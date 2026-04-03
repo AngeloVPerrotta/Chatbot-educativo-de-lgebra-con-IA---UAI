@@ -1,0 +1,22 @@
+# Entorno virtual de Python (no debe incluirse en la imagen)
+venv/
+backend/venv/
+
+# Archivos compilados de Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Variables de entorno con claves secretas
+.env
+
+# Control de versiones
+.git/
+.gitignore
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Frontend (no necesario en el contenedor del backend)
+frontend/

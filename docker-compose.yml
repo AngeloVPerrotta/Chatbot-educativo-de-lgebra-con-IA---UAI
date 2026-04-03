@@ -1,0 +1,31 @@
+# ── Versión de la especificación de Docker Compose ──
+version: "3.11"
+
+services:
+
+  # ── Servicio principal: backend FastAPI ──
+  backend:
+    # Construir la imagen desde el Dockerfile en la raíz del proyecto
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # Nombre del contenedor para identificarlo fácilmente
+    container_name: algoria-backend
+
+    # Mapear puerto del host al contenedor (host:contenedor)
+    ports:
+      - "8000:8000"
+
+    # Cargar variables de entorno desde el archivo .env local
+    # (incluye ANTHROPIC_API_KEY y cualquier otra configuración)
+    env_file:
+      - .env
+
+    # Montar la carpeta data/ como volumen para que los archivos
+    # de conocimiento sean accesibles sin reconstruir la imagen
+    volumes:
+      - ./data:/app/data
+
+    # Reiniciar automáticamente el contenedor si falla
+    restart: unless-stopped

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AlgorIA – Asistente de Álgebra</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Scrollbar personalizada para el historial */
+    #chat-box::-webkit-scrollbar { width: 6px; }
+    #chat-box::-webkit-scrollbar-track { background: #f1f5f9; }
+    #chat-box::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 3px; }
+
+    /* Animación de entrada para cada mensaje */
+    .msg-enter {
+      animation: fadeSlide 0.2s ease-out;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Indicador de "escribiendo..." */
+    .typing-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #94a3b8;
+      animation: bounce 1.2s infinite ease-in-out;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40%           { transform: translateY(-6px); }
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            algebra: { DEFAULT: '#2563eb', light: '#eff6ff', border: '#bfdbfe' },
+            calculo:  { DEFAULT: '#16a34a', light: '#f0fdf4', border: '#bbf7d0' },
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+
+<div class="w-full max-w-2xl flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden" style="height: 90vh; max-height: 780px;">
+
+  <!-- ── CABECERA ── -->
+  <header id="header" class="flex items-center justify-between px-5 py-4 bg-blue-600 text-white transition-colors duration-300">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🧮</span>
+      <div>
+        <h1 class="font-bold text-lg leading-tight">AlgorIA</h1>
+        <p id="subtitle" class="text-blue-100 text-xs">Asistente de Álgebra</p>
+      </div>
+    </div>
+    <!-- Selector de materia -->
+    <div class="flex gap-2">
+      <button id="btn-algebra"
+        onclick="setMateria('algebra')"
+        class="px-3 py-1.5 rounded-lg text-sm font-semibold bg-white text-blue-700 shadow transition">
+        📐 Álgebra
+      </button>
+      <button id="btn-calculo"
+        onclick="setMateria('calculo')"
+        class="px-3 py-1.5 rounded-lg text-sm font-semibold bg-blue-500 text-white hover:bg-blue-400 transition">
+        📊 Cálculo
+      </button>
+    </div>
+  </header>
+
+  <!-- ── HISTORIAL DE MENSAJES ── -->
+  <div id="chat-box" class="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-slate-50">
+    <!-- Los mensajes se insertan aquí dinámicamente -->
+  </div>
+
+  <!-- ── BARRA INFERIOR ── -->
+  <div class="border-t border-slate-200 bg-white px-4 py-3">
+    <div class="flex items-end gap-2">
+      <textarea
+        id="user-input"
+        rows="1"
+        placeholder="Escribe tu consulta de álgebra..."
+        class="flex-1 resize-none rounded-xl border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        style="max-height: 120px; overflow-y: auto;"
+        onkeydown="handleKey(event)"
+        oninput="autoResize(this)"
+      ></textarea>
+      <button
+        id="send-btn"
+        onclick="sendMessage()"
+        class="flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-4 py-2.5 text-sm font-semibold transition disabled:opacity-50"
+      >
+        Enviar
+      </button>
+    </div>
+    <div class="flex items-center justify-between mt-2">
+      <span class="text-xs text-slate-400">Materia: <span id="materia-label" class="font-medium text-blue-600">Álgebra</span></span>
+      <button
+        onclick="limpiarConversacion()"
+        class="text-xs text-slate-400 hover:text-red-500 transition"
+      >
+        🗑 Limpiar conversación
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ── Estado global ──
+  const BACKEND = 'http://127.0.0.1:8000';
+  let materia    = 'algebra';
+  let sessionId  = generarSessionId();
+
+  // Genera un ID único de sesión al cargar la página
+  function generarSessionId() {
+    return 'sess-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
+  }
+
+  // ── Selector de materia ──
+  function setMateria(nueva) {
+    materia = nueva;
+    const esAlgebra = nueva === 'algebra';
+
+    // Cabecera
+    const header   = document.getElementById('header');
+    const subtitle = document.getElementById('subtitle');
+    header.className = header.className.replace(/bg-\w+-\d+/, esAlgebra ? 'bg-blue-600' : 'bg-green-600');
+    subtitle.textContent = esAlgebra ? 'Asistente de Álgebra' : 'Asistente de Cálculo';
+
+    // Botones
+    const btnA = document.getElementById('btn-algebra');
+    const btnC = document.getElementById('btn-calculo');
+    if (esAlgebra) {
+      btnA.className = btnA.className.replace('bg-blue-500 text-white hover:bg-blue-400', '').replace('bg-green-500 text-white hover:bg-green-400', '') + ' bg-white text-blue-700 shadow';
+      btnC.className = 'px-3 py-1.5 rounded-lg text-sm font-semibold bg-green-500 text-white hover:bg-green-400 transition';
+    } else {
+      btnC.className = btnC.className.replace('bg-green-500 text-white hover:bg-green-400', '') + ' bg-white text-green-700 shadow';
+      btnA.className = 'px-3 py-1.5 rounded-lg text-sm font-semibold bg-blue-500 text-white hover:bg-blue-400 transition';
+    }
+
+    // Etiqueta inferior y placeholder
+    const label = document.getElementById('materia-label');
+    label.textContent = esAlgebra ? 'Álgebra' : 'Cálculo';
+    label.className   = 'font-medium ' + (esAlgebra ? 'text-blue-600' : 'text-green-600');
+    document.getElementById('user-input').placeholder =
+      esAlgebra ? 'Escribe tu consulta de álgebra...' : 'Escribe tu consulta de cálculo...';
+
+    // Focus del input
+    document.getElementById('user-input').focus();
+    sendBtn(false);
+  }
+
+  // ── Envío de mensaje ──
+  async function sendMessage() {
+    const input   = document.getElementById('user-input');
+    const mensaje = input.value.trim();
+    if (!mensaje) return;
+
+    // Mostrar mensaje del usuario
+    agregarMensaje('user', mensaje);
+    input.value = '';
+    autoResize(input);
+    sendBtn(true);
+
+    // Indicador de escritura
+    const typingId = agregarTyping();
+
+    try {
+      const res = await fetch(`${BACKEND}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: mensaje, materia, session_id: sessionId }),
+      });
+
+      quitarTyping(typingId);
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        agregarMensaje('error', `⚠️ Error ${res.status}: ${err.detail || 'Sin detalle'}`);
+        return;
+      }
+
+      const data = await res.json();
+      agregarMensaje('bot', data.response);
+
+    } catch (e) {
+      quitarTyping(typingId);
+      agregarMensaje('error', '⚠️ No se pudo conectar con el servidor. ¿Está corriendo el backend?');
+    } finally {
+      sendBtn(false);
+    }
+  }
+
+  // ── Limpiar conversación ──
+  async function limpiarConversacion() {
+    try {
+      await fetch(`${BACKEND}/reset`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId }),
+      });
+    } catch (_) { /* Si el backend no responde, igual limpiamos la UI */ }
+
+    // Nueva sesión
+    sessionId = generarSessionId();
+    document.getElementById('chat-box').innerHTML = '';
+    agregarMensaje('bot', '🗑 Conversación reiniciada. ¿En qué puedo ayudarte?');
+  }
+
+  // ── Renderizado de mensajes ──
+  function agregarMensaje(tipo, texto) {
+    const box = document.getElementById('chat-box');
+    const wrap = document.createElement('div');
+
+    if (tipo === 'user') {
+      wrap.className = 'flex justify-end msg-enter';
+      wrap.innerHTML = `
+        <div class="max-w-[75%] bg-blue-600 text-white rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm leading-relaxed shadow-sm">
+          ${escapar(texto)}
+        </div>`;
+    } else if (tipo === 'bot') {
+      wrap.className = 'flex justify-start msg-enter';
+      wrap.innerHTML = `
+        <div class="flex gap-2 max-w-[80%]">
+          <span class="text-xl mt-0.5">🧮</span>
+          <div class="bg-white border border-slate-200 text-slate-800 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm leading-relaxed shadow-sm whitespace-pre-wrap">
+            ${escapar(texto)}
+          </div>
+        </div>`;
+    } else {
+      // Mensaje de error
+      wrap.className = 'flex justify-center msg-enter';
+      wrap.innerHTML = `
+        <div class="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-2 text-xs">
+          ${escapar(texto)}
+        </div>`;
+    }
+
+    box.appendChild(wrap);
+    box.scrollTop = box.scrollHeight;
+    return wrap;
+  }
+
+  // ── Indicador "escribiendo..." ──
+  function agregarTyping() {
+    const box  = document.getElementById('chat-box');
+    const id   = 'typing-' + Date.now();
+    const wrap = document.createElement('div');
+    wrap.id    = id;
+    wrap.className = 'flex justify-start msg-enter';
+    wrap.innerHTML = `
+      <div class="flex gap-2 items-center">
+        <span class="text-xl">🧮</span>
+        <div class="bg-white border border-slate-200 rounded-2xl rounded-tl-sm px-4 py-3 flex gap-1.5 shadow-sm">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>`;
+    box.appendChild(wrap);
+    box.scrollTop = box.scrollHeight;
+    return id;
+  }
+
+  function quitarTyping(id) {
+    document.getElementById(id)?.remove();
+  }
+
+  // ── Utilidades ──
+  function escapar(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }
+
+  function handleKey(e) {
+    // Enter envía; Shift+Enter hace salto de línea
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+
+  function sendBtn(desactivar) {
+    const btn = document.getElementById('send-btn');
+    btn.disabled    = desactivar;
+    btn.textContent = desactivar ? '...' : 'Enviar';
+  }
+
+  // ── Mensaje de bienvenida al cargar ──
+  window.addEventListener('DOMContentLoaded', () => {
+    agregarMensaje('bot',
+      'Soy AlgorIA, tu asistente de Álgebra. 🧉\n' +
+      'Puedo ayudarte con teoría, ejemplos paso a paso y ejercicios de práctica.\n' +
+      '¿Sobre qué tema quieres trabajar?'
+    );
+    document.getElementById('user-input').focus();
+  });
+</script>
+</body>
+</html>
