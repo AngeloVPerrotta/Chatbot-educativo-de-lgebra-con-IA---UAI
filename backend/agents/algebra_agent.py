@@ -1,4 +1,4 @@
-import anthropic
+from groq import Groq
 import os
 from pathlib import Path
 
@@ -9,21 +9,20 @@ def load_system_prompt() -> str:
 
 
 def chat(historial: list, session_id: str = None) -> str:
-    client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    client = Groq(api_key=os.getenv('GROQ_API_KEY'))
     system_prompt = load_system_prompt()
 
-    try:
-        response = client.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=1024,
-            system=system_prompt,
-            messages=historial,
-        )
-        return response.content[0].text
+    # Groq usa el mismo formato de mensajes que Anthropic
+    messages = [{'role': 'system', 'content': system_prompt}] + historial
 
-    except anthropic.AuthenticationError:
-        raise RuntimeError("API key de Anthropic inválida o no configurada.")
-    except anthropic.RateLimitError:
-        raise RuntimeError("Límite de solicitudes alcanzado. Intenta nuevamente en unos segundos.")
-    except anthropic.APIError as e:
-        raise RuntimeError(f"Error al comunicarse con la API de Anthropic: {str(e)}")
+    try:
+        response = client.chat.completions.create(
+            model='llama-3.3-70b-versatile',
+            messages=messages,
+            max_tokens=1024,
+            temperature=0.7
+        )
+        return response.choices[0].message.content
+
+    except Exception as e:
+        raise RuntimeError(f'Error al comunicarse con Groq API: {str(e)}')

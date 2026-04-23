@@ -1,4 +1,4 @@
-import anthropic
+from groq import Groq
 import os
 from pathlib import Path
 
@@ -8,14 +8,21 @@ def load_system_prompt() -> str:
     return prompt_path.read_text(encoding="utf-8")
 
 
-def chat(messages: list[dict], session_id: str = None) -> str:
-    client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+def chat(historial: list, session_id: str = None) -> str:
+    client = Groq(api_key=os.getenv('GROQ_API_KEY'))
+    system_prompt = load_system_prompt()
 
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=2048,
-        system=load_system_prompt(),
-        messages=messages,
-    )
+    # Groq usa el mismo formato de mensajes que Anthropic
+    messages = [{'role': 'system', 'content': system_prompt}] + historial
 
-    return response.content[0].text
+    try:
+        response = client.chat.completions.create(
+            model='llama-3.3-70b-versatile',
+            messages=messages,
+            max_tokens=1024,
+            temperature=0.7
+        )
+        return response.choices[0].message.content
+
+    except Exception as e:
+        raise RuntimeError(f'Error al comunicarse con Groq API: {str(e)}')
