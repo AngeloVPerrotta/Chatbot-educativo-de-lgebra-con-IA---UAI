@@ -1,3 +1,4 @@
+# Force rebuild - 2026-04-22
 FROM python:3.11-slim
 
 WORKDIR /app
