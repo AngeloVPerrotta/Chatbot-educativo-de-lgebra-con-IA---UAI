@@ -3,6 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
+import logging
+import traceback
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 from agents.algebra_agent import chat as algebra_chat
 from agents.calculo_agent import chat as calculo_chat
@@ -57,23 +62,33 @@ def health_check():
 @app.post("/chat", response_model=ChatResponse)
 def chat_endpoint(request: ChatRequest):
     try:
+        logger.info(f'=== ENDPOINT /chat ===')
+        logger.info(f'Materia: {request.materia}')
+        logger.info(f'Session: {request.session_id}')
+
         # Agregar el mensaje del usuario al historial de la sesión
         append_message(request.session_id, "user", request.message)
 
         # Obtener el historial completo para enviarlo al agente
         historial = get_messages(request.session_id)
 
+        logger.info(f'Historial: {len(historial)} mensajes')
+
         # Seleccionar el agente según la materia indicada
         materia = request.materia.lower()
         if materia == "algebra":
+            logger.info('Llamando a algebra_chat...')
             respuesta = algebra_chat(historial, session_id=request.session_id)
         elif materia == "calculo":
+            logger.info('Llamando a calculo_chat...')
             respuesta = calculo_chat(historial, session_id=request.session_id)
         else:
             raise HTTPException(
                 status_code=400,
                 detail=f"Materia '{request.materia}' no reconocida. Opciones válidas: 'algebra', 'calculo'."
             )
+
+        logger.info(f'Respuesta recibida: {len(respuesta)} chars')
 
         # Guardar la respuesta del asistente en el historial
         append_message(request.session_id, "assistant", respuesta)
@@ -83,6 +98,9 @@ def chat_endpoint(request: ChatRequest):
     except HTTPException:
         raise
     except Exception as e:
+        logger.error(f'ERROR EN ENDPOINT: {type(e).__name__}')
+        logger.error(f'Mensaje: {str(e)}')
+        logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=f"Error interno del servidor: {str(e)}")
 
 
