@@ -20,7 +20,7 @@ services:
     # Cargar variables de entorno desde el archivo .env local
     # (incluye ANTHROPIC_API_KEY y cualquier otra configuración)
     env_file:
-      - .env
+      - backend/.env
 
     # Montar la carpeta data/ como volumen para que los archivos
     # de conocimiento sean accesibles sin reconstruir la imagen
