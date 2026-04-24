@@ -2,7 +2,7 @@ import os
 import logging
 import traceback
 from pathlib import Path
-from openai import OpenAI
+from anthropic import Anthropic
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -20,32 +20,29 @@ def chat(historial: list, session_id: str = None) -> str:
         logger.info(f'Session ID: {session_id}')
         logger.info(f'Historial length: {len(historial)}')
 
-        api_key = os.getenv('OPENROUTER_API_KEY')
+        api_key = os.getenv('ANTHROPIC_API_KEY')
         logger.info(f'API Key presente: {"Si" if api_key else "No"}')
         logger.info(f'API Key primeros 10 chars: {api_key[:10] if api_key else "None"}')
 
-        logger.info('Creando cliente OpenRouter...')
-        client = OpenAI(
-            base_url='https://openrouter.ai/api/v1',
-            api_key=api_key
-        )
-        logger.info('Cliente OpenRouter creado exitosamente')
+        logger.info('Creando cliente Anthropic...')
+        client = Anthropic(api_key=api_key)
+        logger.info('Cliente Anthropic creado exitosamente')
 
         system_prompt = load_system_prompt()
         logger.info(f'System prompt cargado: {len(system_prompt)} caracteres')
 
-        messages = [{'role': 'system', 'content': system_prompt}] + historial
-        logger.info(f'Total mensajes: {len(messages)}')
+        logger.info(f'Total mensajes: {len(historial)}')
 
-        logger.info('Llamando a OpenRouter API...')
-        response = client.chat.completions.create(
-            model='google/gemma-3-27b-it:free',
-            messages=messages,
-            max_tokens=1024
+        logger.info('Llamando a Anthropic API...')
+        response = client.messages.create(
+            model='claude-sonnet-4-20250514',
+            max_tokens=1024,
+            system=system_prompt,
+            messages=historial
         )
-        logger.info('Respuesta recibida de OpenRouter')
+        logger.info('Respuesta recibida de Anthropic')
 
-        result = response.choices[0].message.content
+        result = response.content[0].text
         logger.info(f'Respuesta length: {len(result)} caracteres')
         logger.info('=== FIN CHAT CALCULO ===')
 
@@ -56,4 +53,4 @@ def chat(historial: list, session_id: str = None) -> str:
         logger.error(f'Mensaje de error: {str(e)}')
         logger.error('Traceback completo:')
         logger.error(traceback.format_exc())
-        raise RuntimeError(f'Error al comunicarse con OpenRouter API: {str(e)}')
+        raise RuntimeError(f'Error al comunicarse con Anthropic API: {str(e)}')
