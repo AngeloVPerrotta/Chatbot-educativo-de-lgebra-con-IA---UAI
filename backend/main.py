@@ -13,7 +13,9 @@ from agents.algebra_agent import chat as algebra_chat
 from agents.calculo_agent import chat as calculo_chat
 from utils.session_manager import get_session, append_message, get_messages, clear_session
 
-load_dotenv()
+load_dotenv(override=False)
+logger.info(f'ANTHROPIC_API_KEY presente en env: {"Si" if os.getenv("ANTHROPIC_API_KEY") else "No"}')
+logger.info(f'OPENROUTER_API_KEY presente en env: {"Si" if os.getenv("OPENROUTER_API_KEY") else "No"}')
 
 app = FastAPI(title="AlgorIA API", version="1.0.0")
 
