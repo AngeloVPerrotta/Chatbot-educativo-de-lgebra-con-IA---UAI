@@ -2,6 +2,7 @@ import os
 import logging
 import traceback
 from pathlib import Path
+from openai import OpenAI
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -19,17 +20,16 @@ def chat(historial: list, session_id: str = None) -> str:
         logger.info(f'Session ID: {session_id}')
         logger.info(f'Historial length: {len(historial)}')
 
-        api_key = os.getenv('GROQ_API_KEY')
+        api_key = os.getenv('OPENROUTER_API_KEY')
         logger.info(f'API Key presente: {"Si" if api_key else "No"}')
         logger.info(f'API Key primeros 10 chars: {api_key[:10] if api_key else "None"}')
 
-        logger.info('Importando Groq...')
-        from groq import Groq
-        logger.info('Groq importado exitosamente')
-
-        logger.info('Creando cliente Groq...')
-        client = Groq(api_key=api_key)
-        logger.info('Cliente Groq creado exitosamente')
+        logger.info('Creando cliente OpenRouter...')
+        client = OpenAI(
+            base_url='https://openrouter.ai/api/v1',
+            api_key=api_key
+        )
+        logger.info('Cliente OpenRouter creado exitosamente')
 
         system_prompt = load_system_prompt()
         logger.info(f'System prompt cargado: {len(system_prompt)} caracteres')
@@ -37,14 +37,13 @@ def chat(historial: list, session_id: str = None) -> str:
         messages = [{'role': 'system', 'content': system_prompt}] + historial
         logger.info(f'Total mensajes: {len(messages)}')
 
-        logger.info('Llamando a Groq API...')
+        logger.info('Llamando a OpenRouter API...')
         response = client.chat.completions.create(
-            model='llama-3.3-70b-versatile',
+            model='meta-llama/llama-3.1-8b-instruct:free',
             messages=messages,
-            max_tokens=1024,
-            temperature=0.7
+            max_tokens=1024
         )
-        logger.info('Respuesta recibida de Groq')
+        logger.info('Respuesta recibida de OpenRouter')
 
         result = response.choices[0].message.content
         logger.info(f'Respuesta length: {len(result)} caracteres')
@@ -57,4 +56,4 @@ def chat(historial: list, session_id: str = None) -> str:
         logger.error(f'Mensaje de error: {str(e)}')
         logger.error('Traceback completo:')
         logger.error(traceback.format_exc())
-        raise RuntimeError(f'Error al comunicarse con Groq API: {str(e)}')
+        raise RuntimeError(f'Error al comunicarse con OpenRouter API: {str(e)}')

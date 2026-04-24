@@ -14,5 +14,4 @@ COPY backend/ .
 EXPOSE 8000
 
 # Comando para ejecutar la app
-RUN python test_groq.py
 CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
