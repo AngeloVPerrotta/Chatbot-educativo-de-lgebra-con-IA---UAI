@@ -39,7 +39,7 @@ def chat(historial: list, session_id: str = None) -> str:
 
         logger.info('Llamando a OpenRouter API...')
         response = client.chat.completions.create(
-            model='meta-llama/llama-3.1-8b-instruct:free',
+            model='meta-llama/llama-3.3-70b-instruct:free',
             messages=messages,
             max_tokens=1024
         )
