@@ -1,315 +1,756 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AlgorIA – Asistente de Álgebra</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    /* Scrollbar personalizada para el historial */
-    #chat-box::-webkit-scrollbar { width: 6px; }
-    #chat-box::-webkit-scrollbar-track { background: #f1f5f9; }
-    #chat-box::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 3px; }
-
-    /* Animación de entrada para cada mensaje */
-    .msg-enter {
-      animation: fadeSlide 0.2s ease-out;
-    }
-    @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Indicador de "escribiendo..." */
-    .typing-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: #94a3b8;
-      animation: bounce 1.2s infinite ease-in-out;
-    }
-    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes bounce {
-      0%, 80%, 100% { transform: translateY(0); }
-      40%           { transform: translateY(-6px); }
-    }
-  </style>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            algebra: { DEFAULT: '#2563eb', light: '#eff6ff', border: '#bfdbfe' },
-            calculo:  { DEFAULT: '#16a34a', light: '#f0fdf4', border: '#bbf7d0' },
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlgorIA — Tutor de Álgebra</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a1f35;
+            --bg-input: #151b30;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --accent-glow: rgba(99, 102, 241, 0.3);
+            --accent-subtle: rgba(99, 102, 241, 0.08);
+            --green: #34d399;
+            --green-glow: rgba(52, 211, 153, 0.2);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: rgba(99, 102, 241, 0.15);
+            --border-hover: rgba(99, 102, 241, 0.3);
+            --user-bubble: linear-gradient(135deg, #6366f1, #4f46e5);
+            --bot-bubble: #1e2642;
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.4);
         }
-      }
-    }
-  </script>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ===== PARTICLE CANVAS ===== */
+        #particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ===== AMBIENT GLOW ===== */
+        .ambient-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .glow-1 {
+            width: 500px; height: 500px;
+            background: rgba(99, 102, 241, 0.08);
+            top: -150px; right: -100px;
+        }
+        .glow-2 {
+            width: 400px; height: 400px;
+            background: rgba(52, 211, 153, 0.05);
+            bottom: -100px; left: -100px;
+        }
+
+        /* ===== CURSOR GLOW ===== */
+        .cursor-glow {
+            position: fixed;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.07) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+        }
+
+        /* ===== MAIN LAYOUT ===== */
+        .app-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0 16px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-mark {
+            width: 44px; height: 44px;
+            background: var(--user-bubble);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 20px var(--accent-glow);
+            position: relative;
+            overflow: hidden;
+        }
+        .logo-mark::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%);
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+
+        .header-title h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header-title p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--green);
+            background: var(--green-glow);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+        }
+        .status-dot {
+            width: 6px; height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        /* ===== CHAT AREA ===== */
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-glow) transparent;
+        }
+        .chat-area::-webkit-scrollbar { width: 4px; }
+        .chat-area::-webkit-scrollbar-thumb {
+            background: var(--accent-glow);
+            border-radius: 4px;
+        }
+
+        /* ===== WELCOME SCREEN ===== */
+        .welcome {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 24px;
+            animation: fadeUp 0.8s ease;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome-icon {
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, var(--accent), #4f46e5);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            box-shadow: 0 8px 40px var(--accent-glow);
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .welcome h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .welcome p {
+            color: var(--text-secondary);
+            max-width: 440px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .quick-prompts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            max-width: 600px;
+        }
+        .quick-prompt {
+            padding: 10px 18px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quick-prompt:hover {
+            border-color: var(--accent-light);
+            color: var(--accent-light);
+            background: var(--accent-subtle);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px var(--accent-glow);
+        }
+
+        /* ===== MESSAGES ===== */
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: msgIn 0.35s ease;
+            max-width: 85%;
+        }
+        @keyframes msgIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 34px; height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+        .message.bot .message-avatar {
+            background: linear-gradient(135deg, var(--accent), #4f46e5);
+            box-shadow: 0 2px 12px var(--accent-glow);
+        }
+        .message.user .message-avatar {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+        }
+
+        .message-content {
+            padding: 14px 18px;
+            border-radius: 16px;
+            line-height: 1.65;
+            font-size: 0.92rem;
+        }
+        .message.bot .message-content {
+            background: var(--bot-bubble);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+        }
+        .message.user .message-content {
+            background: var(--user-bubble);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-content p { margin-bottom: 8px; }
+        .message-content p:last-child { margin-bottom: 0; }
+        .message-content strong { color: var(--accent-light); font-weight: 600; }
+        .message-content code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(99, 102, 241, 0.12);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        .message-content ul, .message-content ol {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+        .message-content li { margin-bottom: 4px; }
+
+        /* ===== TYPING INDICATOR ===== */
+        .typing-indicator {
+            display: flex;
+            gap: 12px;
+            animation: msgIn 0.35s ease;
+        }
+        .typing-dots {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 16px 20px;
+            background: var(--bot-bubble);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+        }
+        .typing-dots span {
+            width: 7px; height: 7px;
+            background: var(--accent-light);
+            border-radius: 50%;
+            animation: typingBounce 1.4s ease-in-out infinite;
+        }
+        .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-6px); opacity: 1; }
+        }
+
+        /* ===== INPUT AREA ===== */
+        .input-area {
+            padding: 16px 0 20px;
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 8px 8px 8px 18px;
+            transition: all 0.25s;
+        }
+        .input-wrapper:focus-within {
+            border-color: var(--accent-light);
+            box-shadow: 0 0 0 3px var(--accent-glow), 0 4px 24px rgba(0,0,0,0.2);
+        }
+
+        .input-wrapper textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.92rem;
+            resize: none;
+            outline: none;
+            max-height: 120px;
+            padding: 8px 0;
+            line-height: 1.5;
+        }
+        .input-wrapper textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .send-btn {
+            width: 42px; height: 42px;
+            background: var(--user-bubble);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .send-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 4px 16px var(--accent-glow);
+        }
+        .send-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .send-btn svg {
+            width: 18px; height: 18px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 8px 0 14px;
+            flex-shrink: 0;
+        }
+        .footer p {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 0.02em;
+        }
+        .footer a {
+            color: var(--accent-light);
+            text-decoration: none;
+        }
+        .footer a:hover { text-decoration: underline; }
+
+        /* ===== CLEAR BUTTON ===== */
+        .clear-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .clear-btn:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.08);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 640px) {
+            .app-container { padding: 0 12px; }
+            .header-title h1 { font-size: 1.2rem; }
+            .welcome h2 { font-size: 1.4rem; }
+            .quick-prompts { flex-direction: column; align-items: center; }
+            .message { max-width: 92%; }
+            .status-badge span:last-child { display: none; }
+        }
+    </style>
 </head>
-<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+<body>
+    <canvas id="particles"></canvas>
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
 
-<div class="w-full max-w-2xl flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden" style="height: 90vh; max-height: 780px;">
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo-mark">∑</div>
+                <div class="header-title">
+                    <h1>AlgorIA</h1>
+                    <p>Tutor inteligente de Álgebra · UAI</p>
+                </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <button class="clear-btn" onclick="clearChat()" title="Limpiar conversación">✕ Limpiar</button>
+                <div class="status-badge">
+                    <div class="status-dot"></div>
+                    <span>En línea</span>
+                </div>
+            </div>
+        </header>
 
-  <!-- ── CABECERA ── -->
-  <header id="header" class="flex items-center justify-between px-5 py-4 bg-blue-600 text-white transition-colors duration-300">
-    <div class="flex items-center gap-3">
-      <span class="text-2xl">🧮</span>
-      <div>
-        <h1 class="font-bold text-lg leading-tight">AlgorIA</h1>
-        <p id="subtitle" class="text-blue-100 text-xs">Asistente de Álgebra</p>
-      </div>
-    </div>
-    <!-- Selector de materia -->
-    <div class="flex gap-2">
-      <button id="btn-algebra"
-        onclick="setMateria('algebra')"
-        class="px-3 py-1.5 rounded-lg text-sm font-semibold bg-white text-blue-700 shadow transition">
-        📐 Álgebra
-      </button>
-      <button id="btn-calculo"
-        onclick="setMateria('calculo')"
-        class="px-3 py-1.5 rounded-lg text-sm font-semibold bg-blue-500 text-white hover:bg-blue-400 transition">
-        📊 Cálculo
-      </button>
-    </div>
-  </header>
-
-  <!-- ── HISTORIAL DE MENSAJES ── -->
-  <div id="chat-box" class="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-slate-50">
-    <!-- Los mensajes se insertan aquí dinámicamente -->
-  </div>
-
-  <!-- ── BARRA INFERIOR ── -->
-  <div class="border-t border-slate-200 bg-white px-4 py-3">
-    <div class="flex items-end gap-2">
-      <textarea
-        id="user-input"
-        rows="1"
-        placeholder="Escribe tu consulta de álgebra..."
-        class="flex-1 resize-none rounded-xl border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-        style="max-height: 120px; overflow-y: auto;"
-        onkeydown="handleKey(event)"
-        oninput="autoResize(this)"
-      ></textarea>
-      <button
-        id="send-btn"
-        onclick="sendMessage()"
-        class="flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-4 py-2.5 text-sm font-semibold transition disabled:opacity-50"
-      >
-        Enviar
-      </button>
-    </div>
-    <div class="flex items-center justify-between mt-2">
-      <span class="text-xs text-slate-400">Materia: <span id="materia-label" class="font-medium text-blue-600">Álgebra</span></span>
-      <button
-        onclick="limpiarConversacion()"
-        class="text-xs text-slate-400 hover:text-red-500 transition"
-      >
-        🗑 Limpiar conversación
-      </button>
-    </div>
-  </div>
-
-</div>
-
-<script>
-  // ── Estado global ──
-  const BACKEND = 'https://chatbot-educativo-de-lgebra-con-ia-uai-production.up.railway.app';
-  let materia    = 'algebra';
-  let sessionId  = generarSessionId();
-
-  // Genera un ID único de sesión al cargar la página
-  function generarSessionId() {
-    return 'sess-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
-  }
-
-  // ── Selector de materia ──
-  function setMateria(nueva) {
-    materia = nueva;
-    const esAlgebra = nueva === 'algebra';
-
-    // Cabecera
-    const header   = document.getElementById('header');
-    const subtitle = document.getElementById('subtitle');
-    header.className = header.className.replace(/bg-\w+-\d+/, esAlgebra ? 'bg-blue-600' : 'bg-green-600');
-    subtitle.textContent = esAlgebra ? 'Asistente de Álgebra' : 'Asistente de Cálculo';
-
-    // Botones
-    const btnA = document.getElementById('btn-algebra');
-    const btnC = document.getElementById('btn-calculo');
-    if (esAlgebra) {
-      btnA.className = btnA.className.replace('bg-blue-500 text-white hover:bg-blue-400', '').replace('bg-green-500 text-white hover:bg-green-400', '') + ' bg-white text-blue-700 shadow';
-      btnC.className = 'px-3 py-1.5 rounded-lg text-sm font-semibold bg-green-500 text-white hover:bg-green-400 transition';
-    } else {
-      btnC.className = btnC.className.replace('bg-green-500 text-white hover:bg-green-400', '') + ' bg-white text-green-700 shadow';
-      btnA.className = 'px-3 py-1.5 rounded-lg text-sm font-semibold bg-blue-500 text-white hover:bg-blue-400 transition';
-    }
-
-    // Etiqueta inferior y placeholder
-    const label = document.getElementById('materia-label');
-    label.textContent = esAlgebra ? 'Álgebra' : 'Cálculo';
-    label.className   = 'font-medium ' + (esAlgebra ? 'text-blue-600' : 'text-green-600');
-    document.getElementById('user-input').placeholder =
-      esAlgebra ? 'Escribe tu consulta de álgebra...' : 'Escribe tu consulta de cálculo...';
-
-    // Focus del input
-    document.getElementById('user-input').focus();
-    sendBtn(false);
-  }
-
-  // ── Envío de mensaje ──
-  async function sendMessage() {
-    const input   = document.getElementById('user-input');
-    const mensaje = input.value.trim();
-    if (!mensaje) return;
-
-    // Mostrar mensaje del usuario
-    agregarMensaje('user', mensaje);
-    input.value = '';
-    autoResize(input);
-    sendBtn(true);
-
-    // Indicador de escritura
-    const typingId = agregarTyping();
-
-    try {
-      const res = await fetch(`${BACKEND}/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: mensaje, materia, session_id: sessionId }),
-      });
-
-      quitarTyping(typingId);
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        agregarMensaje('error', `⚠️ Error ${res.status}: ${err.detail || 'Sin detalle'}`);
-        return;
-      }
-
-      const data = await res.json();
-      agregarMensaje('bot', data.response);
-
-    } catch (e) {
-      quitarTyping(typingId);
-      agregarMensaje('error', '⚠️ No se pudo conectar con el servidor. ¿Está corriendo el backend?');
-    } finally {
-      sendBtn(false);
-    }
-  }
-
-  // ── Limpiar conversación ──
-  async function limpiarConversacion() {
-    try {
-      await fetch(`${BACKEND}/reset`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: sessionId }),
-      });
-    } catch (_) { /* Si el backend no responde, igual limpiamos la UI */ }
-
-    // Nueva sesión
-    sessionId = generarSessionId();
-    document.getElementById('chat-box').innerHTML = '';
-    agregarMensaje('bot', '🗑 Conversación reiniciada. ¿En qué puedo ayudarte?');
-  }
-
-  // ── Renderizado de mensajes ──
-  function agregarMensaje(tipo, texto) {
-    const box = document.getElementById('chat-box');
-    const wrap = document.createElement('div');
-
-    if (tipo === 'user') {
-      wrap.className = 'flex justify-end msg-enter';
-      wrap.innerHTML = `
-        <div class="max-w-[75%] bg-blue-600 text-white rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm leading-relaxed shadow-sm">
-          ${escapar(texto)}
-        </div>`;
-    } else if (tipo === 'bot') {
-      wrap.className = 'flex justify-start msg-enter';
-      wrap.innerHTML = `
-        <div class="flex gap-2 max-w-[80%]">
-          <span class="text-xl mt-0.5">🧮</span>
-          <div class="bg-white border border-slate-200 text-slate-800 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm leading-relaxed shadow-sm whitespace-pre-wrap">
-            ${escapar(texto)}
-          </div>
-        </div>`;
-    } else {
-      // Mensaje de error
-      wrap.className = 'flex justify-center msg-enter';
-      wrap.innerHTML = `
-        <div class="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-2 text-xs">
-          ${escapar(texto)}
-        </div>`;
-    }
-
-    box.appendChild(wrap);
-    box.scrollTop = box.scrollHeight;
-    return wrap;
-  }
-
-  // ── Indicador "escribiendo..." ──
-  function agregarTyping() {
-    const box  = document.getElementById('chat-box');
-    const id   = 'typing-' + Date.now();
-    const wrap = document.createElement('div');
-    wrap.id    = id;
-    wrap.className = 'flex justify-start msg-enter';
-    wrap.innerHTML = `
-      <div class="flex gap-2 items-center">
-        <span class="text-xl">🧮</span>
-        <div class="bg-white border border-slate-200 rounded-2xl rounded-tl-sm px-4 py-3 flex gap-1.5 shadow-sm">
-          <div class="typing-dot"></div>
-          <div class="typing-dot"></div>
-          <div class="typing-dot"></div>
+        <!-- CHAT -->
+        <div class="chat-area" id="chatArea">
+            <!-- WELCOME -->
+            <div class="welcome" id="welcome">
+                <div class="welcome-icon">∑</div>
+                <h2>¡Hola! Soy AlgorIA</h2>
+                <p>Tu tutor de Álgebra universitaria. Te guío paso a paso sin darte la respuesta directa — porque aprender es el verdadero objetivo.</p>
+                <div class="quick-prompts">
+                    <button class="quick-prompt" onclick="sendQuick(this)">Explicame vectores en R²</button>
+                    <button class="quick-prompt" onclick="sendQuick(this)">¿Cómo resuelvo un sistema de ecuaciones 3x3?</button>
+                    <button class="quick-prompt" onclick="sendQuick(this)">¿Qué es una transformación lineal?</button>
+                    <button class="quick-prompt" onclick="sendQuick(this)">Ayudame con matrices inversas</button>
+                </div>
+            </div>
         </div>
-      </div>`;
-    box.appendChild(wrap);
-    box.scrollTop = box.scrollHeight;
-    return id;
-  }
 
-  function quitarTyping(id) {
-    document.getElementById(id)?.remove();
-  }
+        <!-- INPUT -->
+        <div class="input-area">
+            <div class="input-wrapper">
+                <textarea id="msgInput" rows="1" placeholder="Escribí tu pregunta de Álgebra..."
+                    oninput="autoResize(this)" onkeydown="handleKey(event)"></textarea>
+                <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </div>
 
-  // ── Utilidades ──
-  function escapar(str) {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
+        <!-- FOOTER -->
+        <footer class="footer">
+            <p>Hecho por <strong>Angelo Perrotta</strong> · Ingeniería en Sistemas · <a href="https://www.uai.edu.ar" target="_blank" rel="noopener">UAI</a></p>
+        </footer>
+    </div>
 
-  function autoResize(el) {
-    el.style.height = 'auto';
-    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-  }
+    <script>
+        // ===== CONFIG =====
+        const BACKEND = 'https://chatbot-educativo-de-lgebra-con-ia-uai-production.up.railway.app';
+        const sessionId = 'sess-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
+        let isWaiting = false;
 
-  function handleKey(e) {
-    // Enter envía; Shift+Enter hace salto de línea
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  }
+        // ===== ELEMENTS =====
+        const chatArea = document.getElementById('chatArea');
+        const msgInput = document.getElementById('msgInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const welcome = document.getElementById('welcome');
+        const cursorGlow = document.getElementById('cursorGlow');
 
-  function sendBtn(desactivar) {
-    const btn = document.getElementById('send-btn');
-    btn.disabled    = desactivar;
-    btn.textContent = desactivar ? '...' : 'Enviar';
-  }
+        // ===== CURSOR GLOW EFFECT =====
+        document.addEventListener('mousemove', (e) => {
+            cursorGlow.style.left = e.clientX + 'px';
+            cursorGlow.style.top = e.clientY + 'px';
+        });
 
-  // ── Mensaje de bienvenida al cargar ──
-  window.addEventListener('DOMContentLoaded', () => {
-    agregarMensaje('bot',
-      'Soy AlgorIA, tu asistente de Álgebra. 🧉\n' +
-      'Puedo ayudarte con teoría, ejemplos paso a paso y ejercicios de práctica.\n' +
-      '¿Sobre qué tema quieres trabajar?'
-    );
-    document.getElementById('user-input').focus();
-  });
-</script>
+        // ===== PARTICLE SYSTEM =====
+        (function initParticles() {
+            const canvas = document.getElementById('particles');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const count = 50;
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.3,
+                    vy: (Math.random() - 0.5) * 0.3,
+                    r: Math.random() * 2 + 0.5,
+                    o: Math.random() * 0.3 + 0.05,
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(99, 102, 241, ${p.o})`;
+                    ctx.fill();
+                });
+                // Draw connections
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 120) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(99, 102, 241, ${0.06 * (1 - dist / 120)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(draw);
+            }
+            draw();
+        })();
+
+        // ===== CHAT FUNCTIONS =====
+        function sendQuick(el) {
+            msgInput.value = el.textContent;
+            sendMessage();
+        }
+
+        function autoResize(el) {
+            el.style.height = 'auto';
+            el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+        }
+
+        function handleKey(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function escapeHtml(text) {
+            const d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
+        }
+
+        function formatResponse(text) {
+            // Trim leading whitespace/newlines from the response
+            text = text.replace(/^\s+/, '');
+
+            // Convert markdown-like formatting
+            let html = escapeHtml(text);
+
+            // Bold: **text** or __text__
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/__(.+?)__/g, '<strong>$1</strong>');
+
+            // Italic: *text* or _text_
+            html = html.replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+
+            // Inline code: `text`
+            html = html.replace(/`(.+?)`/g, '<code>$1</code>');
+
+            // Line breaks to paragraphs
+            html = html.split('\n\n').map(p => `<p>${p.trim()}</p>`).join('');
+            html = html.replace(/\n/g, '<br>');
+
+            return html;
+        }
+
+        function addMessage(role, content) {
+            if (welcome) welcome.style.display = 'none';
+
+            const msg = document.createElement('div');
+            msg.className = `message ${role}`;
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = role === 'bot' ? '∑' : '👤';
+
+            const bubble = document.createElement('div');
+            bubble.className = 'message-content';
+            bubble.innerHTML = role === 'bot' ? formatResponse(content) : `<p>${escapeHtml(content)}</p>`;
+
+            msg.appendChild(avatar);
+            msg.appendChild(bubble);
+            chatArea.appendChild(msg);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function showTyping() {
+            const el = document.createElement('div');
+            el.className = 'typing-indicator';
+            el.id = 'typingIndicator';
+            el.innerHTML = `
+                <div class="message-avatar" style="background:linear-gradient(135deg,var(--accent),#4f46e5);box-shadow:0 2px 12px var(--accent-glow);">∑</div>
+                <div class="typing-dots"><span></span><span></span><span></span></div>
+            `;
+            chatArea.appendChild(el);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function hideTyping() {
+            const el = document.getElementById('typingIndicator');
+            if (el) el.remove();
+        }
+
+        async function sendMessage() {
+            const text = msgInput.value.trim();
+            if (!text || isWaiting) return;
+
+            isWaiting = true;
+            sendBtn.disabled = true;
+            msgInput.value = '';
+            msgInput.style.height = 'auto';
+
+            addMessage('user', text);
+            showTyping();
+
+            try {
+                const res = await fetch(`${BACKEND}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: text,
+                        materia: 'algebra',
+                        session_id: sessionId
+                    }),
+                });
+
+                hideTyping();
+
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    throw new Error(err.detail || `Error ${res.status}`);
+                }
+
+                const data = await res.json();
+                addMessage('bot', data.response);
+            } catch (err) {
+                hideTyping();
+                addMessage('bot', `⚠️ ${err.message}\n\nReintentá en unos segundos.`);
+            } finally {
+                isWaiting = false;
+                sendBtn.disabled = false;
+                msgInput.focus();
+            }
+        }
+
+        async function clearChat() {
+            try {
+                await fetch(`${BACKEND}/reset`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session_id: sessionId }),
+                });
+            } catch (e) { /* ignore */ }
+
+            // Remove messages and typing indicator
+            chatArea.querySelectorAll('.message, .typing-indicator').forEach(el => el.remove());
+            if (welcome) welcome.style.display = 'flex';
+        }
+
+        // Focus input on load
+        msgInput.focus();
+    </script>
 </body>
 </html>
