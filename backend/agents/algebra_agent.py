@@ -3,6 +3,7 @@ import logging
 import traceback
 from pathlib import Path
 from anthropic import Anthropic
+from utils.rag import retrieve_context
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -30,6 +31,14 @@ def chat(historial: list, session_id: str = None) -> str:
 
         system_prompt = load_system_prompt()
         logger.info(f'System prompt cargado: {len(system_prompt)} caracteres')
+
+        user_messages = [m for m in historial if m.get("role") == "user"]
+        if user_messages:
+            last_user_message = user_messages[-1].get("content", "")
+            context = retrieve_context(last_user_message)
+            if context:
+                system_prompt = system_prompt + "\n\nCONTEXTO RELEVANTE DE LA CÁTEDRA:\n" + context
+                logger.info(f'Contexto RAG agregado: {len(context)} caracteres')
 
         logger.info(f'Total mensajes: {len(historial)}')
 

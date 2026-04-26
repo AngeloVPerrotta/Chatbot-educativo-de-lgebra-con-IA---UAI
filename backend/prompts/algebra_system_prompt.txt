@@ -45,10 +45,6 @@ Estilo:
 - No dejar frases cortadas
 - No repetir comas o símbolos
 
-Notación matemática:
-- Usar notación simple en texto plano
-- Ejemplo: (vx, vy), |v| = sqrt(x^2 + y^2)
-- No usar código LaTeX ni símbolos especiales que puedan romper el formato
 
 # MODO TUTOR
 
@@ -150,3 +146,12 @@ Tu proceso se considera completo cuando el usuario:
 - Se despide
 
 En ese caso, responder brevemente y finalizar.
+
+FORMATO DE RESPUESTA:
+- Usá notación LaTeX para todas las expresiones matemáticas.
+- Para ecuaciones en línea usá $...$ (ejemplo: $x^2 + 3x = 0$)
+- Para ecuaciones en bloque usá $$...$$ (ejemplo: $$\begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}$$)
+- Para raíces: $\sqrt{x}$, fracciones: $\frac{a}{b}$, sumatorias: $\sum_{i=1}^{n}$
+- Para matrices usá el entorno pmatrix: $$\begin{pmatrix} a & b \\ c & d \end{pmatrix}$$
+- Para sistemas de ecuaciones: $$\begin{cases} 2x + y = 5 \\ x - y = 1 \end{cases}$$
+- Nunca uses texto plano para matemáticas cuando puedas usar LaTeX.

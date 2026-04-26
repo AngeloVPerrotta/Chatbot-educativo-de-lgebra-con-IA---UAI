@@ -1,0 +1,337 @@
+[
+  {
+    "id": "ec_01",
+    "topic": "ecuaciones",
+    "content": "Una ecuación es una igualdad entre dos expresiones algebraicas que contiene una o más incógnitas. Resolver una ecuación significa encontrar el/los valores de la incógnita que hacen verdadera la igualdad. Esos valores se llaman soluciones o raíces. Ejemplo: $2x + 3 = 7 \\Rightarrow x = 2$."
+  },
+  {
+    "id": "ec_02",
+    "topic": "ecuaciones",
+    "content": "Ecuación de primer grado: $ax + b = 0$ con $a \\neq 0$. Solución: $x = -\\frac{b}{a}$. Ejemplo: $3x - 6 = 0 \\Rightarrow x = 2$. Propiedad: si se suma/resta/multiplica/divide por el mismo valor ambos lados, la igualdad se mantiene (excepto dividir por cero)."
+  },
+  {
+    "id": "ec_03",
+    "topic": "ecuaciones",
+    "content": "Ecuación de segundo grado: $ax^2 + bx + c = 0$ con $a \\neq 0$. Fórmula resolvente: $$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$ El discriminante $\\Delta = b^2 - 4ac$ determina la naturaleza de las raíces: $\\Delta > 0$ dos raíces reales distintas, $\\Delta = 0$ raíz doble, $\\Delta < 0$ sin raíces reales."
+  },
+  {
+    "id": "ec_04",
+    "topic": "ecuaciones",
+    "content": "Relaciones de Vieta para $ax^2 + bx + c = 0$: si $x_1, x_2$ son las raíces, entonces $x_1 + x_2 = -\\frac{b}{a}$ y $x_1 \\cdot x_2 = \\frac{c}{a}$. Útil para verificar resultados o construir ecuaciones a partir de raíces conocidas."
+  },
+  {
+    "id": "ec_05",
+    "topic": "ecuaciones",
+    "content": "Ecuaciones con valor absoluto: $|f(x)| = k$ con $k \\geq 0$ equivale a $f(x) = k$ o $f(x) = -k$. Si $k < 0$, no tiene solución. Ejemplo: $|2x - 1| = 3 \\Rightarrow 2x - 1 = 3$ (da $x = 2$) o $2x - 1 = -3$ (da $x = -1$)."
+  },
+  {
+    "id": "int_01",
+    "topic": "intervalos_inecuaciones",
+    "content": "Un intervalo es un subconjunto de $\\mathbb{R}$ formado por todos los reales entre dos extremos. Notación: $(a,b)$ abierto, $[a,b]$ cerrado, $[a,b)$ semiabierto. También: $(-\\infty, a)$, $(a, +\\infty)$. La unión $A \\cup B$ y la intersección $A \\cap B$ de intervalos se representan en la recta numérica."
+  },
+  {
+    "id": "int_02",
+    "topic": "intervalos_inecuaciones",
+    "content": "Inecuación de primer grado: $ax + b > 0$. Si $a > 0$: $x > -b/a$. Si $a < 0$: se invierte el signo de la desigualdad, $x < -b/a$. Regla clave: multiplicar o dividir por un número negativo invierte el sentido de la desigualdad."
+  },
+  {
+    "id": "int_03",
+    "topic": "intervalos_inecuaciones",
+    "content": "Inecuación de segundo grado: $ax^2 + bx + c > 0$. Método: hallar raíces $x_1, x_2$ (con $x_1 < x_2$), luego analizar signo en cada intervalo. Si $a > 0$: la parábola abre hacia arriba, la expresión es positiva en $(-\\infty, x_1) \\cup (x_2, +\\infty)$ y negativa en $(x_1, x_2)$."
+  },
+  {
+    "id": "int_04",
+    "topic": "intervalos_inecuaciones",
+    "content": "Inecuaciones con valor absoluto: $|f(x)| < k \\Leftrightarrow -k < f(x) < k$. $|f(x)| > k \\Leftrightarrow f(x) < -k$ o $f(x) > k$. Ejemplo: $|x - 2| < 3 \\Leftrightarrow -3 < x - 2 < 3 \\Leftrightarrow -1 < x < 5$, solución: $(-1, 5)$."
+  },
+  {
+    "id": "nc_01",
+    "topic": "numeros_complejos",
+    "content": "Los números complejos extienden los reales. Un número complejo es $z = a + bi$ donde $a, b \\in \\mathbb{R}$ e $i$ es la unidad imaginaria con $i^2 = -1$. $a = \\text{Re}(z)$ es la parte real y $b = \\text{Im}(z)$ es la parte imaginaria. Si $b = 0$, es real; si $a = 0$, es imaginario puro."
+  },
+  {
+    "id": "nc_02",
+    "topic": "numeros_complejos",
+    "content": "Operaciones: suma $(a+bi)+(c+di) = (a+c)+(b+d)i$; producto $(a+bi)(c+di) = (ac-bd)+(ad+bc)i$. Conjugado: $\\bar{z} = a - bi$. Módulo: $|z| = \\sqrt{a^2 + b^2}$. Propiedad: $z \\cdot \\bar{z} = |z|^2$. División: $\\frac{z_1}{z_2} = \\frac{z_1 \\cdot \\bar{z_2}}{|z_2|^2}$."
+  },
+  {
+    "id": "nc_03",
+    "topic": "numeros_complejos",
+    "content": "Forma trigonométrica (polar): $z = r(\\cos\\theta + i\\sin\\theta) = r\\,e^{i\\theta}$ donde $r = |z| = \\sqrt{a^2+b^2}$ y $\\theta = \\arg(z) = \\arctan(b/a)$ (ajustado al cuadrante). Producto en forma polar: $|z_1 z_2| = r_1 r_2$, $\\arg(z_1 z_2) = \\theta_1 + \\theta_2$."
+  },
+  {
+    "id": "nc_04",
+    "topic": "numeros_complejos",
+    "content": "Fórmula de De Moivre: $z^n = r^n(\\cos n\\theta + i\\sin n\\theta)$. Raíces $n$-ésimas de un complejo: $w_k = r^{1/n}\\left(\\cos\\frac{\\theta + 2\\pi k}{n} + i\\sin\\frac{\\theta + 2\\pi k}{n}\\right)$ para $k = 0, 1, \\ldots, n-1$. Hay exactamente $n$ raíces distintas equiespaciadas en la circunferencia de radio $r^{1/n}$."
+  },
+  {
+    "id": "nc_05",
+    "topic": "numeros_complejos",
+    "content": "Toda ecuación polinómica de grado $n$ tiene exactamente $n$ raíces en $\\mathbb{C}$ (Teorema Fundamental del Álgebra). Las raíces complejas de polinomios con coeficientes reales aparecen en pares conjugados: si $z = a + bi$ es raíz, entonces $\\bar{z} = a - bi$ también lo es."
+  },
+  {
+    "id": "rec_01",
+    "topic": "recta",
+    "content": "La recta en el plano puede representarse de varias formas. Ecuación explícita: $y = mx + b$, donde $m$ es la pendiente y $b$ la ordenada al origen. Ecuación implícita: $ax + by + c = 0$. Forma punto-pendiente: $y - y_0 = m(x - x_0)$ dado un punto $(x_0, y_0)$ y pendiente $m$."
+  },
+  {
+    "id": "rec_02",
+    "topic": "recta",
+    "content": "Pendiente entre dos puntos $(x_1, y_1)$ y $(x_2, y_2)$: $m = \\frac{y_2 - y_1}{x_2 - x_1}$ con $x_1 \\neq x_2$. Dos rectas son paralelas si tienen igual pendiente ($m_1 = m_2$) y perpendiculares si $m_1 \\cdot m_2 = -1$. La recta vertical $x = k$ no tiene pendiente definida."
+  },
+  {
+    "id": "rec_03",
+    "topic": "recta",
+    "content": "Distancia de un punto $P(x_0, y_0)$ a la recta $ax + by + c = 0$: $$d = \\frac{|ax_0 + by_0 + c|}{\\sqrt{a^2 + b^2}}$$ Punto medio del segmento entre $(x_1,y_1)$ y $(x_2,y_2)$: $M = \\left(\\frac{x_1+x_2}{2}, \\frac{y_1+y_2}{2}\\right)$."
+  },
+  {
+    "id": "rec_04",
+    "topic": "recta",
+    "content": "Ecuación de la recta que pasa por dos puntos $(x_1, y_1)$ y $(x_2, y_2)$: $$\\frac{y - y_1}{y_2 - y_1} = \\frac{x - x_1}{x_2 - x_1}$$ Intersección entre dos rectas: resolver el sistema formado por sus ecuaciones. Si son paralelas no hay solución; si son iguales, infinitas soluciones."
+  },
+  {
+    "id": "con_01",
+    "topic": "conicas",
+    "content": "Las cónicas son curvas obtenidas al intersecar un plano con un cono. Tipos: circunferencia, elipse, parábola e hipérbola. Ecuación general: $Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0$. El tipo depende del discriminante $B^2 - 4AC$: negativo → elipse/circunferencia, cero → parábola, positivo → hipérbola."
+  },
+  {
+    "id": "con_02",
+    "topic": "conicas",
+    "content": "Circunferencia con centro $(h, k)$ y radio $r$: $(x-h)^2 + (y-k)^2 = r^2$. Forma general: $x^2 + y^2 + Dx + Ey + F = 0$; se convierte a canónica completando cuadrados. Centro: $(-D/2, -E/2)$, radio: $r = \\sqrt{(D/2)^2 + (E/2)^2 - F}$."
+  },
+  {
+    "id": "con_03",
+    "topic": "conicas",
+    "content": "Elipse con centro en el origen: $\\frac{x^2}{a^2} + \\frac{y^2}{b^2} = 1$ con $a > b > 0$. Semiejes: $a$ (mayor, horizontal) y $b$ (menor, vertical). Focos en $(\\pm c, 0)$ con $c^2 = a^2 - b^2$. Excentricidad: $e = c/a$ con $0 < e < 1$. Para eje mayor vertical, se intercambian $a$ y $b$."
+  },
+  {
+    "id": "con_04",
+    "topic": "conicas",
+    "content": "Parábola con vértice en el origen: $y^2 = 4px$ (eje horizontal) o $x^2 = 4py$ (eje vertical). El foco está en $(p, 0)$ o $(0, p)$ y la directriz es $x = -p$ o $y = -p$. Con vértice en $(h,k)$: $(y-k)^2 = 4p(x-h)$ o $(x-h)^2 = 4p(y-k)$."
+  },
+  {
+    "id": "con_05",
+    "topic": "conicas",
+    "content": "Hipérbola con centro en el origen: $\\frac{x^2}{a^2} - \\frac{y^2}{b^2} = 1$ (eje real horizontal). Focos en $(\\pm c, 0)$ con $c^2 = a^2 + b^2$. Asíntotas: $y = \\pm \\frac{b}{a}x$. Para eje real vertical: $\\frac{y^2}{a^2} - \\frac{x^2}{b^2} = 1$ con focos en $(0, \\pm c)$."
+  },
+  {
+    "id": "vec_01",
+    "topic": "vectores",
+    "content": "Un vector en $\\mathbb{R}^n$ es un elemento $(v_1, v_2, \\ldots, v_n)$. En $\\mathbb{R}^2$: $\\vec{v} = (v_x, v_y)$; en $\\mathbb{R}^3$: $\\vec{v} = (v_x, v_y, v_z)$. Módulo (norma): $|\\vec{v}| = \\sqrt{v_x^2 + v_y^2 + v_z^2}$. Vector unitario: $\\hat{v} = \\vec{v}/|\\vec{v}|$. Vector nulo: $\\vec{0} = (0, 0, 0)$."
+  },
+  {
+    "id": "vec_02",
+    "topic": "vectores",
+    "content": "Operaciones con vectores: suma $\\vec{u} + \\vec{v} = (u_x+v_x, u_y+v_y, u_z+v_z)$; producto escalar $k\\vec{v} = (kv_x, kv_y, kv_z)$. Producto escalar (dot product): $\\vec{u} \\cdot \\vec{v} = u_xv_x + u_yv_y + u_zv_z = |\\vec{u}||\\vec{v}|\\cos\\theta$. Vectores perpendiculares si $\\vec{u} \\cdot \\vec{v} = 0$."
+  },
+  {
+    "id": "vec_03",
+    "topic": "vectores",
+    "content": "Producto vectorial (solo en $\\mathbb{R}^3$): $\\vec{u} \\times \\vec{v} = \\begin{vmatrix} \\vec{i} & \\vec{j} & \\vec{k} \\\\ u_x & u_y & u_z \\\\ v_x & v_y & v_z \\end{vmatrix}$. El resultado es un vector perpendicular a ambos. $|\\vec{u} \\times \\vec{v}| = |\\vec{u}||\\vec{v}|\\sin\\theta$ = área del paralelogramo formado por $\\vec{u}$ y $\\vec{v}$."
+  },
+  {
+    "id": "vec_04",
+    "topic": "vectores",
+    "content": "Combinación lineal: $\\vec{w} = \\alpha\\vec{u} + \\beta\\vec{v}$. Vectores linealmente independientes: ninguno es combinación lineal de los otros, equivalente a que el sistema $\\alpha\\vec{u} + \\beta\\vec{v} = \\vec{0}$ solo tiene solución trivial $\\alpha = \\beta = 0$. En $\\mathbb{R}^2$: dos vectores no paralelos son LI."
+  },
+  {
+    "id": "vec_05",
+    "topic": "vectores",
+    "content": "Proyección de $\\vec{u}$ sobre $\\vec{v}$: $\\text{proy}_{\\vec{v}}\\vec{u} = \\frac{\\vec{u}\\cdot\\vec{v}}{|\\vec{v}|^2}\\vec{v}$. Componente escalar: $\\text{comp}_{\\vec{v}}\\vec{u} = \\frac{\\vec{u}\\cdot\\vec{v}}{|\\vec{v}|}$. Ángulo entre vectores: $\\cos\\theta = \\frac{\\vec{u}\\cdot\\vec{v}}{|\\vec{u}||\\vec{v}|}$ con $\\theta \\in [0°, 180°]$."
+  },
+  {
+    "id": "mat_01",
+    "topic": "matrices",
+    "content": "Una matriz de orden $m \\times n$ es un arreglo rectangular de $m$ filas y $n$ columnas: $A = (a_{ij})$. Tipos: cuadrada ($m=n$), nula ($a_{ij}=0$ para todo $i,j$), identidad $I_n$ ($a_{ii}=1$, resto $0$), triangular (superior/inferior), diagonal, simétrica ($A = A^T$)."
+  },
+  {
+    "id": "mat_02",
+    "topic": "matrices",
+    "content": "Operaciones: suma $A+B$ (mismo orden, $c_{ij}=a_{ij}+b_{ij}$), producto escalar $kA$, transpuesta $A^T$ (filas↔columnas). Producto matricial $AB$: requiere que el número de columnas de $A$ sea igual al número de filas de $B$. $(AB)_{ij} = \\sum_k a_{ik}b_{kj}$. El producto matricial NO es conmutativo en general."
+  },
+  {
+    "id": "mat_03",
+    "topic": "matrices",
+    "content": "Matriz inversa: $A^{-1}$ existe si y solo si $\\det(A) \\neq 0$ (matriz invertible o no singular). Propiedad: $A \\cdot A^{-1} = A^{-1} \\cdot A = I$. Para $2 \\times 2$: si $A = \\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}$, entonces $A^{-1} = \\frac{1}{ad-bc}\\begin{pmatrix}d&-b\\\\-c&a\\end{pmatrix}$."
+  },
+  {
+    "id": "mat_04",
+    "topic": "matrices",
+    "content": "Rango de una matriz: número máximo de filas (o columnas) linealmente independientes. Se calcula mediante eliminación de Gauss llevando la matriz a forma escalonada. El rango determina la solución de sistemas lineales: para $Ax = b$, si $\\text{rg}(A) = \\text{rg}(A|b) = n$ (incógnitas), solución única."
+  },
+  {
+    "id": "mat_05",
+    "topic": "matrices",
+    "content": "Eliminación de Gauss-Jordan: operaciones elementales sobre filas (multiplicar fila por escalar, sumar múltiplo de una fila a otra, intercambiar filas). Se aplica a la matriz ampliada $[A|b]$ para resolver sistemas. La forma escalonada reducida tiene $1$s en los pivotes y $0$s en toda la columna de cada pivote."
+  },
+  {
+    "id": "det_01",
+    "topic": "determinantes",
+    "content": "El determinante es una función escalar definida para matrices cuadradas. Para $1\\times1$: $\\det(a) = a$. Para $2\\times2$: $\\det\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix} = ad - bc$. Para $3\\times3$ (regla de Sarrus): $\\det(A) = a_{11}(a_{22}a_{33}-a_{23}a_{32}) - a_{12}(a_{21}a_{33}-a_{23}a_{31}) + a_{13}(a_{21}a_{32}-a_{22}a_{31})$."
+  },
+  {
+    "id": "det_02",
+    "topic": "determinantes",
+    "content": "Propiedades del determinante: $\\det(AB) = \\det(A)\\det(B)$; $\\det(A^T) = \\det(A)$; $\\det(kA) = k^n\\det(A)$ para $A$ de orden $n$; $\\det(A^{-1}) = 1/\\det(A)$. Si se intercambian dos filas, el determinante cambia de signo. Si una fila es múltiplo de otra, $\\det = 0$."
+  },
+  {
+    "id": "det_03",
+    "topic": "determinantes",
+    "content": "Desarrollo por cofactores (expansión de Laplace) sobre la fila $i$: $\\det(A) = \\sum_{j=1}^n a_{ij} C_{ij}$ donde $C_{ij} = (-1)^{i+j} M_{ij}$ es el cofactor y $M_{ij}$ el menor (determinante de la submatriz eliminando fila $i$ y columna $j$). Conviene expandir por la fila/columna con más ceros."
+  },
+  {
+    "id": "det_04",
+    "topic": "determinantes",
+    "content": "Regla de Cramer para $Ax = b$ con $\\det(A) \\neq 0$: $x_i = \\frac{\\det(A_i)}{\\det(A)}$ donde $A_i$ es la matriz $A$ con la columna $i$ reemplazada por $b$. Útil para sistemas pequeños ($2\\times2$, $3\\times3$). Para sistemas grandes, Gauss es más eficiente."
+  },
+  {
+    "id": "sis_01",
+    "topic": "sistemas_ecuaciones",
+    "content": "Un sistema de ecuaciones lineales $Ax = b$ puede tener: solución única (compatible determinado), infinitas soluciones (compatible indeterminado), o ninguna solución (incompatible). El Teorema de Rouché-Frobenius establece: el sistema es compatible $\\Leftrightarrow$ $\\text{rg}(A) = \\text{rg}(A|b)$."
+  },
+  {
+    "id": "sis_02",
+    "topic": "sistemas_ecuaciones",
+    "content": "Método de Gauss: se aplican operaciones elementales sobre filas a la matriz ampliada $[A|b]$ para obtener la forma escalonada, luego se resuelve por sustitución regresiva. Método de Gauss-Jordan: se lleva a la forma escalonada reducida para leer directamente las soluciones."
+  },
+  {
+    "id": "sis_03",
+    "topic": "sistemas_ecuaciones",
+    "content": "Método de sustitución: se despeja una incógnita de una ecuación y se sustituye en las demás. Método de eliminación (reducción): se suman/restan múltiplos de ecuaciones para eliminar una incógnita. Ambos son equivalentes al método de Gauss para sistemas $2\\times2$ y $3\\times3$."
+  },
+  {
+    "id": "sis_04",
+    "topic": "sistemas_ecuaciones",
+    "content": "Sistemas homogéneos ($b = \\vec{0}$): siempre tienen la solución trivial $x = \\vec{0}$. Tienen soluciones no triviales $\\Leftrightarrow$ $\\det(A) = 0$ $\\Leftrightarrow$ $\\text{rg}(A) < n$. Las soluciones forman un subespacio vectorial (espacio nulo o núcleo de $A$)."
+  },
+  {
+    "id": "sis_05",
+    "topic": "sistemas_ecuaciones",
+    "content": "Solución con infinitas soluciones: las variables correspondientes a columnas sin pivote son variables libres (parámetros). Se expresan las variables pivote en función de las libres. Ejemplo: si $\\text{rg}(A) = 2$ y hay $3$ incógnitas, hay $3-2=1$ variable libre y la solución es una recta en $\\mathbb{R}^3$."
+  },
+  {
+    "id": "fun_01",
+    "topic": "funciones",
+    "content": "Una función $f: A \\to B$ asigna a cada elemento $x \\in A$ (dominio) exactamente un elemento $f(x) \\in B$ (codominio). La imagen o rango es $\\text{Im}(f) = \\{f(x) : x \\in A\\} \\subseteq B$. Tipos: inyectiva ($f(x_1)=f(x_2) \\Rightarrow x_1=x_2$), suryectiva ($\\text{Im}=B$), biyectiva (ambas)."
+  },
+  {
+    "id": "fun_02",
+    "topic": "funciones",
+    "content": "Dominio natural: conjunto de valores reales para los que $f(x)$ está definida. Restricciones comunes: denominador $\\neq 0$, argumento de raíz par $\\geq 0$, argumento de logaritmo $> 0$. Ejemplo: $f(x) = \\frac{\\sqrt{x-1}}{x-3}$ tiene dominio $[1,3) \\cup (3, +\\infty)$."
+  },
+  {
+    "id": "fun_03",
+    "topic": "funciones",
+    "content": "Composición de funciones: $(f \\circ g)(x) = f(g(x))$. Dominio de $f \\circ g$: valores de $x$ en el dominio de $g$ tales que $g(x)$ esté en el dominio de $f$. Función inversa: si $f$ es biyectiva, $f^{-1}$ cumple $f^{-1}(f(x)) = x$. Se obtiene despejando $x$ en $y = f(x)$."
+  },
+  {
+    "id": "fun_04",
+    "topic": "funciones",
+    "content": "Paridad: $f$ es par si $f(-x) = f(x)$ (simétrica respecto al eje $y$); es impar si $f(-x) = -f(x)$ (simétrica respecto al origen). Monotonía: $f$ es creciente en $I$ si $x_1 < x_2 \\Rightarrow f(x_1) < f(x_2)$; decreciente si $x_1 < x_2 \\Rightarrow f(x_1) > f(x_2)$."
+  },
+  {
+    "id": "fc_01",
+    "topic": "funcion_cuadratica",
+    "content": "La función cuadrática tiene la forma $f(x) = ax^2 + bx + c$ con $a \\neq 0$. Su gráfica es una parábola. Si $a > 0$, abre hacia arriba (tiene mínimo); si $a < 0$, abre hacia abajo (tiene máximo). Vértice: $V = \\left(-\\frac{b}{2a},\\ f\\!\\left(-\\frac{b}{2a}\\right)\\right)$."
+  },
+  {
+    "id": "fc_02",
+    "topic": "funcion_cuadratica",
+    "content": "Forma canónica o vertex form: $f(x) = a(x-h)^2 + k$ donde $(h, k)$ es el vértice. Se obtiene completando el cuadrado: $ax^2 + bx + c = a\\left(x + \\frac{b}{2a}\\right)^2 + c - \\frac{b^2}{4a}$. Útil para identificar vértice, eje de simetría ($x = h$) y el valor extremo $k$."
+  },
+  {
+    "id": "fc_03",
+    "topic": "funcion_cuadratica",
+    "content": "Intersecciones con los ejes: con el eje $y$ en $(0, c)$; con el eje $x$ resolviendo $ax^2 + bx + c = 0$ (raíces). Si $\\Delta > 0$: dos raíces reales (la parábola corta al eje $x$ en dos puntos); $\\Delta = 0$: una raíz doble (tangente al eje $x$); $\\Delta < 0$: no corta al eje $x$."
+  },
+  {
+    "id": "fc_04",
+    "topic": "funcion_cuadratica",
+    "content": "Rango de la función cuadrática: si $a > 0$, $\\text{Im}(f) = [k, +\\infty)$; si $a < 0$, $\\text{Im}(f) = (-\\infty, k]$, donde $k = c - \\frac{b^2}{4a}$ es el valor en el vértice. La función no es inyectiva (salvo que se restrinja el dominio al eje de simetría)."
+  },
+  {
+    "id": "fp_01",
+    "topic": "funcion_polinomica",
+    "content": "Un polinomio de grado $n$: $p(x) = a_n x^n + a_{n-1}x^{n-1} + \\cdots + a_1 x + a_0$ con $a_n \\neq 0$. Dominio: $\\mathbb{R}$. Grado impar: la función va de $-\\infty$ a $+\\infty$ (o viceversa). Grado par: ambos extremos van al mismo infinito, determinado por el signo de $a_n$."
+  },
+  {
+    "id": "fp_02",
+    "topic": "funcion_polinomica",
+    "content": "Teorema del factor: $(x - r)$ es factor de $p(x)$ si y solo si $p(r) = 0$ (i.e., $r$ es raíz). División de polinomios: $p(x) = (x-r) \\cdot q(x) + p(r)$ (algoritmo de Ruffini). Si $r$ es raíz, $p(x) = (x-r)\\cdot q(x)$ con $\\deg(q) = n-1$."
+  },
+  {
+    "id": "fp_03",
+    "topic": "funcion_polinomica",
+    "content": "Regla de Ruffini para dividir $p(x)$ por $(x - r)$: se escriben los coeficientes de $p(x)$, se baja el primero, se multiplica por $r$, se suma al siguiente coeficiente, y así sucesivamente. El último valor es el resto $p(r)$. Útil para factorizar buscando raíces enteras (divisores del término independiente)."
+  },
+  {
+    "id": "fp_04",
+    "topic": "funcion_polinomica",
+    "content": "Multiplicidad de una raíz: $r$ tiene multiplicidad $k$ si $(x-r)^k$ divide a $p(x)$ pero $(x-r)^{k+1}$ no. Si $k$ es impar, la gráfica cruza el eje $x$ en $r$; si $k$ es par, es tangente al eje $x$. La suma de multiplicidades de todas las raíces (en $\\mathbb{C}$) es igual al grado."
+  },
+  {
+    "id": "fel_01",
+    "topic": "funcion_exponencial_logaritmica",
+    "content": "Función exponencial: $f(x) = a^x$ con $a > 0$, $a \\neq 1$. Dominio: $\\mathbb{R}$; imagen: $(0, +\\infty)$. Si $a > 1$: creciente; si $0 < a < 1$: decreciente. Siempre pasa por $(0,1)$. La función $e^x$ (base natural $e \\approx 2.718$) es la más usada en cálculo."
+  },
+  {
+    "id": "fel_02",
+    "topic": "funcion_exponencial_logaritmica",
+    "content": "Función logarítmica: $f(x) = \\log_a(x)$ es la inversa de $a^x$. Dominio: $(0, +\\infty)$; imagen: $\\mathbb{R}$. Propiedades: $\\log_a(xy) = \\log_a x + \\log_a y$; $\\log_a(x/y) = \\log_a x - \\log_a y$; $\\log_a(x^n) = n\\log_a x$. Cambio de base: $\\log_a x = \\frac{\\ln x}{\\ln a}$."
+  },
+  {
+    "id": "fel_03",
+    "topic": "funcion_exponencial_logaritmica",
+    "content": "Ecuaciones exponenciales: $a^{f(x)} = a^{g(x)} \\Rightarrow f(x) = g(x)$. Si las bases no son iguales, aplicar logaritmo. Ejemplo: $2^x = 5 \\Rightarrow x = \\log_2 5 = \\frac{\\ln 5}{\\ln 2}$. Ecuaciones logarítmicas: $\\log_a f(x) = k \\Rightarrow f(x) = a^k$ (verificar dominio: $f(x) > 0$)."
+  },
+  {
+    "id": "fel_04",
+    "topic": "funcion_exponencial_logaritmica",
+    "content": "Inecuaciones exponenciales: $a^{f(x)} > a^{g(x)}$. Si $a > 1$: $f(x) > g(x)$; si $0 < a < 1$: $f(x) < g(x)$ (se invierte). Inecuaciones logarítmicas: $\\log_a f(x) > \\log_a g(x)$. Si $a > 1$: $f(x) > g(x)$ (con ambos positivos); si $0 < a < 1$: $f(x) < g(x)$."
+  },
+  {
+    "id": "ft_01",
+    "topic": "funcion_trigonometrica",
+    "content": "Funciones trigonométricas básicas: $\\sin x$, $\\cos x$, $\\tan x = \\sin x / \\cos x$. Período: $\\sin$ y $\\cos$ tienen período $2\\pi$; $\\tan$ tiene período $\\pi$. Dominio de $\\tan x$: $\\mathbb{R} \\setminus \\{\\pi/2 + k\\pi,\\ k \\in \\mathbb{Z}\\}$. Identidad fundamental: $\\sin^2 x + \\cos^2 x = 1$."
+  },
+  {
+    "id": "ft_02",
+    "topic": "funcion_trigonometrica",
+    "content": "Valores notables: $$\\begin{array}{c|cccc} x & 0 & \\pi/6 & \\pi/4 & \\pi/3 & \\pi/2 \\\\ \\hline \\sin x & 0 & 1/2 & \\sqrt{2}/2 & \\sqrt{3}/2 & 1 \\\\ \\cos x & 1 & \\sqrt{3}/2 & \\sqrt{2}/2 & 1/2 & 0 \\end{array}$$ Los ángulos en los cuatro cuadrantes se obtienen por simetría. Signo: $\\sin > 0$ en Q1 y Q2; $\\cos > 0$ en Q1 y Q4."
+  },
+  {
+    "id": "ft_03",
+    "topic": "funcion_trigonometrica",
+    "content": "Identidades útiles: $\\sin(a \\pm b) = \\sin a \\cos b \\pm \\cos a \\sin b$; $\\cos(a \\pm b) = \\cos a \\cos b \\mp \\sin a \\sin b$. Duplicación: $\\sin 2a = 2\\sin a \\cos a$; $\\cos 2a = \\cos^2 a - \\sin^2 a = 1 - 2\\sin^2 a = 2\\cos^2 a - 1$."
+  },
+  {
+    "id": "ft_04",
+    "topic": "funcion_trigonometrica",
+    "content": "Funciones inversas: $\\arcsin: [-1,1] \\to [-\\pi/2, \\pi/2]$; $\\arccos: [-1,1] \\to [0, \\pi]$; $\\arctan: \\mathbb{R} \\to (-\\pi/2, \\pi/2)$. Graficación de $f(x) = A\\sin(Bx + C) + D$: amplitud $|A|$, período $2\\pi/|B|$, desfase horizontal $-C/B$, desplazamiento vertical $D$."
+  },
+  {
+    "id": "et_01",
+    "topic": "ecuaciones_trigonometricas",
+    "content": "Ecuación trigonométrica básica: $\\sin x = k$ con $|k| \\leq 1$. Solución general: $x = \\arcsin(k) + 2k\\pi$ o $x = \\pi - \\arcsin(k) + 2k\\pi$, $k \\in \\mathbb{Z}$. Para $\\cos x = k$: $x = \\pm\\arccos(k) + 2k\\pi$. Para $\\tan x = k$: $x = \\arctan(k) + k\\pi$."
+  },
+  {
+    "id": "et_02",
+    "topic": "ecuaciones_trigonometricas",
+    "content": "Método general de resolución: 1) Identificar la función trigonométrica. 2) Usar identidades para reducir a una función simple si es necesario. 3) Hallar la solución en el intervalo principal (ej. $[0, 2\\pi)$). 4) Generalizar con el período. Verificar que las soluciones satisfagan restricciones de dominio."
+  },
+  {
+    "id": "et_03",
+    "topic": "ecuaciones_trigonometricas",
+    "content": "Ecuaciones que requieren factorización: ejemplo $2\\sin^2 x - \\sin x - 1 = 0$. Sustituyendo $u = \\sin x$: $2u^2 - u - 1 = 0 \\Rightarrow (2u+1)(u-1) = 0$, entonces $\\sin x = -1/2$ o $\\sin x = 1$. Se resuelve cada caso por separado usando los valores notables."
+  },
+  {
+    "id": "et_04",
+    "topic": "ecuaciones_trigonometricas",
+    "content": "Ecuaciones con identidades: para $\\sin^2 x + \\cos x = 1$, reemplazar $\\sin^2 x = 1 - \\cos^2 x$: $1 - \\cos^2 x + \\cos x = 1 \\Rightarrow \\cos x(1 - \\cos x) = 0$, entonces $\\cos x = 0$ o $\\cos x = 1$. Soluciones en $[0, 2\\pi)$: $x = \\pi/2,\\ 3\\pi/2,\\ 0$."
+  },
+  {
+    "id": "et_05",
+    "topic": "ecuaciones_trigonometricas",
+    "content": "Ecuaciones con argumento compuesto: $\\sin(2x) = \\sqrt{3}/2$. Se resuelve $2x = \\pi/3 + 2k\\pi$ o $2x = 2\\pi/3 + 2k\\pi$, luego $x = \\pi/6 + k\\pi$ o $x = \\pi/3 + k\\pi$. En $[0, 2\\pi)$: $x \\in \\{\\pi/6,\\ \\pi/3,\\ 7\\pi/6,\\ 4\\pi/3\\}$."
+  }
+]
