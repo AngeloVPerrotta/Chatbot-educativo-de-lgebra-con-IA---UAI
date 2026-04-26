@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 from agents.algebra_agent import chat as algebra_chat
 from agents.calculo_agent import chat as calculo_chat
 from utils.session_manager import get_session, append_message, get_messages, clear_session
+from utils.analytics import get_stats, get_recent_interactions
 
 load_dotenv(override=False)
 logger.info(f'ANTHROPIC_API_KEY presente en env: {"Si" if os.getenv("ANTHROPIC_API_KEY") else "No"}')
@@ -117,6 +118,30 @@ def reset_session(payload: dict):
 
     clear_session(session_id)
     return {"message": "Sesión reiniciada"}
+
+
+# --- Admin helpers ---
+
+def _require_admin(request: Request):
+    admin_key = os.getenv("ADMIN_KEY", "")
+    if not admin_key or request.headers.get("X-Admin-Key") != admin_key:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+
+# --- GET /admin/stats ---
+
+@app.get("/admin/stats")
+def admin_stats(request: Request):
+    _require_admin(request)
+    return get_stats()
+
+
+# --- GET /admin/interactions ---
+
+@app.get("/admin/interactions")
+def admin_interactions(request: Request):
+    _require_admin(request)
+    return get_recent_interactions()
 
 
 # --- GET /sessions/{session_id} ---

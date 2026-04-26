@@ -1,9 +1,11 @@
 import os
+import time
 import logging
 import traceback
 from pathlib import Path
 from anthropic import Anthropic
 from utils.rag import retrieve_context
+from utils.analytics import log_interaction
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -43,16 +45,32 @@ def chat(historial: list, session_id: str = None) -> str:
         logger.info(f'Total mensajes: {len(historial)}')
 
         logger.info('Llamando a Anthropic API...')
+        t_start = time.time()
         response = client.messages.create(
             model='claude-sonnet-4-20250514',
             max_tokens=1024,
             system=system_prompt,
             messages=historial
         )
+        response_time_ms = int((time.time() - t_start) * 1000)
         logger.info('Respuesta recibida de Anthropic')
 
         result = response.content[0].text
         logger.info(f'Respuesta length: {len(result)} caracteres')
+
+        user_messages = [m for m in historial if m.get("role") == "user"]
+        user_msg_len = len(user_messages[-1].get("content", "")) if user_messages else 0
+        try:
+            log_interaction(
+                session_id=session_id or "",
+                topic="algebra",
+                user_msg_len=user_msg_len,
+                bot_resp_len=len(result),
+                response_time_ms=response_time_ms,
+            )
+        except Exception:
+            pass  # No interrumpir el flujo si falla el analytics
+
         logger.info('=== FIN CHAT ALGEBRA ===')
 
         return result
