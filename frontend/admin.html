@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlgorIA — Panel de Administración</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-card: #131b2e;
+            --bg-card-hover: #182236;
+            --bg-input: #111827;
+            --accent: #f59e0b;
+            --accent-soft: #fbbf24;
+            --accent-glow: rgba(245, 158, 11, 0.15);
+            --cyan: #38bdf8;
+            --green: #34d399;
+            --red: #f87171;
+            --purple: #a78bfa;
+            --text-primary: #e8edf5;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: rgba(245, 158, 11, 0.12);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+
+        /* ===== LOGIN ===== */
+        .login-screen {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 20px;
+        }
+        .login-box {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 20px; padding: 48px 40px; max-width: 420px; width: 100%;
+            text-align: center;
+        }
+        .login-box h1 {
+            font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800;
+            margin-bottom: 6px;
+        }
+        .login-box h1 span { color: var(--accent); }
+        .login-box p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 28px; }
+        .login-box input {
+            width: 100%; padding: 14px 18px; border-radius: 12px;
+            border: 1px solid var(--border); background: var(--bg-input);
+            color: var(--text-primary); font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem; outline: none; margin-bottom: 16px;
+            transition: border-color 0.2s;
+        }
+        .login-box input:focus { border-color: var(--accent); }
+        .login-box input::placeholder { color: var(--text-muted); }
+        .login-box button {
+            width: 100%; padding: 14px; border: none; border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), #d97706);
+            color: #000; font-weight: 700; font-size: 0.95rem; cursor: pointer;
+            font-family: 'DM Sans', sans-serif; transition: transform 0.15s;
+        }
+        .login-box button:hover { transform: scale(1.02); }
+        .login-error { color: var(--red); font-size: 0.82rem; margin-top: 12px; display: none; }
+
+        /* ===== DASHBOARD ===== */
+        .dashboard { display: none; max-width: 1100px; margin: 0 auto; padding: 24px 20px 40px; }
+        .dash-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+        }
+        .dash-header-left h1 {
+            font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 800;
+        }
+        .dash-header-left h1 span { color: var(--accent); }
+        .dash-header-left p { color: var(--text-muted); font-size: 0.78rem; margin-top: 2px; }
+        .dash-header-right { display: flex; gap: 10px; align-items: center; }
+        .refresh-btn, .logout-btn {
+            padding: 8px 16px; border-radius: 10px; font-size: 0.78rem;
+            font-family: 'DM Sans', sans-serif; cursor: pointer; border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        .refresh-btn { background: var(--bg-card); color: var(--text-secondary); }
+        .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .logout-btn { background: transparent; color: var(--text-muted); }
+        .logout-btn:hover { border-color: var(--red); color: var(--red); }
+
+        /* ===== STAT CARDS ===== */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px; margin-bottom: 28px;
+        }
+        .stat-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 22px 24px;
+            transition: background 0.2s;
+        }
+        .stat-card:hover { background: var(--bg-card-hover); }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+        .stat-value { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 800; }
+        .stat-value.cyan { color: var(--cyan); }
+        .stat-value.green { color: var(--green); }
+        .stat-value.purple { color: var(--purple); }
+        .stat-value.accent { color: var(--accent); }
+
+        /* ===== CHARTS ===== */
+        .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 28px; }
+        .chart-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 24px;
+        }
+        .chart-card h3 { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px; font-weight: 600; }
+        .chart-container { position: relative; height: 240px; }
+
+        /* ===== TABLE ===== */
+        .table-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 24px; overflow-x: auto;
+        }
+        .table-card h3 { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px; font-weight: 600; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+        th { text-align: left; color: var(--text-muted); font-weight: 600; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text-secondary); }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; }
+        .badge-algebra { background: rgba(56,189,248,0.12); color: var(--cyan); }
+        .msg-preview { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .loading { text-align: center; padding: 60px; color: var(--text-muted); }
+        .empty-state { text-align: center; padding: 40px; color: var(--text-muted); font-size: 0.85rem; }
+
+        @media (max-width: 768px) {
+            .charts-row { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <h1>Algor<span>IA</span> Admin</h1>
+            <p>Panel de administración · Ingresá tu clave</p>
+            <input type="password" id="adminKeyInput" placeholder="Clave de administrador" onkeydown="if(event.key==='Enter')doLogin()">
+            <button onclick="doLogin()">Ingresar</button>
+            <div class="login-error" id="loginError">Clave incorrecta. Intentá de nuevo.</div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="dashboard" id="dashboard">
+        <header class="dash-header">
+            <div class="dash-header-left">
+                <h1>Algor<span>IA</span> Admin</h1>
+                <p>Panel de administración · UAI</p>
+            </div>
+            <div class="dash-header-right">
+                <button class="refresh-btn" onclick="loadDashboard()">↻ Actualizar</button>
+                <button class="logout-btn" onclick="doLogout()">Salir</button>
+            </div>
+        </header>
+
+        <!-- STATS -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card"><div class="stat-label">Total interacciones</div><div class="stat-value cyan" id="statTotal">—</div></div>
+            <div class="stat-card"><div class="stat-label">Sesiones únicas</div><div class="stat-value green" id="statSessions">—</div></div>
+            <div class="stat-card"><div class="stat-label">Largo promedio respuesta</div><div class="stat-value purple" id="statAvgLen">—</div></div>
+            <div class="stat-card"><div class="stat-label">Interacciones hoy</div><div class="stat-value accent" id="statToday">—</div></div>
+        </div>
+
+        <!-- CHARTS -->
+        <div class="charts-row">
+            <div class="chart-card">
+                <h3>Interacciones por día (últimos 30 días)</h3>
+                <div class="chart-container"><canvas id="dailyChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>Distribución</h3>
+                <div class="chart-container"><canvas id="topicChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-card">
+            <h3>Últimas interacciones</h3>
+            <table>
+                <thead><tr><th>Fecha</th><th>Sesión</th><th>Tema</th><th>Largo pregunta</th><th>Largo respuesta</th><th>Tiempo (ms)</th></tr></thead>
+                <tbody id="interactionsBody"><tr><td colspan="6" class="empty-state">Cargando...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND = 'https://chatbot-educativo-de-lgebra-con-ia-uai-production.up.railway.app';
+        let adminKey = '';
+        let dailyChartInstance = null;
+        let topicChartInstance = null;
+
+        function doLogin() {
+            adminKey = document.getElementById('adminKeyInput').value.trim();
+            if (!adminKey) return;
+            // Test the key
+            fetch(`${BACKEND}/admin/stats`, { headers: { 'X-Admin-Key': adminKey } })
+                .then(r => {
+                    if (!r.ok) throw new Error('bad key');
+                    return r.json();
+                })
+                .then(() => {
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    loadDashboard();
+                })
+                .catch(() => {
+                    document.getElementById('loginError').style.display = 'block';
+                });
+        }
+
+        function doLogout() {
+            adminKey = '';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('adminKeyInput').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        async function loadDashboard() {
+            try {
+                const [statsRes, intRes] = await Promise.all([
+                    fetch(`${BACKEND}/admin/stats`, { headers: { 'X-Admin-Key': adminKey } }),
+                    fetch(`${BACKEND}/admin/interactions`, { headers: { 'X-Admin-Key': adminKey } }),
+                ]);
+                const stats = await statsRes.json();
+                const interactions = await intRes.json();
+                renderStats(stats);
+                renderDailyChart(stats.interactions_by_day || []);
+                renderTopicChart(stats.top_topics || []);
+                renderTable(interactions);
+            } catch (e) {
+                console.error('Dashboard error:', e);
+            }
+        }
+
+        function renderStats(s) {
+            document.getElementById('statTotal').textContent = s.total_interactions || 0;
+            document.getElementById('statSessions').textContent = s.unique_sessions || 0;
+            document.getElementById('statAvgLen').textContent = s.avg_response_length ? Math.round(s.avg_response_length) + ' chars' : '—';
+            const today = new Date().toISOString().slice(0, 10);
+            const todayData = (s.interactions_by_day || []).find(d => d.date === today);
+            document.getElementById('statToday').textContent = todayData ? todayData.count : 0;
+        }
+
+        function renderDailyChart(data) {
+            const ctx = document.getElementById('dailyChart').getContext('2d');
+            if (dailyChartInstance) dailyChartInstance.destroy();
+            dailyChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.date.slice(5)),
+                    datasets: [{
+                        label: 'Interacciones',
+                        data: data.map(d => d.count),
+                        backgroundColor: 'rgba(56, 189, 248, 0.5)',
+                        borderColor: 'rgba(56, 189, 248, 0.8)',
+                        borderWidth: 1, borderRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { display: false } },
+                        y: { ticks: { color: '#64748b', stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function renderTopicChart(data) {
+            const ctx = document.getElementById('topicChart').getContext('2d');
+            if (topicChartInstance) topicChartInstance.destroy();
+            if (!data.length) { data = [{ topic: 'algebra', count: 1 }]; }
+            topicChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.map(d => d.topic),
+                    datasets: [{
+                        data: data.map(d => d.count),
+                        backgroundColor: ['#38bdf8', '#34d399', '#a78bfa', '#f59e0b', '#f87171'],
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 }, padding: 12 } }
+                    }
+                }
+            });
+        }
+
+        function renderTable(rows) {
+            const tbody = document.getElementById('interactionsBody');
+            if (!rows.length) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Sin interacciones aún. Mandá un mensaje al chatbot para empezar.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = rows.map(r => `
+                <tr>
+                    <td>${r.timestamp ? r.timestamp.slice(0, 16).replace('T', ' ') : '—'}</td>
+                    <td style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--text-muted)">${(r.session_id || '').slice(0, 16)}…</td>
+                    <td><span class="badge badge-algebra">${r.topic || 'algebra'}</span></td>
+                    <td>${r.user_message_length || 0}</td>
+                    <td>${r.bot_response_length || 0}</td>
+                    <td>${r.response_time_ms || 0}</td>
+                </tr>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
