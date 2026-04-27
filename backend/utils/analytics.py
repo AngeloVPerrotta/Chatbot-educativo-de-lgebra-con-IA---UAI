@@ -2,7 +2,7 @@ import sqlite3
 from pathlib import Path
 from datetime import datetime
 
-DB_PATH = Path(__file__).parent.parent / "data" / "analytics.db"
+DB_PATH = '/tmp/analytics.db'
 
 
 def _get_conn():
