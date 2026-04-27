@@ -23,6 +23,7 @@ app = FastAPI(title="AlgorIA API", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        'https://blanchedalmond-buffalo-707381.hostingersite.com',
         'https://chatbot-educativo-de-lgebra-con-ia-uai-production.up.railway.app',
         'https://*.netlify.app',  # Permite cualquier dominio de Netlify
         'http://localhost:5500',  # Para desarrollo local
