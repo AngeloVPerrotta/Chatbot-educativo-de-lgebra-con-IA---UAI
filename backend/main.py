@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import Optional
 from dotenv import load_dotenv
 import os
 import logging
@@ -12,7 +13,15 @@ logger = logging.getLogger(__name__)
 from agents.algebra_agent import chat as algebra_chat
 from agents.calculo_agent import chat as calculo_chat
 from utils.session_manager import get_session, append_message, get_messages, clear_session
-from utils.analytics import get_stats, get_recent_interactions
+from utils.analytics import (
+    get_stats,
+    get_recent_interactions,
+    register_user,
+    get_user_by_email,
+    add_tokens_used,
+    check_token_limit,
+    get_all_users,
+)
 
 load_dotenv(override=False)
 logger.info(f'GEMINI_API_KEY presente en env: {"Si" if os.getenv("GEMINI_API_KEY") else "No"}')
@@ -39,12 +48,20 @@ app.add_middleware(
 
 class ChatRequest(BaseModel):
     message: str
-    materia: str = "algebra"  # valor por defecto
+    materia: str = "algebra"
     session_id: str
+    user_email: Optional[str] = None
 
 class ChatResponse(BaseModel):
     response: str
     session_id: str
+
+class UserRegisterRequest(BaseModel):
+    name: str
+    email: str
+
+class UserLoginRequest(BaseModel):
+    email: str
 
 
 # --- Endpoints base ---
@@ -59,6 +76,26 @@ def health_check():
     return {"status": "ok"}
 
 
+# --- POST /register ---
+
+@app.post("/register")
+def register_endpoint(payload: UserRegisterRequest):
+    result = register_user(payload.name.strip(), payload.email.strip().lower())
+    if not result["ok"]:
+        raise HTTPException(status_code=409, detail=result["error"])
+    return result["user"]
+
+
+# --- POST /login ---
+
+@app.post("/login")
+def login_endpoint(payload: UserLoginRequest):
+    user = get_user_by_email(payload.email.strip().lower())
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado. ¿Ya te registraste?")
+    return user
+
+
 # --- POST /chat ---
 # Recibe el mensaje del usuario, selecciona el agente según la materia,
 # mantiene el historial de la sesión y retorna la respuesta del modelo.
@@ -69,6 +106,10 @@ def chat_endpoint(request: ChatRequest):
         logger.info(f'=== ENDPOINT /chat ===')
         logger.info(f'Materia: {request.materia}')
         logger.info(f'Session: {request.session_id}')
+
+        # Verificar límite de tokens si viene user_email
+        if request.user_email and not check_token_limit(request.user_email):
+            raise HTTPException(status_code=429, detail="TOKEN_LIMIT_EXCEEDED")
 
         # Agregar el mensaje del usuario al historial de la sesión
         append_message(request.session_id, "user", request.message)
@@ -96,6 +137,10 @@ def chat_endpoint(request: ChatRequest):
 
         # Guardar la respuesta del asistente en el historial
         append_message(request.session_id, "assistant", respuesta)
+
+        # Actualizar tokens usados (aproximado por longitud de respuesta)
+        if request.user_email:
+            add_tokens_used(request.user_email, len(respuesta))
 
         return ChatResponse(response=respuesta, session_id=request.session_id)
 
@@ -143,6 +188,14 @@ def admin_stats(request: Request):
 def admin_interactions(request: Request):
     _require_admin(request)
     return get_recent_interactions()
+
+
+# --- GET /admin/users ---
+
+@app.get("/admin/users")
+def admin_users(request: Request):
+    _require_admin(request)
+    return get_all_users()
 
 
 # --- GET /sessions/{session_id} ---
