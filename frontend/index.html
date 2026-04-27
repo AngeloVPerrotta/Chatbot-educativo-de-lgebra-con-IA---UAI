@@ -185,8 +185,10 @@
             h=h.replace(/__(.+?)__/g,'<strong>$1</strong>');
             h=h.replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g,'<em>$1</em>');
             h=h.replace(/`(.+?)`/g,'<code>$1</code>');
+            h=h.replace(/\$\$([\s\S]*?)\$\$/g,(_,m)=>'$$'+m.replace(/\n/g,'%%NEWLINE%%')+'$$');
             h=h.split('\n\n').map(p=>`<p>${p.trim()}</p>`).join('');
             h=h.replace(/\n/g,'<br>');
+            h=h.replace(/%%NEWLINE%%/g,'\n');
             return h;
         }
 

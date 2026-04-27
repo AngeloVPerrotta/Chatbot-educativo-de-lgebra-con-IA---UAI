@@ -155,3 +155,4 @@ FORMATO DE RESPUESTA:
 - Para matrices usá el entorno pmatrix: $$\begin{pmatrix} a & b \\ c & d \end{pmatrix}$$
 - Para sistemas de ecuaciones: $$\begin{cases} 2x + y = 5 \\ x - y = 1 \end{cases}$$
 - Nunca uses texto plano para matemáticas cuando puedas usar LaTeX.
+- Evitá usar el entorno \begin{array}. Para matrices usá \begin{pmatrix}, para sistemas de ecuaciones usá \begin{cases}. Nunca uses \begin{array} porque no es compatible con el renderizador.
