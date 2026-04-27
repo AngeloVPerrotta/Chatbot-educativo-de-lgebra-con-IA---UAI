@@ -15,14 +15,14 @@ from utils.session_manager import get_session, append_message, get_messages, cle
 from utils.analytics import get_stats, get_recent_interactions
 
 load_dotenv(override=False)
-logger.info(f'ANTHROPIC_API_KEY presente en env: {"Si" if os.getenv("ANTHROPIC_API_KEY") else "No"}')
-logger.info(f'OPENROUTER_API_KEY presente en env: {"Si" if os.getenv("OPENROUTER_API_KEY") else "No"}')
+logger.info(f'GEMINI_API_KEY presente en env: {"Si" if os.getenv("GEMINI_API_KEY") else "No"}')
 
 app = FastAPI(title="AlgorIA API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        'https://algoria.angeloperrotta.online',
         'https://blanchedalmond-buffalo-707381.hostingersite.com',
         'https://chatbot-educativo-de-lgebra-con-ia-uai-production.up.railway.app',
         'https://*.netlify.app',  # Permite cualquier dominio de Netlify
