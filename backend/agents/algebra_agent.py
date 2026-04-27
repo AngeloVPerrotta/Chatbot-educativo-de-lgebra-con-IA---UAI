@@ -3,7 +3,7 @@ import time
 import logging
 import traceback
 from pathlib import Path
-from anthropic import Anthropic
+from google import genai
 from utils.rag import retrieve_context
 from utils.analytics import log_interaction
 
@@ -23,13 +23,13 @@ def chat(historial: list, session_id: str = None) -> str:
         logger.info(f'Session ID: {session_id}')
         logger.info(f'Historial length: {len(historial)}')
 
-        api_key = os.getenv('ANTHROPIC_API_KEY')
+        api_key = os.getenv('GEMINI_API_KEY')
         logger.info(f'API Key presente: {"Si" if api_key else "No"}')
         logger.info(f'API Key primeros 10 chars: {api_key[:10] if api_key else "None"}')
 
-        logger.info('Creando cliente Anthropic...')
-        client = Anthropic(api_key=api_key)
-        logger.info('Cliente Anthropic creado exitosamente')
+        logger.info('Creando cliente Gemini...')
+        client = genai.Client(api_key=api_key)
+        logger.info('Cliente Gemini creado exitosamente')
 
         system_prompt = load_system_prompt()
         logger.info(f'System prompt cargado: {len(system_prompt)} caracteres')
@@ -42,23 +42,30 @@ def chat(historial: list, session_id: str = None) -> str:
                 system_prompt = system_prompt + "\n\nCONTEXTO RELEVANTE DE LA CÁTEDRA:\n" + context
                 logger.info(f'Contexto RAG agregado: {len(context)} caracteres')
 
-        logger.info(f'Total mensajes: {len(historial)}')
+        # Convertir historial al formato Gemini (assistant -> model)
+        contents = [
+            {"role": "model" if m["role"] == "assistant" else m["role"], "parts": [{"text": m["content"]}]}
+            for m in historial
+        ]
 
-        logger.info('Llamando a Anthropic API...')
+        logger.info(f'Total mensajes: {len(contents)}')
+
+        logger.info('Llamando a Gemini API...')
         t_start = time.time()
-        response = client.messages.create(
-            model='claude-sonnet-4-20250514',
-            max_tokens=1024,
-            system=system_prompt,
-            messages=historial
+        response = client.models.generate_content(
+            model='gemini-2.0-flash',
+            contents=contents,
+            config=genai.types.GenerateContentConfig(
+                system_instruction=system_prompt,
+                max_output_tokens=1024,
+            )
         )
         response_time_ms = int((time.time() - t_start) * 1000)
-        logger.info('Respuesta recibida de Anthropic')
+        logger.info('Respuesta recibida de Gemini')
 
-        result = response.content[0].text
+        result = response.text
         logger.info(f'Respuesta length: {len(result)} caracteres')
 
-        user_messages = [m for m in historial if m.get("role") == "user"]
         user_msg_len = len(user_messages[-1].get("content", "")) if user_messages else 0
         try:
             log_interaction(
@@ -80,4 +87,4 @@ def chat(historial: list, session_id: str = None) -> str:
         logger.error(f'Mensaje de error: {str(e)}')
         logger.error('Traceback completo:')
         logger.error(traceback.format_exc())
-        raise RuntimeError(f'Error al comunicarse con Anthropic API: {str(e)}')
+        raise RuntimeError(f'Error al comunicarse con Gemini API: {str(e)}')
