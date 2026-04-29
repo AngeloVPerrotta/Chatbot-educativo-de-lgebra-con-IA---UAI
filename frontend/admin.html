@@ -137,6 +137,23 @@
         .loading { text-align: center; padding: 60px; color: var(--text-muted); }
         .empty-state { text-align: center; padding: 40px; color: var(--text-muted); font-size: 0.85rem; }
 
+        /* ===== FEEDBACK SECTION ===== */
+        .feedback-avg { display: flex; align-items: baseline; gap: 8px; margin-bottom: 16px; }
+        .feedback-avg-num { font-family: 'Outfit', sans-serif; font-size: 2.8rem; font-weight: 800; color: #fbbf24; line-height: 1; }
+        .feedback-avg-sub { font-size: 0.8rem; color: var(--text-muted); }
+        .star-dist { display: flex; flex-direction: column; gap: 7px; }
+        .star-row-dist { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--text-secondary); }
+        .star-row-dist .star-label { width: 28px; text-align: right; flex-shrink: 0; }
+        .star-row-dist .star-bar { flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
+        .star-row-dist .star-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #fbbf24, #f59e0b); transition: width 0.4s; }
+        .star-row-dist .star-count { width: 24px; text-align: right; color: var(--text-muted); flex-shrink: 0; }
+        .feedback-comments { display: flex; flex-direction: column; gap: 10px; }
+        .feedback-comment { background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+        .feedback-comment-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+        .feedback-comment-stars { color: #fbbf24; font-size: 0.85rem; letter-spacing: 1px; }
+        .feedback-comment-meta { font-size: 0.72rem; color: var(--text-muted); }
+        .feedback-comment-text { font-size: 0.83rem; color: var(--text-secondary); line-height: 1.5; }
+
         @media (max-width: 768px) {
             .charts-row { grid-template-columns: 1fr; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -189,6 +206,24 @@
             </div>
         </div>
 
+        <!-- RAG + FEEDBACK CHARTS -->
+        <div class="charts-row" id="ragFeedbackRow" style="display:none">
+            <div class="chart-card">
+                <h3>Confianza RAG — distribución</h3>
+                <div class="chart-container"><canvas id="ragChart"></canvas></div>
+            </div>
+            <div class="chart-card" id="feedbackStatsCard">
+                <h3>Feedback — Calificaciones</h3>
+                <div id="feedbackStatsContent"><p style="color:var(--text-muted);font-size:.84rem">Sin datos de feedback aún.</p></div>
+            </div>
+        </div>
+
+        <!-- FEEDBACK COMMENTS -->
+        <div class="table-card" id="feedbackCommentsCard" style="display:none">
+            <h3>Últimos comentarios de feedback</h3>
+            <div class="feedback-comments" id="feedbackComments"></div>
+        </div>
+
         <!-- USUARIOS REGISTRADOS -->
         <div class="table-card">
             <h3>Usuarios registrados</h3>
@@ -213,6 +248,7 @@
         let adminKey = '';
         let dailyChartInstance = null;
         let topicChartInstance = null;
+        let ragChartInstance = null;
 
         function doLogin() {
             adminKey = document.getElementById('adminKeyInput').value.trim();
@@ -242,17 +278,21 @@
 
         async function loadDashboard() {
             try {
-                const [statsRes, intRes, usersRes] = await Promise.all([
+                const [statsRes, intRes, usersRes, feedbackRes] = await Promise.all([
                     fetch(`${BACKEND}/admin/stats`, { headers: { 'X-Admin-Key': adminKey } }),
                     fetch(`${BACKEND}/admin/interactions`, { headers: { 'X-Admin-Key': adminKey } }),
                     fetch(`${BACKEND}/admin/users`, { headers: { 'X-Admin-Key': adminKey } }),
+                    fetch(`${BACKEND}/admin/feedback`, { headers: { 'X-Admin-Key': adminKey } }).catch(() => null),
                 ]);
                 const stats = await statsRes.json();
                 const interactions = await intRes.json();
                 const users = usersRes.ok ? await usersRes.json() : [];
+                const feedback = feedbackRes && feedbackRes.ok ? await feedbackRes.json().catch(() => null) : null;
                 renderStats(stats, users);
                 renderDailyChart(stats.interactions_by_day || []);
                 renderTopicChart(stats.top_topics || []);
+                renderRagChart(stats.rag_stats || null);
+                renderFeedback(feedback);
                 renderUsersTable(users);
                 renderTable(interactions);
             } catch (e) {
@@ -342,6 +382,98 @@
                     </td>
                     <td>${(u.token_limit || 0).toLocaleString()}</td>
                 </tr>`;
+            }).join('');
+        }
+
+        function renderRagChart(ragStats) {
+            const row = document.getElementById('ragFeedbackRow');
+            if (!ragStats || !Object.keys(ragStats).length) return;
+            row.style.display = 'grid';
+            const ctx = document.getElementById('ragChart').getContext('2d');
+            if (ragChartInstance) ragChartInstance.destroy();
+            const labels = ['Alta', 'Media', 'Baja', 'Sin RAG'];
+            const keys = ['high', 'medium', 'low', 'none'];
+            const colors = ['#34d399', '#fbbf24', '#f87171', '#64748b'];
+            const values = keys.map(k => ragStats[k] || 0);
+            ragChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: colors,
+                        borderWidth: 0,
+                        hoverOffset: 6,
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 }, padding: 14 } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                    const pct = total ? Math.round((ctx.parsed / total) * 100) : 0;
+                                    return ` ${ctx.label}: ${ctx.parsed} (${pct}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderFeedback(feedback) {
+            const row = document.getElementById('ragFeedbackRow');
+            if (!feedback) return;
+            // Show RAG+feedback row even if RAG wasn't shown yet
+            row.style.display = 'grid';
+
+            // Stats card
+            const statsEl = document.getElementById('feedbackStatsContent');
+            const items = Array.isArray(feedback) ? feedback : (feedback.items || []);
+            if (!items.length) {
+                statsEl.innerHTML = '<p style="color:var(--text-muted);font-size:.84rem">Sin datos de feedback aún.</p>';
+                return;
+            }
+            const avg = items.reduce((a, b) => a + (b.rating || 0), 0) / items.length;
+            const dist = [5, 4, 3, 2, 1].map(star => ({
+                star,
+                count: items.filter(i => i.rating === star).length
+            }));
+            const maxCount = Math.max(...dist.map(d => d.count), 1);
+
+            statsEl.innerHTML = `
+                <div class="feedback-avg">
+                    <span class="feedback-avg-num">${avg.toFixed(1)}</span>
+                    <span class="feedback-avg-sub">/ 5 &nbsp;·&nbsp; ${items.length} calificación${items.length !== 1 ? 'es' : ''}</span>
+                </div>
+                <div class="star-dist">
+                    ${dist.map(d => `
+                    <div class="star-row-dist">
+                        <span class="star-label">${d.star}★</span>
+                        <div class="star-bar"><div class="star-bar-fill" style="width:${Math.round((d.count / maxCount) * 100)}%"></div></div>
+                        <span class="star-count">${d.count}</span>
+                    </div>`).join('')}
+                </div>`;
+
+            // Comments card
+            const withComments = items.filter(i => i.message && i.message.trim()).slice(0, 10);
+            if (!withComments.length) return;
+            document.getElementById('feedbackCommentsCard').style.display = 'block';
+            document.getElementById('feedbackComments').innerHTML = withComments.map(i => {
+                const stars = '★'.repeat(i.rating || 0) + '☆'.repeat(5 - (i.rating || 0));
+                const date = i.created_at ? i.created_at.slice(0, 16).replace('T', ' ') : '';
+                const email = i.user_email || '';
+                return `
+                <div class="feedback-comment">
+                    <div class="feedback-comment-header">
+                        <span class="feedback-comment-stars">${stars}</span>
+                        <span class="feedback-comment-meta">${email}${date ? ' · ' + date : ''}</span>
+                    </div>
+                    <div class="feedback-comment-text">${i.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                </div>`;
             }).join('');
         }
 
