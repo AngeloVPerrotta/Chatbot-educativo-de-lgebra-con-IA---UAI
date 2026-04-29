@@ -42,16 +42,26 @@ def _init_db():
                 token_limit INTEGER DEFAULT 50000
             )
         """)
-        # Backward-compatible migration: add pin if not present
+        # Backward-compatible migration: add role if not present
         try:
-            conn.execute("ALTER TABLE users ADD COLUMN pin TEXT")
+            conn.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'")
         except Exception:
             pass
-        # Backward-compatible migration: add is_admin if not present
-        try:
-            conn.execute("ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0")
-        except Exception:
-            pass
+
+        # Ensure superadmins exist
+        for sa_email, sa_name in [
+            ("perrottangelo340@gmail.com", "Angelo Perrotta"),
+            ("angelovalentin.perrotta@alumnos.uai.edu.ar", "Angelo Perrotta"),
+        ]:
+            existing = conn.execute("SELECT id FROM users WHERE email = ?", (sa_email,)).fetchone()
+            if existing:
+                conn.execute("UPDATE users SET role = 'superadmin' WHERE email = ?", (sa_email,))
+            else:
+                conn.execute(
+                    "INSERT OR IGNORE INTO users (name, email, role) VALUES (?, ?, 'superadmin')",
+                    (sa_name, sa_email),
+                )
+        conn.commit()
 
         conn.execute("""
             CREATE TABLE IF NOT EXISTS feedback (
@@ -73,7 +83,6 @@ def _init_db():
                 created_at DATETIME DEFAULT (datetime('now'))
             )
         """)
-        conn.commit()
 
 
 _init_db()
@@ -102,11 +111,11 @@ def log_interaction(
 
 # --- User management ---
 
-def register_user(name: str, email: str, pin: str) -> dict:
+def register_user(name: str, email: str) -> dict:
     """Returns {'ok': True, 'user': {...}} or {'ok': False, 'error': '...'}."""
     try:
         with _get_conn() as conn:
-            conn.execute("INSERT INTO users (name, email, pin) VALUES (?, ?, ?)", (name, email, pin))
+            conn.execute("INSERT INTO users (name, email) VALUES (?, ?)", (name, email))
             conn.commit()
         return {"ok": True, "user": get_user_by_email(email)}
     except sqlite3.IntegrityError:
@@ -117,32 +126,32 @@ def get_user_by_email(email: str) -> Optional[dict]:
     with _get_conn() as conn:
         conn.row_factory = sqlite3.Row
         row = conn.execute(
-            "SELECT id, name, email, created_at, tokens_used, token_limit FROM users WHERE email = ?",
+            "SELECT id, name, email, created_at, tokens_used, token_limit, role FROM users WHERE email = ?",
             (email,),
         ).fetchone()
         return dict(row) if row else None
 
 
-def verify_pin(email: str, pin: str) -> bool:
+def set_user_role(email: str, role: str):
     with _get_conn() as conn:
-        row = conn.execute("SELECT pin FROM users WHERE email = ?", (email,)).fetchone()
-        if not row:
-            return False
-        return row[0] == pin
-
-
-def set_admin(email: str):
-    with _get_conn() as conn:
-        conn.execute("UPDATE users SET is_admin = 1 WHERE email = ?", (email,))
+        conn.execute("UPDATE users SET role = ? WHERE email = ?", (role, email))
         conn.commit()
 
 
-def is_admin_user(email: str) -> bool:
+def is_admin_or_super(email: str) -> bool:
     with _get_conn() as conn:
-        row = conn.execute("SELECT is_admin FROM users WHERE email = ?", (email,)).fetchone()
+        row = conn.execute("SELECT role FROM users WHERE email = ?", (email,)).fetchone()
         if not row:
             return False
-        return bool(row[0])
+        return row[0] in ("admin", "superadmin")
+
+
+def is_superadmin(email: str) -> bool:
+    with _get_conn() as conn:
+        row = conn.execute("SELECT role FROM users WHERE email = ?", (email,)).fetchone()
+        if not row:
+            return False
+        return row[0] == "superadmin"
 
 
 def add_tokens_used(email: str, tokens: int):
@@ -166,7 +175,7 @@ def get_all_users() -> list:
     with _get_conn() as conn:
         conn.row_factory = sqlite3.Row
         rows = conn.execute(
-            "SELECT id, name, email, created_at, tokens_used, token_limit FROM users ORDER BY id DESC"
+            "SELECT id, name, email, created_at, tokens_used, token_limit, role FROM users ORDER BY id DESC"
         ).fetchall()
     return [dict(r) for r in rows]
 

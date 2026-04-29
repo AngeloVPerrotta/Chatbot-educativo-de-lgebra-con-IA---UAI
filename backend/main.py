@@ -24,12 +24,12 @@ from utils.analytics import (
     save_feedback,
     get_feedback_stats,
     get_recent_feedback,
-    verify_pin,
     save_chat_message,
     get_user_sessions,
     get_session_messages,
-    set_admin,
-    is_admin_user,
+    set_user_role,
+    is_admin_or_super,
+    is_superadmin,
 )
 
 load_dotenv(override=False)
@@ -68,20 +68,18 @@ class ChatResponse(BaseModel):
 class UserRegisterRequest(BaseModel):
     name: str
     email: str
-    pin: str
 
 class UserLoginRequest(BaseModel):
     email: str
-    pin: str
 
 class FeedbackRequest(BaseModel):
     user_email: str
     rating: int
     message: Optional[str] = None
 
-class SetAdminRequest(BaseModel):
-    email: str
-    master_key: str
+class SetRoleRequest(BaseModel):
+    target_email: str
+    role: str
 
 
 # --- Endpoints base ---
@@ -100,9 +98,7 @@ def health_check():
 
 @app.post("/register")
 def register_endpoint(payload: UserRegisterRequest):
-    if not payload.pin.isdigit() or len(payload.pin) != 4:
-        raise HTTPException(status_code=422, detail="El PIN debe ser exactamente 4 dígitos numéricos.")
-    result = register_user(payload.name.strip(), payload.email.strip().lower(), payload.pin)
+    result = register_user(payload.name.strip(), payload.email.strip().lower())
     if not result["ok"]:
         raise HTTPException(status_code=409, detail=result["error"])
     return result["user"]
@@ -115,8 +111,6 @@ def login_endpoint(payload: UserLoginRequest):
     user = get_user_by_email(payload.email.strip().lower())
     if not user:
         raise HTTPException(status_code=404, detail="Usuario no encontrado. ¿Ya te registraste?")
-    if not verify_pin(payload.email.strip().lower(), payload.pin):
-        raise HTTPException(status_code=401, detail="PIN incorrecto.")
     return user
 
 
@@ -204,27 +198,39 @@ def reset_session(payload: dict):
 
 # --- Admin helpers ---
 
-def _require_admin(request: Request):
-    email = request.headers.get("X-Admin-Email", "")
-    pin = request.headers.get("X-Admin-Pin", "")
-    if not email or not pin:
+def _require_admin(request: Request) -> str:
+    email = request.headers.get("X-Admin-Email", "").strip().lower()
+    if not email or not is_admin_or_super(email):
         raise HTTPException(status_code=403, detail="Forbidden")
-    if not verify_pin(email, pin) or not is_admin_user(email):
-        raise HTTPException(status_code=403, detail="Forbidden")
+    return email
 
 
-# --- POST /admin/set-admin ---
+# --- GET /admin/check-access ---
 
-@app.post("/admin/set-admin")
-def admin_set_admin(payload: SetAdminRequest):
-    admin_key = os.getenv("ADMIN_KEY", "")
-    if not admin_key or payload.master_key != admin_key:
+@app.get("/admin/check-access")
+def admin_check_access(request: Request):
+    email = request.headers.get("X-Admin-Email", "").strip().lower()
+    if not email:
+        return {"is_admin": False, "is_superadmin": False, "email": email}
+    _is_super = is_superadmin(email)
+    _is_admin = is_admin_or_super(email)
+    return {"is_admin": _is_admin, "is_superadmin": _is_super, "email": email}
+
+
+# --- POST /admin/set-role ---
+
+@app.post("/admin/set-role")
+def admin_set_role(payload: SetRoleRequest, request: Request):
+    caller = _require_admin(request)
+    if not is_superadmin(caller):
         raise HTTPException(status_code=403, detail="Forbidden")
-    user = get_user_by_email(payload.email.strip().lower())
-    if not user:
+    if payload.role not in ("user", "admin"):
+        raise HTTPException(status_code=422, detail="Rol inválido. Opciones: 'user', 'admin'.")
+    target = get_user_by_email(payload.target_email.strip().lower())
+    if not target:
         raise HTTPException(status_code=404, detail="Usuario no encontrado.")
-    set_admin(payload.email.strip().lower())
-    return {"ok": True, "email": payload.email.strip().lower(), "is_admin": True}
+    set_user_role(payload.target_email.strip().lower(), payload.role)
+    return {"ok": True, "email": payload.target_email.strip().lower(), "role": payload.role}
 
 
 # --- GET /admin/stats ---
