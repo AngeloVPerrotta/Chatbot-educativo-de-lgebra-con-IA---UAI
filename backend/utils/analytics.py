@@ -47,6 +47,11 @@ def _init_db():
             conn.execute("ALTER TABLE users ADD COLUMN pin TEXT")
         except Exception:
             pass
+        # Backward-compatible migration: add is_admin if not present
+        try:
+            conn.execute("ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0")
+        except Exception:
+            pass
 
         conn.execute("""
             CREATE TABLE IF NOT EXISTS feedback (
@@ -124,6 +129,20 @@ def verify_pin(email: str, pin: str) -> bool:
         if not row:
             return False
         return row[0] == pin
+
+
+def set_admin(email: str):
+    with _get_conn() as conn:
+        conn.execute("UPDATE users SET is_admin = 1 WHERE email = ?", (email,))
+        conn.commit()
+
+
+def is_admin_user(email: str) -> bool:
+    with _get_conn() as conn:
+        row = conn.execute("SELECT is_admin FROM users WHERE email = ?", (email,)).fetchone()
+        if not row:
+            return False
+        return bool(row[0])
 
 
 def add_tokens_used(email: str, tokens: int):

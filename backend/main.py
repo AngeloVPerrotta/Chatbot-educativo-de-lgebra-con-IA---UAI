@@ -28,6 +28,8 @@ from utils.analytics import (
     save_chat_message,
     get_user_sessions,
     get_session_messages,
+    set_admin,
+    is_admin_user,
 )
 
 load_dotenv(override=False)
@@ -77,6 +79,10 @@ class FeedbackRequest(BaseModel):
     rating: int
     message: Optional[str] = None
 
+class SetAdminRequest(BaseModel):
+    email: str
+    master_key: str
+
 
 # --- Endpoints base ---
 
@@ -124,6 +130,10 @@ def chat_endpoint(request: ChatRequest):
         logger.info(f'=== ENDPOINT /chat ===')
         logger.info(f'Materia: {request.materia}')
         logger.info(f'Session: {request.session_id}')
+
+        # Verificar longitud del mensaje
+        if len(request.message) > 500:
+            raise HTTPException(status_code=400, detail="El mensaje no puede superar los 500 caracteres.")
 
         # Verificar límite de tokens si viene user_email
         if request.user_email and not check_token_limit(request.user_email):
@@ -195,9 +205,26 @@ def reset_session(payload: dict):
 # --- Admin helpers ---
 
 def _require_admin(request: Request):
-    admin_key = os.getenv("ADMIN_KEY", "")
-    if not admin_key or request.headers.get("X-Admin-Key") != admin_key:
+    email = request.headers.get("X-Admin-Email", "")
+    pin = request.headers.get("X-Admin-Pin", "")
+    if not email or not pin:
         raise HTTPException(status_code=403, detail="Forbidden")
+    if not verify_pin(email, pin) or not is_admin_user(email):
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+
+# --- POST /admin/set-admin ---
+
+@app.post("/admin/set-admin")
+def admin_set_admin(payload: SetAdminRequest):
+    admin_key = os.getenv("ADMIN_KEY", "")
+    if not admin_key or payload.master_key != admin_key:
+        raise HTTPException(status_code=403, detail="Forbidden")
+    user = get_user_by_email(payload.email.strip().lower())
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado.")
+    set_admin(payload.email.strip().lower())
+    return {"ok": True, "email": payload.email.strip().lower(), "is_admin": True}
 
 
 # --- GET /admin/stats ---
