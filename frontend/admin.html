@@ -158,6 +158,20 @@
             .charts-row { grid-template-columns: 1fr; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
         }
+
+        /* ===== PRINT ===== */
+        .print-btn { padding: 8px 16px; border-radius: 10px; font-size: 0.78rem; font-family: 'DM Sans', sans-serif; cursor: pointer; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-secondary); transition: all 0.2s; }
+        .print-btn:hover { border-color: var(--accent); color: var(--accent); }
+        @media print {
+            body { background: #fff; color: #000; }
+            .login-screen { display: none !important; }
+            .dash-header-right { display: none !important; }
+            .chart-card, .stat-card, .table-card { border: 1px solid #ccc; background: #fff; break-inside: avoid; }
+            .stat-label, .chart-card h3, .table-card h3 { color: #555; }
+            .stat-value, td, th { color: #000; }
+            .charts-row { display: block; }
+            .charts-row > * { margin-bottom: 20px; }
+        }
     </style>
 </head>
 <body>
@@ -165,10 +179,11 @@
     <div class="login-screen" id="loginScreen">
         <div class="login-box">
             <h1>Algor<span>IA</span> Admin</h1>
-            <p>Panel de administración · Ingresá tu clave</p>
-            <input type="password" id="adminKeyInput" placeholder="Clave de administrador" onkeydown="if(event.key==='Enter')doLogin()">
+            <p>Panel de administración · Ingresá tu email y PIN</p>
+            <input type="email" id="adminEmailInput" placeholder="Email de administrador" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()">
+            <input type="text" id="adminPinInput" placeholder="PIN (4 dígitos)" maxlength="4" inputmode="numeric" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()">
             <button onclick="doLogin()">Ingresar</button>
-            <div class="login-error" id="loginError">Clave incorrecta. Intentá de nuevo.</div>
+            <div class="login-error" id="loginError">Credenciales incorrectas. Intentá de nuevo.</div>
         </div>
     </div>
 
@@ -180,6 +195,7 @@
                 <p>Panel de administración · UAI</p>
             </div>
             <div class="dash-header-right">
+                <button class="print-btn" onclick="window.print()">Exportar PDF</button>
                 <button class="refresh-btn" onclick="loadDashboard()">↻ Actualizar</button>
                 <button class="logout-btn" onclick="doLogout()">Salir</button>
             </div>
@@ -245,22 +261,41 @@
 
     <script>
         const BACKEND = 'https://chatbot-educativo-de-lgebra-con-ia-uai-production.up.railway.app';
-        let adminKey = '';
+        let adminEmail = sessionStorage.getItem('algoria_admin_email') || '';
+        let adminPin = sessionStorage.getItem('algoria_admin_pin') || '';
         let dailyChartInstance = null;
         let topicChartInstance = null;
         let ragChartInstance = null;
 
+        function adminHeaders() {
+            return { 'X-Admin-Email': adminEmail, 'X-Admin-Pin': adminPin };
+        }
+
+        // Auto-login if credentials in sessionStorage
+        if (adminEmail && adminPin) {
+            fetch(`${BACKEND}/admin/stats`, { headers: adminHeaders() })
+                .then(r => { if (r.ok) { showDashboard(); loadDashboard(); } })
+                .catch(() => {});
+        }
+
+        function showDashboard() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+        }
+
         function doLogin() {
-            adminKey = document.getElementById('adminKeyInput').value.trim();
-            if (!adminKey) return;
-            fetch(`${BACKEND}/admin/stats`, { headers: { 'X-Admin-Key': adminKey } })
+            adminEmail = document.getElementById('adminEmailInput').value.trim();
+            adminPin = document.getElementById('adminPinInput').value.trim();
+            if (!adminEmail || !adminPin) return;
+            fetch(`${BACKEND}/admin/stats`, { headers: adminHeaders() })
                 .then(r => {
-                    if (!r.ok) throw new Error('bad key');
+                    if (!r.ok) throw new Error('bad credentials');
                     return r.json();
                 })
                 .then(() => {
-                    document.getElementById('loginScreen').style.display = 'none';
-                    document.getElementById('dashboard').style.display = 'block';
+                    sessionStorage.setItem('algoria_admin_email', adminEmail);
+                    sessionStorage.setItem('algoria_admin_pin', adminPin);
+                    showDashboard();
                     loadDashboard();
                 })
                 .catch(() => {
@@ -269,20 +304,24 @@
         }
 
         function doLogout() {
-            adminKey = '';
+            adminEmail = '';
+            adminPin = '';
+            sessionStorage.removeItem('algoria_admin_email');
+            sessionStorage.removeItem('algoria_admin_pin');
             document.getElementById('loginScreen').style.display = 'flex';
             document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('adminKeyInput').value = '';
+            document.getElementById('adminEmailInput').value = '';
+            document.getElementById('adminPinInput').value = '';
             document.getElementById('loginError').style.display = 'none';
         }
 
         async function loadDashboard() {
             try {
                 const [statsRes, intRes, usersRes, feedbackRes] = await Promise.all([
-                    fetch(`${BACKEND}/admin/stats`, { headers: { 'X-Admin-Key': adminKey } }),
-                    fetch(`${BACKEND}/admin/interactions`, { headers: { 'X-Admin-Key': adminKey } }),
-                    fetch(`${BACKEND}/admin/users`, { headers: { 'X-Admin-Key': adminKey } }),
-                    fetch(`${BACKEND}/admin/feedback`, { headers: { 'X-Admin-Key': adminKey } }).catch(() => null),
+                    fetch(`${BACKEND}/admin/stats`, { headers: adminHeaders() }),
+                    fetch(`${BACKEND}/admin/interactions`, { headers: adminHeaders() }),
+                    fetch(`${BACKEND}/admin/users`, { headers: adminHeaders() }),
+                    fetch(`${BACKEND}/admin/feedback`, { headers: adminHeaders() }).catch(() => null),
                 ]);
                 const stats = await statsRes.json();
                 const interactions = await intRes.json();
