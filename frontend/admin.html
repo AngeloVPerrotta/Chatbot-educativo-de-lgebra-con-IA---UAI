@@ -14,9 +14,9 @@
             --bg-card: #131b2e;
             --bg-card-hover: #182236;
             --bg-input: #111827;
-            --accent: #f59e0b;
-            --accent-soft: #fbbf24;
-            --accent-glow: rgba(245, 158, 11, 0.15);
+            --accent: #38bdf8;
+            --accent-soft: #7dd3fc;
+            --accent-glow: rgba(56, 189, 248, 0.15);
             --cyan: #38bdf8;
             --green: #34d399;
             --red: #f87171;
@@ -24,7 +24,7 @@
             --text-primary: #e8edf5;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
-            --border: rgba(245, 158, 11, 0.12);
+            --border: rgba(56, 189, 248, 0.12);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'DM Sans', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
@@ -56,7 +56,7 @@
         .login-box input::placeholder { color: var(--text-muted); }
         .login-box button {
             width: 100%; padding: 14px; border: none; border-radius: 12px;
-            background: linear-gradient(135deg, var(--accent), #d97706);
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
             color: #000; font-weight: 700; font-size: 0.95rem; cursor: pointer;
             font-family: 'DM Sans', sans-serif; transition: transform 0.15s;
         }
@@ -115,7 +115,7 @@
         /* ===== TABLE ===== */
         .table-card {
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 16px; padding: 24px; overflow-x: auto;
+            border-radius: 16px; padding: 24px; overflow-x: auto; margin-bottom: 28px;
         }
         .table-card h3 { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px; font-weight: 600; }
         table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
@@ -125,6 +125,14 @@
         .badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; }
         .badge-algebra { background: rgba(56,189,248,0.12); color: var(--cyan); }
         .msg-preview { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* ===== TOKEN BAR ===== */
+        .token-bar-wrap { display: flex; align-items: center; gap: 8px; }
+        .token-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; min-width: 60px; }
+        .token-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #38bdf8, #0ea5e9); transition: width 0.3s; }
+        .token-bar-fill.warn { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        .token-bar-fill.danger { background: linear-gradient(90deg, #f87171, #ef4444); }
+        .token-pct { font-size: 0.72rem; color: var(--text-muted); min-width: 32px; text-align: right; }
 
         .loading { text-align: center; padding: 60px; color: var(--text-muted); }
         .empty-state { text-align: center; padding: 40px; color: var(--text-muted); font-size: 0.85rem; }
@@ -166,6 +174,7 @@
             <div class="stat-card"><div class="stat-label">Sesiones únicas</div><div class="stat-value green" id="statSessions">—</div></div>
             <div class="stat-card"><div class="stat-label">Largo promedio respuesta</div><div class="stat-value purple" id="statAvgLen">—</div></div>
             <div class="stat-card"><div class="stat-label">Interacciones hoy</div><div class="stat-value accent" id="statToday">—</div></div>
+            <div class="stat-card"><div class="stat-label">Usuarios registrados</div><div class="stat-value cyan" id="statUsers">—</div></div>
         </div>
 
         <!-- CHARTS -->
@@ -180,12 +189,21 @@
             </div>
         </div>
 
-        <!-- TABLE -->
+        <!-- USUARIOS REGISTRADOS -->
+        <div class="table-card">
+            <h3>Usuarios registrados</h3>
+            <table>
+                <thead><tr><th>Nombre</th><th>Email</th><th>Fecha de registro</th><th>Tokens usados</th><th>Límite</th></tr></thead>
+                <tbody id="usersBody"><tr><td colspan="5" class="empty-state">Cargando...</td></tr></tbody>
+            </table>
+        </div>
+
+        <!-- INTERACCIONES -->
         <div class="table-card">
             <h3>Últimas interacciones</h3>
             <table>
-                <thead><tr><th>Fecha</th><th>Sesión</th><th>Tema</th><th>Largo pregunta</th><th>Largo respuesta</th><th>Tiempo (ms)</th></tr></thead>
-                <tbody id="interactionsBody"><tr><td colspan="6" class="empty-state">Cargando...</td></tr></tbody>
+                <thead><tr><th>Fecha</th><th>Usuario</th><th>Sesión</th><th>Tema</th><th>Largo pregunta</th><th>Largo respuesta</th><th>Tiempo (ms)</th></tr></thead>
+                <tbody id="interactionsBody"><tr><td colspan="7" class="empty-state">Cargando...</td></tr></tbody>
             </table>
         </div>
     </div>
@@ -199,7 +217,6 @@
         function doLogin() {
             adminKey = document.getElementById('adminKeyInput').value.trim();
             if (!adminKey) return;
-            // Test the key
             fetch(`${BACKEND}/admin/stats`, { headers: { 'X-Admin-Key': adminKey } })
                 .then(r => {
                     if (!r.ok) throw new Error('bad key');
@@ -225,28 +242,32 @@
 
         async function loadDashboard() {
             try {
-                const [statsRes, intRes] = await Promise.all([
+                const [statsRes, intRes, usersRes] = await Promise.all([
                     fetch(`${BACKEND}/admin/stats`, { headers: { 'X-Admin-Key': adminKey } }),
                     fetch(`${BACKEND}/admin/interactions`, { headers: { 'X-Admin-Key': adminKey } }),
+                    fetch(`${BACKEND}/admin/users`, { headers: { 'X-Admin-Key': adminKey } }),
                 ]);
                 const stats = await statsRes.json();
                 const interactions = await intRes.json();
-                renderStats(stats);
+                const users = usersRes.ok ? await usersRes.json() : [];
+                renderStats(stats, users);
                 renderDailyChart(stats.interactions_by_day || []);
                 renderTopicChart(stats.top_topics || []);
+                renderUsersTable(users);
                 renderTable(interactions);
             } catch (e) {
                 console.error('Dashboard error:', e);
             }
         }
 
-        function renderStats(s) {
+        function renderStats(s, users) {
             document.getElementById('statTotal').textContent = s.total_interactions || 0;
             document.getElementById('statSessions').textContent = s.unique_sessions || 0;
             document.getElementById('statAvgLen').textContent = s.avg_response_length ? Math.round(s.avg_response_length) + ' chars' : '—';
             const today = new Date().toISOString().slice(0, 10);
             const todayData = (s.interactions_by_day || []).find(d => d.date === today);
             document.getElementById('statToday').textContent = todayData ? todayData.count : 0;
+            document.getElementById('statUsers').textContent = Array.isArray(users) ? users.length : '—';
         }
 
         function renderDailyChart(data) {
@@ -298,15 +319,42 @@
             });
         }
 
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('usersBody');
+            if (!Array.isArray(users) || !users.length) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Sin usuarios registrados aún.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = users.map(u => {
+                const pct = u.token_limit ? Math.min(100, Math.round((u.tokens_used / u.token_limit) * 100)) : 0;
+                const fillClass = pct >= 90 ? 'danger' : pct >= 70 ? 'warn' : '';
+                const fecha = u.created_at ? u.created_at.slice(0, 10) : '—';
+                return `
+                <tr>
+                    <td>${u.name || '—'}</td>
+                    <td style="font-family:'JetBrains Mono',monospace;font-size:0.78rem">${u.email || '—'}</td>
+                    <td>${fecha}</td>
+                    <td>
+                        <div class="token-bar-wrap">
+                            <div class="token-bar"><div class="token-bar-fill ${fillClass}" style="width:${pct}%"></div></div>
+                            <span class="token-pct">${(u.tokens_used || 0).toLocaleString()}</span>
+                        </div>
+                    </td>
+                    <td>${(u.token_limit || 0).toLocaleString()}</td>
+                </tr>`;
+            }).join('');
+        }
+
         function renderTable(rows) {
             const tbody = document.getElementById('interactionsBody');
             if (!rows.length) {
-                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Sin interacciones aún. Mandá un mensaje al chatbot para empezar.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Sin interacciones aún. Mandá un mensaje al chatbot para empezar.</td></tr>';
                 return;
             }
             tbody.innerHTML = rows.map(r => `
                 <tr>
                     <td>${r.timestamp ? r.timestamp.slice(0, 16).replace('T', ' ') : '—'}</td>
+                    <td style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--text-muted)">${r.user_email || '—'}</td>
                     <td style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--text-muted)">${(r.session_id || '').slice(0, 16)}…</td>
                     <td><span class="badge badge-algebra">${r.topic || 'algebra'}</span></td>
                     <td>${r.user_message_length || 0}</td>

@@ -34,7 +34,7 @@
         .ambient-glow{position:fixed;border-radius:50%;filter:blur(140px);pointer-events:none;z-index:0}
         .glow-1{width:450px;height:450px;background:rgba(56,189,248,0.06);top:-120px;right:-80px}
         .glow-2{width:350px;height:350px;background:rgba(52,211,153,0.04);bottom:-80px;left:-80px}
-        .cursor-glow{position:fixed;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(56,189,248,0.05) 0%,transparent 70%);pointer-events:none;z-index:0;transform:translate(-50%,-50%);transition:opacity .3s}
+        .cursor-glow{display:none}
         .app-container{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh;max-width:900px;margin:0 auto;padding:0 20px}
         .header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 14px;border-bottom:1px solid var(--border);flex-shrink:0}
         .header-left{display:flex;align-items:center;gap:14px}
@@ -57,7 +57,7 @@
         .welcome-greeting{color:var(--text-primary);max-width:440px;line-height:1.6;font-size:.97rem;font-weight:500}
         .welcome-motive{color:var(--text-secondary);max-width:440px;line-height:1.6;font-size:.88rem}
         .quick-prompts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:600px}
-        .quick-prompt{padding:10px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;color:var(--text-secondary);font-size:.84rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s}
+        .quick-prompt{padding:10px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);font-size:.84rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s}
         .quick-prompt:hover{border-color:var(--accent);color:var(--accent-soft);background:var(--accent-subtle);transform:translateY(-2px);box-shadow:0 4px 16px var(--accent-glow)}
         .message{display:flex;gap:12px;animation:msgIn .3s ease;max-width:85%}
         @keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -65,7 +65,7 @@
         .message-avatar{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;margin-top:4px}
         .message.bot .message-avatar{background:var(--user-bubble);color:#fff;font-weight:700;box-shadow:0 2px 10px var(--accent-glow)}
         .message.user .message-avatar{background:var(--bg-card);border:1px solid var(--border)}
-        .message-content{padding:14px 18px;border-radius:16px;line-height:1.7;font-size:.91rem}
+        .message-content{padding:14px 18px;border-radius:10px;line-height:1.7;font-size:.91rem}
         .message.bot .message-content{background:var(--bot-bubble);border:1px solid var(--border);color:var(--text-primary);border-bottom-left-radius:4px}
         .message.user .message-content{background:var(--user-bubble);color:#fff;border-bottom-right-radius:4px}
         .message-content p{margin-bottom:8px}
@@ -84,7 +84,7 @@
         .typing-dots span:nth-child(3){animation-delay:.3s}
         @keyframes typingBounce{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-5px);opacity:1}}
         .input-area{padding:14px 0 18px;border-top:1px solid var(--border);flex-shrink:0}
-        .input-wrapper{display:flex;gap:10px;align-items:flex-end;background:var(--bg-input);border:1px solid var(--border);border-radius:16px;padding:8px 8px 8px 18px;transition:all .25s}
+        .input-wrapper{display:flex;gap:10px;align-items:flex-end;background:var(--bg-input);border:1px solid var(--border);border-radius:10px;padding:8px 8px 8px 18px;transition:all .25s}
         .input-wrapper:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow),0 4px 20px rgba(0,0,0,0.2)}
         .input-wrapper textarea{flex:1;background:transparent;border:none;color:var(--text-primary);font-family:'DM Sans',sans-serif;font-size:.91rem;resize:none;outline:none;max-height:120px;padding:8px 0;line-height:1.5}
         .input-wrapper textarea::placeholder{color:var(--text-muted)}
@@ -123,19 +123,95 @@
         .auth-error{font-size:.83rem;color:#f87171;text-align:center;min-height:20px}
         .auth-hint{font-size:.78rem;color:var(--text-muted);text-align:center}
 
+        /* --- Theme toggle --- */
+        .theme-toggle{width:34px;height:34px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:all .2s;color:var(--text-secondary);padding:0}
+        .theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+
+        /* --- Light mode --- */
+        body.light{--bg-primary:#f8fafc;--bg-card:#ffffff;--bg-input:#f1f5f9;--text-primary:#1e293b;--text-secondary:#475569;--text-muted:#94a3b8;--bot-bubble:#f1f5f9;--border:rgba(56,189,248,0.15)}
+        body.light .message.user .message-content{color:#fff}
+        body.light .typing-dots span{background:var(--accent)}
+        body.light canvas#particles{opacity:.4}
+
+        /* --- History panel --- */
+        .history-backdrop{position:fixed;inset:0;z-index:399;background:rgba(11,15,25,0.55);display:none}
+        .history-backdrop.open{display:block}
+        .history-panel{position:fixed;top:0;left:0;height:100vh;width:300px;background:var(--bg-card);border-right:1px solid var(--border);z-index:400;transform:translateX(-100%);transition:transform .3s ease;display:flex;flex-direction:column;overflow:hidden}
+        .history-panel.open{transform:translateX(0)}
+        .history-header{padding:18px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+        .history-header h3{font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700}
+        .history-close{background:transparent;border:none;color:var(--text-muted);font-size:1.1rem;cursor:pointer;padding:4px 8px;border-radius:6px;font-family:'DM Sans',sans-serif}
+        .history-close:hover{color:var(--text-primary)}
+        .history-list{flex:1;overflow-y:auto;padding:6px 0}
+        .history-session{padding:11px 16px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);transition:background .15s}
+        .history-session:hover{background:rgba(255,255,255,0.04)}
+        .history-session-date{font-size:.7rem;color:var(--text-muted);margin-bottom:3px}
+        .history-session-preview{font-size:.82rem;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:250px}
+        .history-empty{padding:40px 16px;text-align:center;color:var(--text-muted);font-size:.84rem}
+        .readonly-banner{background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.22);color:#fbbf24;font-size:.81rem;padding:9px 14px;border-radius:9px;display:none;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px;flex-shrink:0}
+        .readonly-banner button{background:transparent;border:1px solid rgba(251,191,36,0.35);color:#fbbf24;font-size:.77rem;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
+
+        /* --- Suggestions --- */
+        .suggestions{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;padding-left:44px}
+        .suggestion-btn{padding:5px 11px;background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);font-size:.77rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .18s}
+        .suggestion-btn:hover{border-color:var(--accent);color:var(--accent-soft);background:var(--accent-subtle)}
+
+        /* --- UAI badge --- */
+        .uai-badge{display:none;align-items:center;gap:6px;color:var(--green);font-size:.82rem;background:var(--green-glow);border:1px solid rgba(52,211,153,0.25);padding:6px 12px;border-radius:8px}
+
+        /* --- Feedback popup --- */
+        .feedback-overlay{position:fixed;inset:0;z-index:600;background:rgba(11,15,25,0.7);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeUp .4s ease}
+        .feedback-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:28px 28px 24px;width:100%;max-width:360px;display:flex;flex-direction:column;align-items:center;gap:16px;box-shadow:0 8px 40px rgba(0,0,0,0.5)}
+        .feedback-title{font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text-primary);text-align:center}
+        .star-row{display:flex;gap:8px}
+        .star{font-size:2rem;color:var(--text-muted);cursor:pointer;transition:color .15s,transform .15s}
+        .star:hover,.star.selected{color:#fbbf24;transform:scale(1.15)}
+        .feedback-card textarea{width:100%;background:var(--bg-input);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-family:'DM Sans',sans-serif;font-size:.88rem;padding:10px 14px;outline:none;resize:none}
+        .feedback-card textarea:focus{border-color:var(--accent)}
+        .feedback-btns{display:flex;gap:10px;width:100%}
+        .feedback-btns .auth-btn{flex:1}
+
         @media(max-width:640px){.app-container{padding:0 12px}.header-title h1{font-size:1.2rem}.welcome h2{font-size:1.35rem}.quick-prompts{flex-direction:column;align-items:center}.message{max-width:92%}.status-badge span:last-child{display:none}.auth-card{padding:30px 22px}}
     </style>
 </head>
 <body>
     <canvas id="particles"></canvas>
-    <div class="ambient-glow glow-1"></div>
-    <div class="ambient-glow glow-2"></div>
-    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <!-- History panel -->
+    <div class="history-backdrop" id="historyBackdrop" onclick="closeHistoryPanel()"></div>
+    <div class="history-panel" id="historyPanel">
+        <div class="history-header">
+            <h3>📋 Conversaciones</h3>
+            <button class="history-close" onclick="closeHistoryPanel()">✕</button>
+        </div>
+        <div class="history-list" id="historyList">
+            <div class="history-empty">Cargando...</div>
+        </div>
+    </div>
+
+    <!-- Feedback popup -->
+    <div class="feedback-overlay" id="feedbackOverlay" style="display:none">
+        <div class="feedback-card">
+            <p class="feedback-title">¿Cómo viene la experiencia?</p>
+            <div class="star-row" id="starRow">
+                <span class="star" data-v="1">★</span>
+                <span class="star" data-v="2">★</span>
+                <span class="star" data-v="3">★</span>
+                <span class="star" data-v="4">★</span>
+                <span class="star" data-v="5">★</span>
+            </div>
+            <textarea id="feedbackMsg" placeholder="Comentario (opcional)" rows="2"></textarea>
+            <div class="feedback-btns">
+                <button class="auth-btn" onclick="submitFeedback()">Enviar</button>
+                <button class="clear-btn" onclick="closeFeedback()">Ahora no</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Auth overlay -->
     <div class="auth-overlay" id="authOverlay">
         <div class="auth-card">
-            <div class="auth-logo">∑</div>
+            <div class="auth-logo">A</div>
             <h2>Algor<span>IA</span></h2>
             <p class="auth-subtitle">Tutor de Álgebra · UAI</p>
 
@@ -148,12 +224,15 @@
             <div class="auth-form" id="formRegister">
                 <input class="auth-input" type="text" id="regName" placeholder="Tu nombre" autocomplete="off">
                 <input class="auth-input" type="email" id="regEmail" placeholder="Tu email universitario" autocomplete="off">
+                <div class="uai-badge" id="uaiBadge">✓ Email UAI verificado</div>
+                <input class="auth-input" type="text" id="regPin" placeholder="PIN (4 dígitos)" maxlength="4" autocomplete="off" inputmode="numeric">
                 <button class="auth-btn" id="btnRegister" onclick="doRegister()">Crear cuenta</button>
             </div>
 
             <!-- Login form -->
             <div class="auth-form" id="formLogin" style="display:none">
                 <input class="auth-input" type="email" id="loginEmail" placeholder="Tu email" autocomplete="off">
+                <input class="auth-input" type="text" id="loginPin" placeholder="PIN (4 dígitos)" maxlength="4" autocomplete="off" inputmode="numeric">
                 <button class="auth-btn" id="btnLogin" onclick="doLogin()">Ingresar</button>
             </div>
 
@@ -167,20 +246,26 @@
     <div class="app-container">
         <header class="header">
             <div class="header-left">
-                <div class="logo-mark">∑</div>
+                <div class="logo-mark">A</div>
                 <div class="header-title">
                     <h1>Algor<span>IA</span></h1>
                     <p>Tutor inteligente de Álgebra · UAI</p>
                 </div>
             </div>
             <div class="header-right">
+                <button class="clear-btn" onclick="openHistoryPanel()" title="Ver historial">📋 Historial</button>
                 <button class="clear-btn" onclick="clearChat()" title="Limpiar conversación">✕ Limpiar</button>
+                <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
                 <div class="status-badge"><div class="status-dot"></div><span>En línea</span></div>
             </div>
         </header>
+        <div class="readonly-banner" id="readonlyBanner">
+            <span>📂 Modo lectura — <span id="readonlyDate"></span></span>
+            <button onclick="exitReadonlyMode()">← Volver al chat</button>
+        </div>
         <div class="chat-area" id="chatArea">
             <div class="welcome" id="welcome">
-                <div class="welcome-icon">∑</div>
+                <div class="welcome-icon">AI</div>
                 <h2 id="welcomeTitle">¡Hola! Soy Algor<span>IA</span></h2>
                 <p class="welcome-greeting" id="welcomeGreeting"></p>
                 <p class="welcome-motive" id="welcomeMotive"></p>
@@ -204,15 +289,16 @@
         const BACKEND = 'https://chatbot-educativo-de-lgebra-con-ia-uai-production.up.railway.app';
         const sessionId = 'sess-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
         let isWaiting = false;
+        let botMsgCount = 0;
+        let feedbackShown = !!sessionStorage.getItem('algoria_feedback_shown');
         const chatArea = document.getElementById('chatArea');
         const msgInput = document.getElementById('msgInput');
         const sendBtn = document.getElementById('sendBtn');
         const welcome = document.getElementById('welcome');
-        const cursorGlow = document.getElementById('cursorGlow');
 
-        // --- Current user from sessionStorage ---
+        // --- Current user from localStorage (persiste entre sesiones) ---
         let currentUser = null;
-        try { currentUser = JSON.parse(sessionStorage.getItem('algoria_user')); } catch(e) {}
+        try { currentUser = JSON.parse(localStorage.getItem('algoria_user')); } catch(e) {}
 
         // --- Auth overlay logic ---
 
@@ -236,7 +322,9 @@
         async function doRegister() {
             const name = document.getElementById('regName').value.trim();
             const email = document.getElementById('regEmail').value.trim();
+            const pin = document.getElementById('regPin').value.trim();
             if (!name || !email) { setAuthError('Completá nombre y email.'); return; }
+            if (!/^\d{4}$/.test(pin)) { setAuthError('El PIN debe ser exactamente 4 dígitos numéricos.'); return; }
             const btn = document.getElementById('btnRegister');
             setAuthLoading(btn, true);
             setAuthError('');
@@ -244,11 +332,11 @@
                 const res = await fetch(`${BACKEND}/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email })
+                    body: JSON.stringify({ name, email, pin })
                 });
                 const data = await res.json();
                 if (!res.ok) { setAuthError(data.detail || 'Error al registrarse.'); return; }
-                sessionStorage.setItem('algoria_user', JSON.stringify(data));
+                localStorage.setItem('algoria_user', JSON.stringify(data));
                 currentUser = data;
                 hideAuthOverlay();
             } catch(e) {
@@ -260,7 +348,9 @@
 
         async function doLogin() {
             const email = document.getElementById('loginEmail').value.trim();
+            const pin = document.getElementById('loginPin').value.trim();
             if (!email) { setAuthError('Ingresá tu email.'); return; }
+            if (!/^\d{4}$/.test(pin)) { setAuthError('Ingresá tu PIN de 4 dígitos.'); return; }
             const btn = document.getElementById('btnLogin');
             setAuthLoading(btn, true);
             setAuthError('');
@@ -268,11 +358,11 @@
                 const res = await fetch(`${BACKEND}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
+                    body: JSON.stringify({ email, pin })
                 });
                 const data = await res.json();
                 if (!res.ok) { setAuthError(data.detail || 'No te encontramos. ¿Ya te registraste?'); return; }
-                sessionStorage.setItem('algoria_user', JSON.stringify(data));
+                localStorage.setItem('algoria_user', JSON.stringify(data));
                 currentUser = data;
                 hideAuthOverlay();
             } catch(e) {
@@ -292,7 +382,17 @@
         // Allow Enter key in auth inputs
         document.getElementById('regEmail').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
         document.getElementById('regName').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
+        document.getElementById('regPin').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
         document.getElementById('loginEmail').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+        document.getElementById('loginPin').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+        // UAI email badge detection
+        document.getElementById('regEmail').addEventListener('input', function() {
+            const v = this.value.trim().toLowerCase();
+            const badge = document.getElementById('uaiBadge');
+            const isUai = v.endsWith('@alumnos.uai.edu.ar') || v.endsWith('@uai.edu.ar');
+            badge.style.display = isUai ? 'flex' : 'none';
+        });
 
         // Show or skip auth overlay
         if (currentUser) {
@@ -362,19 +462,14 @@
         setupWelcome();
 
         // --- Particles ---
-        document.addEventListener('mousemove', e => {
-            cursorGlow.style.left = e.clientX + 'px';
-            cursorGlow.style.top = e.clientY + 'px';
-        });
-
         (function() {
             const c = document.getElementById('particles'), ctx = c.getContext('2d'); let ps = []; const n = 40;
             function resize() { c.width = innerWidth; c.height = innerHeight; } resize(); addEventListener('resize', resize);
-            for (let i = 0; i < n; i++) ps.push({ x: Math.random() * c.width, y: Math.random() * c.height, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: Math.random() * 1.8 + .4, o: Math.random() * .2 + .04 });
+            for (let i = 0; i < n; i++) ps.push({ x: Math.random() * c.width, y: Math.random() * c.height, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: Math.random() * 1.8 + .4, o: Math.random() * .08 + .02 });
             function draw() {
                 ctx.clearRect(0, 0, c.width, c.height);
                 ps.forEach(p => { p.x += p.vx; p.y += p.vy; if (p.x < 0 || p.x > c.width) p.vx *= -1; if (p.y < 0 || p.y > c.height) p.vy *= -1; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fillStyle = `rgba(56,189,248,${p.o})`; ctx.fill(); });
-                for (let i = 0; i < ps.length; i++) for (let j = i + 1; j < ps.length; j++) { const dx = ps[i].x - ps[j].x, dy = ps[i].y - ps[j].y, d = Math.sqrt(dx * dx + dy * dy); if (d < 110) { ctx.beginPath(); ctx.moveTo(ps[i].x, ps[i].y); ctx.lineTo(ps[j].x, ps[j].y); ctx.strokeStyle = `rgba(56,189,248,${.045 * (1 - d / 110)})`; ctx.lineWidth = .5; ctx.stroke(); } }
+                for (let i = 0; i < ps.length; i++) for (let j = i + 1; j < ps.length; j++) { const dx = ps[i].x - ps[j].x, dy = ps[i].y - ps[j].y, d = Math.sqrt(dx * dx + dy * dy); if (d < 110) { ctx.beginPath(); ctx.moveTo(ps[i].x, ps[i].y); ctx.lineTo(ps[j].x, ps[j].y); ctx.strokeStyle = `rgba(56,189,248,${.02 * (1 - d / 110)})`; ctx.lineWidth = .5; ctx.stroke(); } }
                 requestAnimationFrame(draw);
             } draw();
         })();
@@ -414,7 +509,7 @@
         function addMessage(role, content) {
             if (welcome) welcome.style.display = 'none';
             const msg = document.createElement('div'); msg.className = `message ${role}`;
-            const av = document.createElement('div'); av.className = 'message-avatar'; av.textContent = role === 'bot' ? '∑' : '👤';
+            const av = document.createElement('div'); av.className = 'message-avatar'; av.textContent = role === 'bot' ? 'A' : '👤';
             const bb = document.createElement('div'); bb.className = 'message-content';
             bb.innerHTML = role === 'bot' ? formatResponse(content) : `<p>${escapeHtml(content)}</p>`;
             msg.appendChild(av); msg.appendChild(bb); chatArea.appendChild(msg);
@@ -424,7 +519,7 @@
 
         function showTyping() {
             const el = document.createElement('div'); el.className = 'typing-indicator'; el.id = 'typingIndicator';
-            el.innerHTML = `<div class="message-avatar" style="background:var(--user-bubble);color:#fff;font-weight:700;box-shadow:0 2px 10px var(--accent-glow)">∑</div><div class="typing-dots"><span></span><span></span><span></span></div>`;
+            el.innerHTML = `<div class="message-avatar" style="background:var(--user-bubble);color:#fff;font-weight:700;box-shadow:0 2px 10px var(--accent-glow)">A</div><div class="typing-dots"><span></span><span></span><span></span></div>`;
             chatArea.appendChild(el); chatArea.scrollTop = chatArea.scrollHeight;
         }
         function hideTyping() { const el = document.getElementById('typingIndicator'); if (el) el.remove(); }
@@ -455,6 +550,9 @@
                 }
                 const data = await res.json();
                 addMessage('bot', data.response);
+                addSuggestions(data.response);
+                botMsgCount++;
+                if (botMsgCount === 5 && !feedbackShown) showFeedbackPopup();
             } catch (err) {
                 hideTyping();
                 addMessage('bot', `Error de conexión: ${err.message}\n\nReintentá en unos segundos.`);
@@ -470,6 +568,167 @@
         }
 
         if (currentUser) msgInput.focus();
+
+        // --- Theme ---
+        (function() {
+            if (localStorage.getItem('algoria_theme') === 'light') {
+                document.body.classList.add('light');
+                document.getElementById('themeToggle').textContent = '☀️';
+            }
+        })();
+
+        function toggleTheme() {
+            const isLight = document.body.classList.toggle('light');
+            localStorage.setItem('algoria_theme', isLight ? 'light' : 'dark');
+            document.getElementById('themeToggle').textContent = isLight ? '☀️' : '🌙';
+        }
+
+        // --- History panel ---
+        async function openHistoryPanel() {
+            if (!currentUser) return;
+            document.getElementById('historyPanel').classList.add('open');
+            document.getElementById('historyBackdrop').classList.add('open');
+            const list = document.getElementById('historyList');
+            list.innerHTML = '<div class="history-empty">Cargando...</div>';
+            try {
+                const res = await fetch(`${BACKEND}/history/${encodeURIComponent(currentUser.email)}`);
+                if (!res.ok) throw new Error();
+                const sessions = await res.json();
+                if (!sessions.length) {
+                    list.innerHTML = '<div class="history-empty">No hay conversaciones anteriores.</div>';
+                    return;
+                }
+                list.innerHTML = sessions.map(s => {
+                    const dt = s.started_at ? s.started_at.slice(0,16).replace('T',' ') : '—';
+                    const preview = s.preview || '(sin mensajes)';
+                    return `<div class="history-session" onclick="loadHistorySession('${escapeHtml(s.session_id)}','${escapeHtml(dt)}')">
+                        <div class="history-session-date">${dt}</div>
+                        <div class="history-session-preview">${escapeHtml(preview)}</div>
+                    </div>`;
+                }).join('');
+            } catch(e) {
+                list.innerHTML = '<div class="history-empty">Error al cargar el historial.</div>';
+            }
+        }
+
+        function closeHistoryPanel() {
+            document.getElementById('historyPanel').classList.remove('open');
+            document.getElementById('historyBackdrop').classList.remove('open');
+        }
+
+        let savedChatHTML = null;
+
+        async function loadHistorySession(sid, dateLabel) {
+            closeHistoryPanel();
+            try {
+                const res = await fetch(`${BACKEND}/history/${encodeURIComponent(currentUser.email)}/${encodeURIComponent(sid)}`);
+                if (!res.ok) throw new Error();
+                const messages = await res.json();
+                savedChatHTML = chatArea.innerHTML;
+                chatArea.innerHTML = '';
+                if (welcome) welcome.style.display = 'none';
+                for (const msg of messages) {
+                    addMessage(msg.role === 'user' ? 'user' : 'bot', msg.content);
+                }
+                const banner = document.getElementById('readonlyBanner');
+                document.getElementById('readonlyDate').textContent = dateLabel;
+                banner.style.display = 'flex';
+                msgInput.disabled = true;
+                sendBtn.disabled = true;
+                msgInput.placeholder = 'Modo lectura — no podés enviar mensajes aquí';
+            } catch(e) {
+                savedChatHTML = null;
+            }
+        }
+
+        function exitReadonlyMode() {
+            if (savedChatHTML !== null) {
+                chatArea.innerHTML = savedChatHTML;
+                savedChatHTML = null;
+            }
+            document.getElementById('readonlyBanner').style.display = 'none';
+            msgInput.disabled = false;
+            sendBtn.disabled = false;
+            msgInput.placeholder = 'Escribí tu pregunta de Álgebra...';
+            msgInput.focus();
+        }
+
+        // --- Suggestions ---
+        const SUGGESTION_TEMPLATES = {
+            matrix: ['¿Podés mostrarme un ejemplo con números?', '¿Cómo se calcula la inversa?', '¿Cuándo una matriz no tiene inversa?'],
+            determinant: ['¿Podés hacer un ejemplo 3×3?', '¿Cuándo el determinante es cero?', '¿Cómo aplico la regla de Sarrus?'],
+            system: ['¿Podés resolverlo con eliminación de Gauss?', '¿Cuándo un sistema no tiene solución?', '¿Cómo uso la regla de Cramer?'],
+            vector: ['¿Podés mostrar el módulo paso a paso?', '¿Cómo verifico si dos vectores son paralelos?', '¿Qué es el producto escalar?'],
+            complex: ['¿Cómo paso este número a forma polar?', '¿Podés dar un ejemplo de multiplicación?', '¿Cómo calculo el módulo de un complejo?'],
+            function: ['¿Podés graficar un ejemplo?', '¿Cómo encuentro el dominio?', '¿Cómo determino la imagen?'],
+            equation: ['¿Podés resolverlo paso a paso?', '¿Cómo verifico si el resultado es correcto?', '¿Qué pasa si hay más de una solución?'],
+            conic: ['¿Podés escribir la ecuación canónica?', '¿Cómo identifico el tipo de cónica?', '¿Dónde están el foco y la directriz?'],
+            default: ['¿Podés darme un ejemplo concreto?', '¿Cómo se resuelve paso a paso?', '¿Podés proponerme un ejercicio?'],
+        };
+
+        function generateSuggestions(text) {
+            const t = text.toLowerCase();
+            let tmpl;
+            if (/matriz|matrices|transpuesta|inversa/.test(t)) tmpl = SUGGESTION_TEMPLATES.matrix;
+            else if (/determinante|sarrus|laplace|cofactor/.test(t)) tmpl = SUGGESTION_TEMPLATES.determinant;
+            else if (/sistema|ecuaciones lineales|gauss|cramer|rouché/.test(t)) tmpl = SUGGESTION_TEMPLATES.system;
+            else if (/vector|módulo|producto escalar|paralel/.test(t)) tmpl = SUGGESTION_TEMPLATES.vector;
+            else if (/complejo|binómica|polar|trigonométric/.test(t)) tmpl = SUGGESTION_TEMPLATES.complex;
+            else if (/función|dominio|imagen|polinómica|exponencial|logarítm/.test(t)) tmpl = SUGGESTION_TEMPLATES.function;
+            else if (/ecuación|raíz|solución|despejá|inecuac/.test(t)) tmpl = SUGGESTION_TEMPLATES.equation;
+            else if (/cónica|circunferencia|elipse|hipérbola|parábola/.test(t)) tmpl = SUGGESTION_TEMPLATES.conic;
+            else tmpl = SUGGESTION_TEMPLATES.default;
+            const shuffled = [...tmpl].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, 2 + Math.floor(Math.random() * 2));
+        }
+
+        function addSuggestions(text) {
+            const suggestions = generateSuggestions(text);
+            const div = document.createElement('div');
+            div.className = 'suggestions';
+            div.innerHTML = suggestions.map(s => `<button class="suggestion-btn" onclick="sendQuick(this)">${escapeHtml(s)}</button>`).join('');
+            chatArea.appendChild(div);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        // --- Feedback popup ---
+
+        let selectedRating = 0;
+
+        function showFeedbackPopup() {
+            feedbackShown = true;
+            sessionStorage.setItem('algoria_feedback_shown', '1');
+            selectedRating = 0;
+            document.querySelectorAll('.star').forEach(s => s.classList.remove('selected'));
+            document.getElementById('feedbackMsg').value = '';
+            document.getElementById('feedbackOverlay').style.display = 'flex';
+        }
+
+        function closeFeedback() {
+            document.getElementById('feedbackOverlay').style.display = 'none';
+        }
+
+        document.getElementById('starRow').addEventListener('click', function(e) {
+            if (!e.target.classList.contains('star')) return;
+            selectedRating = parseInt(e.target.dataset.v);
+            document.querySelectorAll('.star').forEach(s => {
+                s.classList.toggle('selected', parseInt(s.dataset.v) <= selectedRating);
+            });
+        });
+
+        async function submitFeedback() {
+            if (!selectedRating) { return; }
+            const message = document.getElementById('feedbackMsg').value.trim() || null;
+            const user_email = currentUser ? currentUser.email : 'anónimo';
+            try {
+                await fetch(`${BACKEND}/feedback`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_email, rating: selectedRating, message })
+                });
+            } catch(e) {}
+            closeFeedback();
+        }
     </script>
 </body>
 </html>

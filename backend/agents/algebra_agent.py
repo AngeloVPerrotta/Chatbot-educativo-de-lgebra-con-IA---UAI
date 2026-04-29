@@ -35,12 +35,22 @@ def chat(historial: list, session_id: str = None) -> str:
         logger.info(f'System prompt cargado: {len(system_prompt)} caracteres')
 
         user_messages = [m for m in historial if m.get("role") == "user"]
+        rag_confidence = None
         if user_messages:
             last_user_message = user_messages[-1].get("content", "")
-            context = retrieve_context(last_user_message)
+            context, rag_score = retrieve_context(last_user_message)
             if context:
+                if rag_score > 5:
+                    rag_confidence = "high"
+                elif rag_score >= 3:
+                    rag_confidence = "medium"
+                else:
+                    rag_confidence = "low"
+                logger.info(f'RAG confidence: {rag_confidence} (score={rag_score})')
                 system_prompt = system_prompt + "\n\nCONTEXTO RELEVANTE DE LA CÁTEDRA:\n" + context
                 logger.info(f'Contexto RAG agregado: {len(context)} caracteres')
+            else:
+                logger.info('RAG: no context found')
 
         logger.info(f'Total mensajes: {len(historial)}')
 
@@ -66,6 +76,7 @@ def chat(historial: list, session_id: str = None) -> str:
                 user_msg_len=user_msg_len,
                 bot_resp_len=len(result),
                 response_time_ms=response_time_ms,
+                rag_confidence=rag_confidence,
             )
         except Exception:
             pass  # No interrumpir el flujo si falla el analytics

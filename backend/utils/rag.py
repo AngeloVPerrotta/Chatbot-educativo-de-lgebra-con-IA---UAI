@@ -24,12 +24,13 @@ def _tokenize(text: str) -> set:
     return tokens - stopwords
 
 
-def retrieve_context(query: str, top_k: int = 3) -> str:
+def retrieve_context(query: str, top_k: int = 3) -> tuple:
+    """Returns (context_text, max_score). context_text is empty string if no results."""
     chunks = _load_chunks()
     query_tokens = _tokenize(query)
 
     if not query_tokens:
-        return ""
+        return "", 0.0
 
     scores = []
     for chunk in chunks:
@@ -48,10 +49,11 @@ def retrieve_context(query: str, top_k: int = 3) -> str:
     top_chunks = [chunk for score, chunk in scores[:top_k] if score > 0]
 
     if not top_chunks:
-        return ""
+        return "", 0.0
 
+    max_score = float(scores[0][0])
     parts = []
     for chunk in top_chunks:
         parts.append(f"[{chunk['topic']}] {chunk['content']}")
 
-    return "\n\n".join(parts)
+    return "\n\n".join(parts), max_score

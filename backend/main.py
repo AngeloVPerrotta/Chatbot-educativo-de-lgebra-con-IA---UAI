@@ -21,6 +21,13 @@ from utils.analytics import (
     add_tokens_used,
     check_token_limit,
     get_all_users,
+    save_feedback,
+    get_feedback_stats,
+    get_recent_feedback,
+    verify_pin,
+    save_chat_message,
+    get_user_sessions,
+    get_session_messages,
 )
 
 load_dotenv(override=False)
@@ -59,9 +66,16 @@ class ChatResponse(BaseModel):
 class UserRegisterRequest(BaseModel):
     name: str
     email: str
+    pin: str
 
 class UserLoginRequest(BaseModel):
     email: str
+    pin: str
+
+class FeedbackRequest(BaseModel):
+    user_email: str
+    rating: int
+    message: Optional[str] = None
 
 
 # --- Endpoints base ---
@@ -80,7 +94,9 @@ def health_check():
 
 @app.post("/register")
 def register_endpoint(payload: UserRegisterRequest):
-    result = register_user(payload.name.strip(), payload.email.strip().lower())
+    if not payload.pin.isdigit() or len(payload.pin) != 4:
+        raise HTTPException(status_code=422, detail="El PIN debe ser exactamente 4 dígitos numéricos.")
+    result = register_user(payload.name.strip(), payload.email.strip().lower(), payload.pin)
     if not result["ok"]:
         raise HTTPException(status_code=409, detail=result["error"])
     return result["user"]
@@ -93,6 +109,8 @@ def login_endpoint(payload: UserLoginRequest):
     user = get_user_by_email(payload.email.strip().lower())
     if not user:
         raise HTTPException(status_code=404, detail="Usuario no encontrado. ¿Ya te registraste?")
+    if not verify_pin(payload.email.strip().lower(), payload.pin):
+        raise HTTPException(status_code=401, detail="PIN incorrecto.")
     return user
 
 
@@ -141,6 +159,14 @@ def chat_endpoint(request: ChatRequest):
         # Actualizar tokens usados (aproximado por longitud de respuesta)
         if request.user_email:
             add_tokens_used(request.user_email, len(respuesta))
+
+        # Guardar historial de chat
+        if request.user_email:
+            try:
+                save_chat_message(request.user_email, request.session_id, "user", request.message)
+                save_chat_message(request.user_email, request.session_id, "assistant", respuesta)
+            except Exception:
+                pass
 
         return ChatResponse(response=respuesta, session_id=request.session_id)
 
@@ -198,6 +224,24 @@ def admin_users(request: Request):
     return get_all_users()
 
 
+# --- POST /feedback ---
+
+@app.post("/feedback")
+def feedback_endpoint(payload: FeedbackRequest):
+    if not 1 <= payload.rating <= 5:
+        raise HTTPException(status_code=422, detail="El rating debe ser entre 1 y 5.")
+    save_feedback(payload.user_email, payload.rating, payload.message)
+    return {"ok": True}
+
+
+# --- GET /admin/feedback ---
+
+@app.get("/admin/feedback")
+def admin_feedback(request: Request):
+    _require_admin(request)
+    return {"stats": get_feedback_stats(), "recent": get_recent_feedback()}
+
+
 # --- GET /sessions/{session_id} ---
 # Retorna el historial completo de mensajes de una sesión.
 
@@ -208,3 +252,17 @@ def get_session_history(session_id: str):
         return {"session_id": session_id, "messages": historial}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al obtener la sesión: {str(e)}")
+
+
+# --- GET /history/{email} ---
+
+@app.get("/history/{email}")
+def user_sessions(email: str):
+    return get_user_sessions(email.strip().lower())
+
+
+# --- GET /history/{email}/{session_id} ---
+
+@app.get("/history/{email}/{session_id}")
+def session_detail(email: str, session_id: str):
+    return get_session_messages(session_id)
