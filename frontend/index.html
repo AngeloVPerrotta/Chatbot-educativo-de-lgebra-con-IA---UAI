@@ -27,6 +27,7 @@
             --border: rgba(56,189,248,0.1);
             --user-bubble: linear-gradient(135deg,#0ea5e9,#0284c7);
             --bot-bubble: #1a2238;
+            --panel-width: 280px;
         }
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'DM Sans',sans-serif;background:var(--bg-primary);color:var(--text-primary);height:100vh;overflow:hidden;position:relative}
@@ -34,15 +35,51 @@
         .ambient-glow{position:fixed;border-radius:50%;filter:blur(140px);pointer-events:none;z-index:0}
         .glow-1{width:450px;height:450px;background:rgba(56,189,248,0.06);top:-120px;right:-80px}
         .glow-2{width:350px;height:350px;background:rgba(52,211,153,0.04);bottom:-80px;left:-80px}
-        .cursor-glow{display:none}
-        .app-container{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh;max-width:900px;margin:0 auto;padding:0 20px}
+
+        /* === LAYOUT === */
+        .root-layout{position:relative;z-index:1;display:flex;height:100vh;overflow:hidden}
+
+        /* === HISTORY PANEL (fixed left) === */
+        .history-panel{width:var(--panel-width);min-width:var(--panel-width);background:var(--bg-card);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .25s ease,min-width .25s ease;flex-shrink:0}
+        .history-panel.collapsed{width:0;min-width:0;border-right:none}
+        .history-header{padding:16px 14px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;white-space:nowrap;overflow:hidden}
+        .history-header h3{font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:700;overflow:hidden;text-overflow:ellipsis}
+        .history-close{background:transparent;border:none;color:var(--text-muted);font-size:1rem;cursor:pointer;padding:4px 6px;border-radius:6px;font-family:'DM Sans',sans-serif;flex-shrink:0}
+        .history-close:hover{color:var(--text-primary)}
+        .history-new-btn{margin:10px 12px 4px;background:transparent;border:1px dashed var(--border);color:var(--text-secondary);font-size:.8rem;padding:8px 12px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;text-align:left}
+        .history-new-btn:hover{border-color:var(--accent);color:var(--accent)}
+        .history-list{flex:1;overflow-y:auto;padding:4px 0;scrollbar-width:thin;scrollbar-color:var(--accent-glow) transparent}
+        .history-list::-webkit-scrollbar{width:3px}
+        .history-list::-webkit-scrollbar-thumb{background:var(--accent-glow);border-radius:3px}
+        .history-session{padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.03);transition:background .15s;border-left:3px solid transparent}
+        .history-session:hover{background:rgba(255,255,255,0.04)}
+        .history-session.active{border-left-color:var(--accent);background:rgba(56,189,248,0.06)}
+        .history-session-date{font-size:.68rem;color:var(--text-muted);margin-bottom:2px}
+        .history-session-preview{font-size:.79rem;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:230px}
+        .history-empty{padding:32px 14px;text-align:center;color:var(--text-muted);font-size:.82rem}
+
+        /* Mobile overlay */
+        .history-backdrop{display:none;position:fixed;inset:0;z-index:399;background:rgba(11,15,25,0.6)}
+        .history-backdrop.open{display:block}
+        @media(max-width:768px){
+            .history-panel{position:fixed;top:0;left:0;height:100vh;z-index:400;width:var(--panel-width);min-width:var(--panel-width);transform:translateX(-100%);transition:transform .3s ease}
+            .history-panel.mobile-open{transform:translateX(0)}
+            .history-panel.collapsed{transform:translateX(-100%);width:var(--panel-width);min-width:var(--panel-width)}
+        }
+
+        /* === CHAT SIDE === */
+        .app-container{flex:1;display:flex;flex-direction:column;min-width:0;padding:0 20px}
         .header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 14px;border-bottom:1px solid var(--border);flex-shrink:0}
-        .header-left{display:flex;align-items:center;gap:14px}
+        .header-left{display:flex;align-items:center;gap:12px}
+        .hamburger-btn{background:transparent;border:1px solid var(--border);color:var(--text-muted);width:34px;height:34px;border-radius:8px;display:none;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all .2s;flex-shrink:0}
+        .hamburger-btn:hover{border-color:var(--accent);color:var(--accent)}
+        .hamburger-btn.visible{display:flex}
         .logo-mark{width:42px;height:42px;background:var(--user-bubble);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;box-shadow:0 3px 16px var(--accent-glow)}
         .header-title h1{font-family:'Outfit',sans-serif;font-size:1.45rem;font-weight:800;letter-spacing:-0.03em;color:var(--text-primary)}
         .header-title h1 span{color:var(--accent)}
         .header-title p{font-size:.78rem;color:var(--text-muted);margin-top:1px}
-        .header-right{display:flex;align-items:center;gap:10px}
+        .header-right{display:flex;align-items:center;gap:8px}
+        .user-name-badge{font-size:.8rem;color:var(--text-secondary);background:var(--bg-card);border:1px solid var(--border);padding:5px 10px;border-radius:8px;white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis}
         .status-badge{display:flex;align-items:center;gap:6px;font-size:.73rem;color:var(--green);background:var(--green-glow);padding:5px 11px;border-radius:20px;border:1px solid rgba(52,211,153,0.18)}
         .status-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse-dot 2s infinite}
         @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
@@ -99,10 +136,6 @@
         .clear-btn{background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:.76rem;padding:5px 12px;border-radius:8px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
         .clear-btn:hover{border-color:#f87171;color:#f87171;background:rgba(248,113,113,0.08)}
 
-        /* --- Admin gear --- */
-        .admin-gear{position:fixed;bottom:22px;right:22px;width:44px;height:44px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--text-secondary);text-decoration:none;z-index:200;transition:all .2s;box-shadow:0 2px 12px rgba(0,0,0,0.3)}
-        .admin-gear:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-subtle);box-shadow:0 4px 20px var(--accent-glow)}
-
         /* --- Auth overlay --- */
         .auth-overlay{position:fixed;inset:0;z-index:500;background:rgba(11,15,25,0.97);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeUp .5s ease}
         .auth-card{background:var(--bg-card);border:1px solid var(--border);border-radius:24px;padding:40px 36px;width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;gap:20px;box-shadow:0 8px 48px rgba(0,0,0,0.5)}
@@ -121,7 +154,9 @@
         .auth-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 4px 18px var(--accent-glow)}
         .auth-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
         .auth-error{font-size:.83rem;color:#f87171;text-align:center;min-height:20px}
-        .auth-hint{font-size:.78rem;color:var(--text-muted);text-align:center}
+
+        /* --- UAI badge --- */
+        .uai-badge{display:none;align-items:center;gap:6px;color:var(--green);font-size:.82rem;background:var(--green-glow);border:1px solid rgba(52,211,153,0.25);padding:6px 12px;border-radius:8px}
 
         /* --- Theme toggle --- */
         .theme-toggle{width:34px;height:34px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:all .2s;color:var(--text-secondary);padding:0}
@@ -133,45 +168,25 @@
         body.light .typing-dots span{background:var(--accent)}
         body.light canvas#particles{opacity:.4}
 
-        /* --- History panel --- */
-        .history-backdrop{position:fixed;inset:0;z-index:399;background:rgba(11,15,25,0.55);display:none}
-        .history-backdrop.open{display:block}
-        .history-panel{position:fixed;top:0;left:0;height:100vh;width:320px;background:var(--bg-card);border-right:1px solid var(--border);z-index:400;transform:translateX(-100%);transition:transform .3s ease;display:flex;flex-direction:column;overflow:hidden}
-        .history-panel.open{transform:translateX(0)}
-        .history-header{padding:18px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-        .history-header h3{font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700}
-        .history-close{background:transparent;border:none;color:var(--text-muted);font-size:1.1rem;cursor:pointer;padding:4px 8px;border-radius:6px;font-family:'DM Sans',sans-serif}
-        .history-close:hover{color:var(--text-primary)}
-        .history-list{flex:1;overflow-y:auto;padding:6px 0}
-        .history-session{padding:11px 16px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);transition:background .15s}
-        .history-session:hover{background:rgba(255,255,255,0.04)}
-        .history-session-date{font-size:.7rem;color:var(--text-muted);margin-bottom:3px}
-        .history-session-preview{font-size:.82rem;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:250px}
-        .history-empty{padding:40px 16px;text-align:center;color:var(--text-muted);font-size:.84rem}
+        /* --- Readonly banner --- */
         .readonly-banner{background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.22);color:#fbbf24;font-size:.81rem;padding:9px 14px;border-radius:9px;display:none;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px;flex-shrink:0}
         .readonly-banner button{background:transparent;border:1px solid rgba(251,191,36,0.35);color:#fbbf24;font-size:.77rem;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
+
         /* --- Char counter --- */
         .char-counter{font-size:.71rem;color:var(--text-muted);text-align:right;padding:3px 6px 0}
         .char-counter.warn{color:#f87171}
-        /* --- History footer --- */
-        .history-footer{padding:12px 16px;border-top:1px solid var(--border);flex-shrink:0}
-        .history-back-btn{width:100%;background:transparent;border:1px solid var(--border);color:var(--text-secondary);font-size:.79rem;padding:8px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
-        .history-back-btn:hover{border-color:var(--accent);color:var(--accent)}
 
         /* --- Suggestions --- */
         .suggestions{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;padding-left:44px}
         .suggestion-btn{padding:5px 11px;background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);font-size:.77rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .18s}
         .suggestion-btn:hover{border-color:var(--accent);color:var(--accent-soft);background:var(--accent-subtle)}
 
-        /* --- UAI badge --- */
-        .uai-badge{display:none;align-items:center;gap:6px;color:var(--green);font-size:.82rem;background:var(--green-glow);border:1px solid rgba(52,211,153,0.25);padding:6px 12px;border-radius:8px}
-
         /* --- Feedback popup --- */
         .feedback-overlay{position:fixed;inset:0;z-index:600;background:rgba(11,15,25,0.7);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeUp .4s ease}
         .feedback-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:28px 28px 24px;width:100%;max-width:360px;display:flex;flex-direction:column;align-items:center;gap:16px;box-shadow:0 8px 40px rgba(0,0,0,0.5)}
         .feedback-title{font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text-primary);text-align:center}
         .star-row{display:flex;gap:8px}
-        .star{font-size:2rem;color:var(--text-muted);cursor:pointer;transition:color .15s,transform .15s}
+        .star{font-size:2rem;color:var(--text-muted);cursor:pointer;transition:color .15s,transform .15s;line-height:1}
         .star:hover,.star.selected{color:#fbbf24;transform:scale(1.15)}
         .feedback-card textarea{width:100%;background:var(--bg-input);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-family:'DM Sans',sans-serif;font-size:.88rem;padding:10px 14px;outline:none;resize:none}
         .feedback-card textarea:focus{border-color:var(--accent)}
@@ -184,20 +199,8 @@
 <body>
     <canvas id="particles"></canvas>
 
-    <!-- History panel -->
-    <div class="history-backdrop" id="historyBackdrop" onclick="closeHistoryPanel()"></div>
-    <div class="history-panel" id="historyPanel">
-        <div class="history-header">
-            <h3>Conversaciones</h3>
-            <button class="history-close" onclick="closeHistoryPanel()">✕</button>
-        </div>
-        <div class="history-list" id="historyList">
-            <div class="history-empty">Cargando...</div>
-        </div>
-        <div class="history-footer">
-            <button class="history-back-btn" onclick="closeHistoryPanel()">← Volver al chat actual</button>
-        </div>
-    </div>
+    <!-- History backdrop (mobile only) -->
+    <div class="history-backdrop" id="historyBackdrop" onclick="closePanelMobile()"></div>
 
     <!-- Feedback popup -->
     <div class="feedback-overlay" id="feedbackOverlay" style="display:none">
@@ -210,7 +213,7 @@
                 <span class="star" data-v="4">★</span>
                 <span class="star" data-v="5">★</span>
             </div>
-            <textarea id="feedbackMsg" placeholder="Comentario (opcional)" rows="2"></textarea>
+            <textarea id="feedbackMsg" placeholder="Dejanos un comentario (opcional)" rows="2"></textarea>
             <div class="feedback-btns">
                 <button class="auth-btn" onclick="submitFeedback()">Enviar</button>
                 <button class="clear-btn" onclick="closeFeedback()">Ahora no</button>
@@ -226,7 +229,7 @@
             <p class="auth-subtitle">Tutor de Álgebra · UAI</p>
 
             <div class="auth-tabs">
-                <button class="auth-tab active" id="tabRegister" onclick="switchTab('register')">Registrarme</button>
+                <button class="auth-tab active" id="tabRegister" onclick="switchTab('register')">Primera vez</button>
                 <button class="auth-tab" id="tabLogin" onclick="switchTab('login')">Ya tengo cuenta</button>
             </div>
 
@@ -235,14 +238,12 @@
                 <input class="auth-input" type="text" id="regName" placeholder="Tu nombre" autocomplete="off">
                 <input class="auth-input" type="email" id="regEmail" placeholder="Tu email universitario" autocomplete="off">
                 <div class="uai-badge" id="uaiBadge">✓ Email UAI verificado</div>
-                <input class="auth-input" type="text" id="regPin" placeholder="PIN (4 dígitos)" maxlength="4" autocomplete="off" inputmode="numeric">
                 <button class="auth-btn" id="btnRegister" onclick="doRegister()">Crear cuenta</button>
             </div>
 
             <!-- Login form -->
             <div class="auth-form" id="formLogin" style="display:none">
                 <input class="auth-input" type="email" id="loginEmail" placeholder="Tu email" autocomplete="off">
-                <input class="auth-input" type="text" id="loginPin" placeholder="PIN (4 dígitos)" maxlength="4" autocomplete="off" inputmode="numeric">
                 <button class="auth-btn" id="btnLogin" onclick="doLogin()">Ingresar</button>
             </div>
 
@@ -250,70 +251,123 @@
         </div>
     </div>
 
-    <!-- Admin gear icon -->
-    <a href="admin.html" class="admin-gear" title="Admin">⚙</a>
+    <div class="root-layout">
+        <!-- History panel (fixed left) -->
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <h3>Conversaciones</h3>
+                <button class="history-close" onclick="collapsePanel()">✕</button>
+            </div>
+            <button class="history-new-btn" onclick="newConversation()">＋ Nueva conversación</button>
+            <div class="history-list" id="historyList">
+                <div class="history-empty">Iniciá sesión para ver tu historial.</div>
+            </div>
+        </div>
 
-    <div class="app-container">
-        <header class="header">
-            <div class="header-left">
-                <div class="logo-mark">∑</div>
-                <div class="header-title">
-                    <h1>Algor<span>IA</span></h1>
-                    <p>Tutor inteligente de Álgebra · UAI</p>
+        <!-- Main chat -->
+        <div class="app-container">
+            <header class="header">
+                <div class="header-left">
+                    <button class="hamburger-btn" id="hamburgerBtn" onclick="openPanel()">☰</button>
+                    <div class="logo-mark">∑</div>
+                    <div class="header-title">
+                        <h1>Algor<span>IA</span></h1>
+                        <p>Tutor inteligente de Álgebra · UAI</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <span class="user-name-badge" id="userNameBadge" style="display:none"></span>
+                    <button class="clear-btn" onclick="clearChat()" title="Limpiar conversación">✕ Limpiar</button>
+                    <button class="clear-btn" id="logoutBtn" onclick="doLogout()" style="display:none">Cerrar sesión</button>
+                    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
+                    <div class="status-badge"><div class="status-dot"></div><span>En línea</span></div>
+                </div>
+            </header>
+            <div class="readonly-banner" id="readonlyBanner">
+                <span>Modo lectura — <span id="readonlyDate"></span></span>
+                <button onclick="exitReadonlyMode()">← Volver al chat</button>
+            </div>
+            <div class="chat-area" id="chatArea">
+                <div class="welcome" id="welcome">
+                    <div class="welcome-icon">∑</div>
+                    <h2 id="welcomeTitle">¡Hola! Soy Algor<span>IA</span></h2>
+                    <p class="welcome-greeting" id="welcomeGreeting"></p>
+                    <p class="welcome-motive" id="welcomeMotive"></p>
+                    <div class="quick-prompts" id="quickPrompts"></div>
                 </div>
             </div>
-            <div class="header-right">
-                <button class="clear-btn" onclick="openHistoryPanel()" title="Ver historial">📋 Historial</button>
-                <button class="clear-btn" onclick="clearChat()" title="Limpiar conversación">✕ Limpiar</button>
-                <button class="clear-btn" id="logoutBtn" onclick="doLogout()" title="Cerrar sesión" style="display:none">Cerrar sesión</button>
-                <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
-                <div class="status-badge"><div class="status-dot"></div><span>En línea</span></div>
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <textarea id="msgInput" rows="1" placeholder="Escribí tu pregunta de Álgebra..." maxlength="500" oninput="autoResize(this);updateCharCounter(this.value.length)" onkeydown="handleKey(event)"></textarea>
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+                <div class="char-counter" id="charCounter">0/500</div>
             </div>
-        </header>
-        <div class="readonly-banner" id="readonlyBanner">
-            <span>📂 Modo lectura — <span id="readonlyDate"></span></span>
-            <button onclick="exitReadonlyMode()">← Volver al chat</button>
+            <footer class="footer">
+                <p>Hecho por <strong>Angelo Perrotta</strong> · Ingeniería en Sistemas · <a href="https://www.uai.edu.ar" target="_blank" rel="noopener">UAI</a></p>
+            </footer>
         </div>
-        <div class="chat-area" id="chatArea">
-            <div class="welcome" id="welcome">
-                <div class="welcome-icon">∑</div>
-                <h2 id="welcomeTitle">¡Hola! Soy Algor<span>IA</span></h2>
-                <p class="welcome-greeting" id="welcomeGreeting"></p>
-                <p class="welcome-motive" id="welcomeMotive"></p>
-                <div class="quick-prompts" id="quickPrompts"></div>
-            </div>
-        </div>
-        <div class="input-area">
-            <div class="input-wrapper">
-                <textarea id="msgInput" rows="1" placeholder="Escribí tu pregunta de Álgebra..." maxlength="500" oninput="autoResize(this);updateCharCounter(this.value.length)" onkeydown="handleKey(event)"></textarea>
-                <button class="send-btn" id="sendBtn" onclick="sendMessage()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                </button>
-            </div>
-            <div class="char-counter" id="charCounter">0/500</div>
-        </div>
-        <footer class="footer">
-            <p>Hecho por <strong>Angelo Perrotta</strong> · Ingeniería en Sistemas · <a href="https://www.uai.edu.ar" target="_blank" rel="noopener">UAI</a></p>
-        </footer>
     </div>
 
     <script>
         const BACKEND = 'https://chatbot-educativo-de-lgebra-con-ia-uai-production.up.railway.app';
-        const sessionId = 'sess-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
+        let sessionId = 'sess-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
         let isWaiting = false;
         let botMsgCount = 0;
-        let feedbackShown = !!sessionStorage.getItem('algoria_feedback_shown');
+        let panelCollapsed = false;
+        const isMobile = () => window.innerWidth <= 768;
+
         const chatArea = document.getElementById('chatArea');
         const msgInput = document.getElementById('msgInput');
         const sendBtn = document.getElementById('sendBtn');
         const welcome = document.getElementById('welcome');
 
-        // --- Current user from localStorage (persiste entre sesiones) ---
+        // Feedback shown: per-account via localStorage
         let currentUser = null;
         try { currentUser = JSON.parse(localStorage.getItem('algoria_user')); } catch(e) {}
 
-        // --- Auth overlay logic ---
+        function feedbackKey() { return currentUser ? 'algoria_feedback_' + currentUser.email : null; }
+        function feedbackAlreadyShown() { const k = feedbackKey(); return k ? !!localStorage.getItem(k) : true; }
 
+        // === PANEL ===
+        function collapsePanel() {
+            panelCollapsed = true;
+            if (isMobile()) {
+                document.getElementById('historyPanel').classList.remove('mobile-open');
+                document.getElementById('historyBackdrop').classList.remove('open');
+            } else {
+                document.getElementById('historyPanel').classList.add('collapsed');
+            }
+            document.getElementById('hamburgerBtn').classList.add('visible');
+        }
+
+        function openPanel() {
+            panelCollapsed = false;
+            document.getElementById('hamburgerBtn').classList.remove('visible');
+            if (isMobile()) {
+                document.getElementById('historyPanel').classList.add('mobile-open');
+                document.getElementById('historyBackdrop').classList.add('open');
+            } else {
+                document.getElementById('historyPanel').classList.remove('collapsed');
+            }
+            loadHistoryList();
+        }
+
+        function closePanelMobile() {
+            document.getElementById('historyPanel').classList.remove('mobile-open');
+            document.getElementById('historyBackdrop').classList.remove('open');
+        }
+
+        // On mobile, start collapsed
+        if (isMobile()) {
+            collapsePanel();
+        } else {
+            // Desktop: panel visible, load history after login
+        }
+
+        // === AUTH ===
         function switchTab(tab) {
             document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
             document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
@@ -322,9 +376,7 @@
             document.getElementById('authError').textContent = '';
         }
 
-        function setAuthError(msg) {
-            document.getElementById('authError').textContent = msg;
-        }
+        function setAuthError(msg) { document.getElementById('authError').textContent = msg; }
 
         function setAuthLoading(btn, loading) {
             btn.disabled = loading;
@@ -334,17 +386,14 @@
         async function doRegister() {
             const name = document.getElementById('regName').value.trim();
             const email = document.getElementById('regEmail').value.trim();
-            const pin = document.getElementById('regPin').value.trim();
             if (!name || !email) { setAuthError('Completá nombre y email.'); return; }
-            if (!/^\d{4}$/.test(pin)) { setAuthError('El PIN debe ser exactamente 4 dígitos numéricos.'); return; }
             const btn = document.getElementById('btnRegister');
-            setAuthLoading(btn, true);
-            setAuthError('');
+            setAuthLoading(btn, true); setAuthError('');
             try {
                 const res = await fetch(`${BACKEND}/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, pin })
+                    body: JSON.stringify({ name, email })
                 });
                 const data = await res.json();
                 if (!res.ok) { setAuthError(data.detail || 'Error al registrarse.'); return; }
@@ -353,24 +402,19 @@
                 hideAuthOverlay();
             } catch(e) {
                 setAuthError('No se pudo conectar. Revisá tu conexión.');
-            } finally {
-                setAuthLoading(btn, false);
-            }
+            } finally { setAuthLoading(btn, false); }
         }
 
         async function doLogin() {
             const email = document.getElementById('loginEmail').value.trim();
-            const pin = document.getElementById('loginPin').value.trim();
             if (!email) { setAuthError('Ingresá tu email.'); return; }
-            if (!/^\d{4}$/.test(pin)) { setAuthError('Ingresá tu PIN de 4 dígitos.'); return; }
             const btn = document.getElementById('btnLogin');
-            setAuthLoading(btn, true);
-            setAuthError('');
+            setAuthLoading(btn, true); setAuthError('');
             try {
                 const res = await fetch(`${BACKEND}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, pin })
+                    body: JSON.stringify({ email })
                 });
                 const data = await res.json();
                 if (!res.ok) { setAuthError(data.detail || 'No te encontramos. ¿Ya te registraste?'); return; }
@@ -379,38 +423,47 @@
                 hideAuthOverlay();
             } catch(e) {
                 setAuthError('No se pudo conectar. Revisá tu conexión.');
-            } finally {
-                setAuthLoading(btn, false);
-            }
+            } finally { setAuthLoading(btn, false); }
         }
 
         function hideAuthOverlay() {
             const overlay = document.getElementById('authOverlay');
             overlay.style.opacity = '0';
             overlay.style.transition = 'opacity .3s';
-            document.getElementById('logoutBtn').style.display = '';
-            setTimeout(() => { overlay.style.display = 'none'; setupWelcome(); msgInput.focus(); }, 300);
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                updateUserUI();
+                setupWelcome();
+                msgInput.focus();
+                loadHistoryList();
+            }, 300);
         }
 
-        // Allow Enter key in auth inputs
+        function updateUserUI() {
+            if (currentUser) {
+                document.getElementById('logoutBtn').style.display = '';
+                const badge = document.getElementById('userNameBadge');
+                badge.textContent = currentUser.name || currentUser.email;
+                badge.style.display = '';
+            }
+        }
+
+        // Allow Enter in auth inputs
         document.getElementById('regEmail').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
         document.getElementById('regName').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
-        document.getElementById('regPin').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
         document.getElementById('loginEmail').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-        document.getElementById('loginPin').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 
-        // UAI email badge detection
+        // UAI email badge
         document.getElementById('regEmail').addEventListener('input', function() {
             const v = this.value.trim().toLowerCase();
             const badge = document.getElementById('uaiBadge');
-            const isUai = v.endsWith('@alumnos.uai.edu.ar') || v.endsWith('@uai.edu.ar');
-            badge.style.display = isUai ? 'flex' : 'none';
+            badge.style.display = (v.endsWith('@alumnos.uai.edu.ar') || v.endsWith('@uai.edu.ar')) ? 'flex' : 'none';
         });
 
-        // Show or skip auth overlay
         if (currentUser) {
             document.getElementById('authOverlay').style.display = 'none';
-            document.getElementById('logoutBtn').style.display = '';
+            updateUserUI();
+            loadHistoryList();
         }
 
         function doLogout() {
@@ -424,29 +477,15 @@
             el.classList.toggle('warn', n > 450);
         }
 
-        // --- Welcome screen setup ---
-
+        // === WELCOME ===
         const ALL_QUICK_PROMPTS = [
-            'Explicame vectores en R²',
-            '¿Cómo resuelvo un sistema 3×3?',
-            '¿Qué es una transformación lineal?',
-            'Ayudame con matrices inversas',
-            '¿Cómo calculo el determinante?',
-            '¿Qué son los números complejos?',
-            'Explicame la regla de Cramer',
-            '¿Qué es el rango de una matriz?',
-            '¿Cómo se multiplican matrices?',
-            '¿Qué es un autovalor?',
-            'Forma polar de un número complejo',
-            '¿Cómo factorizo un polinomio?',
-            '¿Qué es la proyección ortogonal?',
-            'Ayudame con eliminación gaussiana',
-            '¿Cuándo un sistema no tiene solución?',
-            '¿Qué es la base de un espacio vectorial?',
-            '¿Cómo calculo el módulo de un vector?',
-            '¿Qué es la traza de una matriz?'
+            'Explicame vectores en R²','¿Cómo resuelvo un sistema 3×3?','¿Qué es una transformación lineal?',
+            'Ayudame con matrices inversas','¿Cómo calculo el determinante?','¿Qué son los números complejos?',
+            'Explicame la regla de Cramer','¿Qué es el rango de una matriz?','¿Cómo se multiplican matrices?',
+            '¿Qué es un autovalor?','Forma polar de un número complejo','¿Cómo factorizo un polinomio?',
+            '¿Qué es la proyección ortogonal?','Ayudame con eliminación gaussiana','¿Cuándo un sistema no tiene solución?',
+            '¿Qué es la base de un espacio vectorial?','¿Cómo calculo el módulo de un vector?','¿Qué es la traza de una matriz?'
         ];
-
         const MOTIVATIONAL = [
             'Cada ejercicio resuelto te acerca al parcial aprobado.',
             'Sistemas, matrices, funciones... elegí tu aventura.',
@@ -467,67 +506,60 @@
 
         function setupWelcome() {
             const greeting = getTimeGreeting();
-            const motive = MOTIVATIONAL[Math.floor(Math.random() * MOTIVATIONAL.length)];
-
             if (currentUser) {
                 document.getElementById('welcomeGreeting').textContent = `Hola ${currentUser.name}! ${greeting}`;
                 document.getElementById('welcomeMotive').style.display = 'none';
             } else {
                 document.getElementById('welcomeGreeting').textContent = greeting;
-                document.getElementById('welcomeMotive').textContent = motive;
+                document.getElementById('welcomeMotive').textContent = MOTIVATIONAL[Math.floor(Math.random() * MOTIVATIONAL.length)];
             }
-
-            // Pick 4 random quick prompts
             const shuffled = [...ALL_QUICK_PROMPTS].sort(() => Math.random() - 0.5);
             document.getElementById('quickPrompts').innerHTML = shuffled.slice(0, 4)
-                .map(q => `<button class="quick-prompt" onclick="sendQuick(this)">${q}</button>`)
-                .join('');
+                .map(q => `<button class="quick-prompt" onclick="sendQuick(this)">${q}</button>`).join('');
         }
-
         setupWelcome();
 
-        // --- Particles ---
+        // === PARTICLES ===
         (function() {
             const c = document.getElementById('particles'), ctx = c.getContext('2d'); let ps = []; const n = 40;
             function resize() { c.width = innerWidth; c.height = innerHeight; } resize(); addEventListener('resize', resize);
-            for (let i = 0; i < n; i++) ps.push({ x: Math.random() * c.width, y: Math.random() * c.height, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: Math.random() * 1.8 + .4, o: Math.random() * .08 + .02 });
+            for (let i = 0; i < n; i++) ps.push({ x: Math.random()*c.width, y: Math.random()*c.height, vx: (Math.random()-.5)*.25, vy: (Math.random()-.5)*.25, r: Math.random()*1.8+.4, o: Math.random()*.08+.02 });
             function draw() {
-                ctx.clearRect(0, 0, c.width, c.height);
-                ps.forEach(p => { p.x += p.vx; p.y += p.vy; if (p.x < 0 || p.x > c.width) p.vx *= -1; if (p.y < 0 || p.y > c.height) p.vy *= -1; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fillStyle = `rgba(56,189,248,${p.o})`; ctx.fill(); });
-                for (let i = 0; i < ps.length; i++) for (let j = i + 1; j < ps.length; j++) { const dx = ps[i].x - ps[j].x, dy = ps[i].y - ps[j].y, d = Math.sqrt(dx * dx + dy * dy); if (d < 110) { ctx.beginPath(); ctx.moveTo(ps[i].x, ps[i].y); ctx.lineTo(ps[j].x, ps[j].y); ctx.strokeStyle = `rgba(56,189,248,${.02 * (1 - d / 110)})`; ctx.lineWidth = .5; ctx.stroke(); } }
+                ctx.clearRect(0,0,c.width,c.height);
+                ps.forEach(p => { p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>c.width)p.vx*=-1; if(p.y<0||p.y>c.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=`rgba(56,189,248,${p.o})`; ctx.fill(); });
+                for(let i=0;i<ps.length;i++) for(let j=i+1;j<ps.length;j++){const dx=ps[i].x-ps[j].x,dy=ps[i].y-ps[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<110){ctx.beginPath();ctx.moveTo(ps[i].x,ps[i].y);ctx.lineTo(ps[j].x,ps[j].y);ctx.strokeStyle=`rgba(56,189,248,${.02*(1-d/110)})`;ctx.lineWidth=.5;ctx.stroke();}}
                 requestAnimationFrame(draw);
             } draw();
         })();
 
-        // --- Chat helpers ---
-
+        // === CHAT HELPERS ===
         function renderMath(el) {
             if (typeof renderMathInElement === 'function')
-                renderMathInElement(el, { delimiters: [{ left: '$$', right: '$$', display: true }, { left: '\\[', right: '\\]', display: true }, { left: '$', right: '$', display: false }, { left: '\\(', right: '\\)', display: false }], throwOnError: false, trust: true });
+                renderMathInElement(el, { delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false}], throwOnError:false, trust:true });
         }
 
         function sendQuick(el) { msgInput.value = el.textContent; sendMessage(); }
-        function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
-        function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
-        function escapeHtml(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+        function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
+        function handleKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} }
+        function escapeHtml(t) { const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
 
         function formatResponse(text) {
-            text = text.replace(/^\s+/, '');
+            text = text.replace(/^\s+/,'');
             const lb = [];
-            text = text.replace(/\$\$([\s\S]*?)\$\$/g, (_, m) => { lb.push('$$' + m + '$$'); return `%%L${lb.length - 1}%%`; });
-            text = text.replace(/\\\[([\s\S]*?)\\\]/g, (_, m) => { lb.push('\\[' + m + '\\]'); return `%%L${lb.length - 1}%%`; });
-            text = text.replace(/\$(.+?)\$/g, (_, m) => { lb.push('$' + m + '$'); return `%%L${lb.length - 1}%%`; });
-            text = text.replace(/\\\((.+?)\\\)/g, (_, m) => { lb.push('\\(' + m + '\\)'); return `%%L${lb.length - 1}%%`; });
+            text = text.replace(/\$\$([\s\S]*?)\$\$/g,(_,m)=>{lb.push('$$'+m+'$$');return`%%L${lb.length-1}%%`;});
+            text = text.replace(/\\\[([\s\S]*?)\\\]/g,(_,m)=>{lb.push('\\['+m+'\\]');return`%%L${lb.length-1}%%`;});
+            text = text.replace(/\$(.+?)\$/g,(_,m)=>{lb.push('$'+m+'$');return`%%L${lb.length-1}%%`;});
+            text = text.replace(/\\\((.+?)\\\)/g,(_,m)=>{lb.push('\\('+m+'\\)');return`%%L${lb.length-1}%%`;});
             let h = escapeHtml(text);
-            h = h.replace(/%%L(\d+)%%/g, (_, i) => lb[parseInt(i)]);
-            h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-            h = h.replace(/__(.+?)__/g, '<strong>$1</strong>');
-            h = h.replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
-            h = h.replace(/`(.+?)`/g, '<code>$1</code>');
-            h = h.replace(/\$\$([\s\S]*?)\$\$/g, (_, m) => '$$' + m.replace(/\n/g, '%%NEWLINE%%') + '$$');
-            h = h.split('\n\n').map(p => `<p>${p.trim()}</p>`).join('');
-            h = h.replace(/\n/g, '<br>');
-            h = h.replace(/%%NEWLINE%%/g, '\n');
+            h = h.replace(/%%L(\d+)%%/g,(_,i)=>lb[parseInt(i)]);
+            h = h.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+            h = h.replace(/__(.+?)__/g,'<strong>$1</strong>');
+            h = h.replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g,'<em>$1</em>');
+            h = h.replace(/`(.+?)`/g,'<code>$1</code>');
+            h = h.replace(/\$\$([\s\S]*?)\$\$/g,(_,m)=>'$$'+m.replace(/\n/g,'%%NEWLINE%%')+'$$');
+            h = h.split('\n\n').map(p=>`<p>${p.trim()}</p>`).join('');
+            h = h.replace(/\n/g,'<br>');
+            h = h.replace(/%%NEWLINE%%/g,'\n');
             return h;
         }
 
@@ -552,19 +584,44 @@
         async function sendMessage() {
             const text = msgInput.value.trim();
             if (!text || isWaiting) return;
+
+            // /admin command interception
+            if (text === '/admin') {
+                msgInput.value = ''; msgInput.style.height = 'auto';
+                addMessage('user', text);
+                if (!currentUser) { addMessage('bot', 'Tenés que iniciar sesión para usar este comando.'); return; }
+                showTyping();
+                try {
+                    const res = await fetch(`${BACKEND}/admin/check-access`, {
+                        headers: { 'X-Admin-Email': currentUser.email }
+                    });
+                    hideTyping();
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.is_admin || data.is_superadmin) {
+                            window.location.href = 'admin.html?email=' + encodeURIComponent(currentUser.email);
+                            return;
+                        }
+                    }
+                    addMessage('bot', 'No tenés permisos de administrador.');
+                } catch(e) {
+                    hideTyping();
+                    addMessage('bot', 'Error al verificar permisos.');
+                }
+                return;
+            }
+
             isWaiting = true; sendBtn.disabled = true; msgInput.value = ''; msgInput.style.height = 'auto';
             addMessage('user', text); showTyping();
             try {
                 const body = { message: text, materia: 'algebra', session_id: sessionId };
                 if (currentUser) body.user_email = currentUser.email;
-
                 const res = await fetch(`${BACKEND}/chat`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
                 });
                 hideTyping();
-
                 if (res.status === 429) {
                     addMessage('bot', 'Llegaste al límite de consultas por ahora. Contactá al profesor para ampliar tu acceso.');
                     return;
@@ -577,7 +634,7 @@
                 addMessage('bot', data.response);
                 addSuggestions(data.response);
                 botMsgCount++;
-                if (botMsgCount === 5 && !feedbackShown) showFeedbackPopup();
+                if (botMsgCount === 5 && !feedbackAlreadyShown()) showFeedbackPopup();
             } catch (err) {
                 hideTyping();
                 addMessage('bot', `Error de conexión: ${err.message}\n\nReintentá en unos segundos.`);
@@ -586,15 +643,28 @@
             }
         }
 
+        function newConversation() {
+            sessionId = 'sess-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
+            chatArea.querySelectorAll('.message,.typing-indicator,.suggestions').forEach(el => el.remove());
+            if (welcome) welcome.style.display = 'flex';
+            document.getElementById('readonlyBanner').style.display = 'none';
+            msgInput.disabled = false; sendBtn.disabled = false;
+            msgInput.placeholder = 'Escribí tu pregunta de Álgebra...';
+            botMsgCount = 0;
+            // Remove active from all sessions
+            document.querySelectorAll('.history-session').forEach(s => s.classList.remove('active'));
+            if (isMobile()) closePanelMobile();
+        }
+
         async function clearChat() {
-            try { await fetch(`${BACKEND}/reset`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_id: sessionId }) }); } catch (e) {}
-            chatArea.querySelectorAll('.message,.typing-indicator').forEach(el => el.remove());
+            try { await fetch(`${BACKEND}/reset`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({session_id:sessionId}) }); } catch(e) {}
+            chatArea.querySelectorAll('.message,.typing-indicator,.suggestions').forEach(el => el.remove());
             if (welcome) welcome.style.display = 'flex';
         }
 
         if (currentUser) msgInput.focus();
 
-        // --- Theme ---
+        // === THEME ===
         (function() {
             if (localStorage.getItem('algoria_theme') === 'light') {
                 document.body.classList.add('light');
@@ -608,11 +678,11 @@
             document.getElementById('themeToggle').textContent = isLight ? '☀️' : '🌙';
         }
 
-        // --- History panel ---
-        async function openHistoryPanel() {
+        // === HISTORY LIST ===
+        let activeSessionId = null;
+
+        async function loadHistoryList() {
             if (!currentUser) return;
-            document.getElementById('historyPanel').classList.add('open');
-            document.getElementById('historyBackdrop').classList.add('open');
             const list = document.getElementById('historyList');
             list.innerHTML = '<div class="history-empty">Cargando...</div>';
             try {
@@ -624,12 +694,13 @@
                     return;
                 }
                 list.innerHTML = sessions.map(s => {
-                    const dt = s.started_at ? s.started_at.slice(0,16).replace('T',' ') : '—';
+                    const dt = s.started_at ? formatShortDate(s.started_at) : '—';
                     const raw = s.preview || '(sin mensajes)';
-                    const preview = raw.length > 50 ? raw.slice(0, 50) + '…' : raw;
-                    return `<div class="history-session" onclick="loadHistorySession('${escapeHtml(s.session_id)}','${escapeHtml(dt)}')">
-                        <div style="display:flex;align-items:flex-start;gap:9px">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);flex-shrink:0;margin-top:2px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    const preview = raw.length > 40 ? raw.slice(0,40) + '…' : raw;
+                    const isActive = s.session_id === activeSessionId;
+                    return `<div class="history-session${isActive?' active':''}" onclick="loadHistorySession('${escapeHtml(s.session_id)}','${escapeHtml(dt)}',this)">
+                        <div style="display:flex;align-items:flex-start;gap:8px">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);flex-shrink:0;margin-top:3px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                             <div>
                                 <div class="history-session-date">${dt}</div>
                                 <div class="history-session-preview">${escapeHtml(preview)}</div>
@@ -642,15 +713,21 @@
             }
         }
 
-        function closeHistoryPanel() {
-            document.getElementById('historyPanel').classList.remove('open');
-            document.getElementById('historyBackdrop').classList.remove('open');
+        function formatShortDate(iso) {
+            try {
+                const d = new Date(iso);
+                const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+                return d.getDate() + ' ' + months[d.getMonth()];
+            } catch(e) { return iso.slice(0,10); }
         }
 
         let savedChatHTML = null;
 
-        async function loadHistorySession(sid, dateLabel) {
-            closeHistoryPanel();
+        async function loadHistorySession(sid, dateLabel, el) {
+            if (isMobile()) closePanelMobile();
+            activeSessionId = sid;
+            document.querySelectorAll('.history-session').forEach(s => s.classList.remove('active'));
+            if (el) el.classList.add('active');
             try {
                 const res = await fetch(`${BACKEND}/history/${encodeURIComponent(currentUser.email)}/${encodeURIComponent(sid)}`);
                 if (!res.ok) throw new Error();
@@ -661,82 +738,71 @@
                 for (const msg of messages) {
                     addMessage(msg.role === 'user' ? 'user' : 'bot', msg.content);
                 }
-                const banner = document.getElementById('readonlyBanner');
                 document.getElementById('readonlyDate').textContent = dateLabel;
-                banner.style.display = 'flex';
-                msgInput.disabled = true;
-                sendBtn.disabled = true;
+                document.getElementById('readonlyBanner').style.display = 'flex';
+                msgInput.disabled = true; sendBtn.disabled = true;
                 msgInput.placeholder = 'Modo lectura — no podés enviar mensajes aquí';
-            } catch(e) {
-                savedChatHTML = null;
-            }
+            } catch(e) { savedChatHTML = null; }
         }
 
         function exitReadonlyMode() {
-            if (savedChatHTML !== null) {
-                chatArea.innerHTML = savedChatHTML;
-                savedChatHTML = null;
-            }
+            if (savedChatHTML !== null) { chatArea.innerHTML = savedChatHTML; savedChatHTML = null; }
             document.getElementById('readonlyBanner').style.display = 'none';
-            msgInput.disabled = false;
-            sendBtn.disabled = false;
+            msgInput.disabled = false; sendBtn.disabled = false;
             msgInput.placeholder = 'Escribí tu pregunta de Álgebra...';
+            activeSessionId = null;
+            document.querySelectorAll('.history-session').forEach(s => s.classList.remove('active'));
             msgInput.focus();
         }
 
-        // --- Suggestions ---
+        // === SUGGESTIONS ===
         const SUGGESTION_TEMPLATES = {
-            matrix: ['¿Podés mostrarme un ejemplo con números?', '¿Cómo se calcula la inversa?', '¿Cuándo una matriz no tiene inversa?'],
-            determinant: ['¿Podés hacer un ejemplo 3×3?', '¿Cuándo el determinante es cero?', '¿Cómo aplico la regla de Sarrus?'],
-            system: ['¿Podés resolverlo con eliminación de Gauss?', '¿Cuándo un sistema no tiene solución?', '¿Cómo uso la regla de Cramer?'],
-            vector: ['¿Podés mostrar el módulo paso a paso?', '¿Cómo verifico si dos vectores son paralelos?', '¿Qué es el producto escalar?'],
-            complex: ['¿Cómo paso este número a forma polar?', '¿Podés dar un ejemplo de multiplicación?', '¿Cómo calculo el módulo de un complejo?'],
-            function: ['¿Podés graficar un ejemplo?', '¿Cómo encuentro el dominio?', '¿Cómo determino la imagen?'],
-            equation: ['¿Podés resolverlo paso a paso?', '¿Cómo verifico si el resultado es correcto?', '¿Qué pasa si hay más de una solución?'],
-            conic: ['¿Podés escribir la ecuación canónica?', '¿Cómo identifico el tipo de cónica?', '¿Dónde están el foco y la directriz?'],
-            default: ['¿Podés darme un ejemplo concreto?', '¿Cómo se resuelve paso a paso?', '¿Podés proponerme un ejercicio?'],
+            matrix:['¿Podés mostrarme un ejemplo con números?','¿Cómo se calcula la inversa?','¿Cuándo una matriz no tiene inversa?'],
+            determinant:['¿Podés hacer un ejemplo 3×3?','¿Cuándo el determinante es cero?','¿Cómo aplico la regla de Sarrus?'],
+            system:['¿Podés resolverlo con eliminación de Gauss?','¿Cuándo un sistema no tiene solución?','¿Cómo uso la regla de Cramer?'],
+            vector:['¿Podés mostrar el módulo paso a paso?','¿Cómo verifico si dos vectores son paralelos?','¿Qué es el producto escalar?'],
+            complex:['¿Cómo paso este número a forma polar?','¿Podés dar un ejemplo de multiplicación?','¿Cómo calculo el módulo de un complejo?'],
+            function:['¿Podés graficar un ejemplo?','¿Cómo encuentro el dominio?','¿Cómo determino la imagen?'],
+            equation:['¿Podés resolverlo paso a paso?','¿Cómo verifico si el resultado es correcto?','¿Qué pasa si hay más de una solución?'],
+            conic:['¿Podés escribir la ecuación canónica?','¿Cómo identifico el tipo de cónica?','¿Dónde están el foco y la directriz?'],
+            default:['¿Podés darme un ejemplo concreto?','¿Cómo se resuelve paso a paso?','¿Podés proponerme un ejercicio?'],
         };
 
         function generateSuggestions(text) {
             const t = text.toLowerCase();
             let tmpl;
-            if (/matriz|matrices|transpuesta|inversa/.test(t)) tmpl = SUGGESTION_TEMPLATES.matrix;
-            else if (/determinante|sarrus|laplace|cofactor/.test(t)) tmpl = SUGGESTION_TEMPLATES.determinant;
-            else if (/sistema|ecuaciones lineales|gauss|cramer|rouché/.test(t)) tmpl = SUGGESTION_TEMPLATES.system;
-            else if (/vector|módulo|producto escalar|paralel/.test(t)) tmpl = SUGGESTION_TEMPLATES.vector;
-            else if (/complejo|binómica|polar|trigonométric/.test(t)) tmpl = SUGGESTION_TEMPLATES.complex;
-            else if (/función|dominio|imagen|polinómica|exponencial|logarítm/.test(t)) tmpl = SUGGESTION_TEMPLATES.function;
-            else if (/ecuación|raíz|solución|despejá|inecuac/.test(t)) tmpl = SUGGESTION_TEMPLATES.equation;
-            else if (/cónica|circunferencia|elipse|hipérbola|parábola/.test(t)) tmpl = SUGGESTION_TEMPLATES.conic;
-            else tmpl = SUGGESTION_TEMPLATES.default;
-            const shuffled = [...tmpl].sort(() => Math.random() - 0.5);
-            return shuffled.slice(0, 2 + Math.floor(Math.random() * 2));
+            if(/matriz|matrices|transpuesta|inversa/.test(t)) tmpl=SUGGESTION_TEMPLATES.matrix;
+            else if(/determinante|sarrus|laplace|cofactor/.test(t)) tmpl=SUGGESTION_TEMPLATES.determinant;
+            else if(/sistema|ecuaciones lineales|gauss|cramer|rouché/.test(t)) tmpl=SUGGESTION_TEMPLATES.system;
+            else if(/vector|módulo|producto escalar|paralel/.test(t)) tmpl=SUGGESTION_TEMPLATES.vector;
+            else if(/complejo|binómica|polar|trigonométric/.test(t)) tmpl=SUGGESTION_TEMPLATES.complex;
+            else if(/función|dominio|imagen|polinómica|exponencial|logarítm/.test(t)) tmpl=SUGGESTION_TEMPLATES.function;
+            else if(/ecuación|raíz|solución|despejá|inecuac/.test(t)) tmpl=SUGGESTION_TEMPLATES.equation;
+            else if(/cónica|circunferencia|elipse|hipérbola|parábola/.test(t)) tmpl=SUGGESTION_TEMPLATES.conic;
+            else tmpl=SUGGESTION_TEMPLATES.default;
+            return [...tmpl].sort(()=>Math.random()-.5).slice(0,2+Math.floor(Math.random()*2));
         }
 
         function addSuggestions(text) {
-            const suggestions = generateSuggestions(text);
-            const div = document.createElement('div');
-            div.className = 'suggestions';
-            div.innerHTML = suggestions.map(s => `<button class="suggestion-btn" onclick="sendQuick(this)">${escapeHtml(s)}</button>`).join('');
-            chatArea.appendChild(div);
-            chatArea.scrollTop = chatArea.scrollHeight;
+            const div = document.createElement('div'); div.className = 'suggestions';
+            div.innerHTML = generateSuggestions(text).map(s=>`<button class="suggestion-btn" onclick="sendQuick(this)">${escapeHtml(s)}</button>`).join('');
+            chatArea.appendChild(div); chatArea.scrollTop = chatArea.scrollHeight;
         }
 
-        // --- Feedback popup ---
-
+        // === FEEDBACK ===
         let selectedRating = 0;
 
         function showFeedbackPopup() {
-            feedbackShown = true;
-            sessionStorage.setItem('algoria_feedback_shown', '1');
             selectedRating = 0;
-            document.querySelectorAll('.star').forEach(s => s.classList.remove('selected'));
+            document.querySelectorAll('.star').forEach(s=>s.classList.remove('selected'));
             document.getElementById('feedbackMsg').value = '';
             document.getElementById('feedbackOverlay').style.display = 'flex';
         }
 
         function closeFeedback() {
             document.getElementById('feedbackOverlay').style.display = 'none';
+            const k = feedbackKey();
+            if (k) localStorage.setItem(k, '1');
         }
 
         document.getElementById('starRow').addEventListener('click', function(e) {
@@ -748,14 +814,14 @@
         });
 
         async function submitFeedback() {
-            if (!selectedRating) { return; }
+            if (!selectedRating) return;
             const message = document.getElementById('feedbackMsg').value.trim() || null;
             const user_email = currentUser ? currentUser.email : 'anónimo';
             try {
                 await fetch(`${BACKEND}/feedback`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_email, rating: selectedRating, message })
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({user_email,rating:selectedRating,message})
                 });
             } catch(e) {}
             closeFeedback();

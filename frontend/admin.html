@@ -3,211 +3,242 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlgorIA — Panel de Administración</title>
+    <title>AlgorIA // ADMIN PANEL</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
     <style>
         :root {
-            --bg-primary: #0b0f19;
-            --bg-card: #131b2e;
-            --bg-card-hover: #182236;
-            --bg-input: #111827;
-            --accent: #38bdf8;
-            --accent-soft: #7dd3fc;
-            --accent-glow: rgba(56, 189, 248, 0.15);
-            --cyan: #38bdf8;
-            --green: #34d399;
-            --red: #f87171;
-            --purple: #a78bfa;
-            --text-primary: #e8edf5;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
-            --border: rgba(56, 189, 248, 0.12);
+            --bg: #0a0a0a;
+            --bg-card: #0d0d0d;
+            --bg-input: #111;
+            --green: #00ff41;
+            --green2: #0aff0a;
+            --cyan: #00ffff;
+            --yellow: #ffff00;
+            --red: #ff0040;
+            --border: rgba(0,255,65,0.15);
+            --border-bright: rgba(0,255,65,0.35);
+            --text: #c8ffc8;
+            --text-dim: rgba(0,255,65,0.55);
+            --text-muted: rgba(0,255,65,0.35);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'DM Sans', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            position: relative;
+        }
+        /* Scanlines */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.07) 2px,
+                rgba(0,0,0,0.07) 3px
+            );
+            pointer-events: none;
+            z-index: 9999;
+        }
 
-        /* ===== LOGIN ===== */
-        .login-screen {
-            display: flex; align-items: center; justify-content: center;
-            min-height: 100vh; padding: 20px;
-        }
-        .login-box {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 20px; padding: 48px 40px; max-width: 420px; width: 100%;
-            text-align: center;
-        }
-        .login-box h1 {
-            font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800;
-            margin-bottom: 6px;
-        }
-        .login-box h1 span { color: var(--accent); }
-        .login-box p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 28px; }
-        .login-box input {
-            width: 100%; padding: 14px 18px; border-radius: 12px;
-            border: 1px solid var(--border); background: var(--bg-input);
-            color: var(--text-primary); font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem; outline: none; margin-bottom: 16px;
-            transition: border-color 0.2s;
-        }
-        .login-box input:focus { border-color: var(--accent); }
-        .login-box input::placeholder { color: var(--text-muted); }
-        .login-box button {
-            width: 100%; padding: 14px; border: none; border-radius: 12px;
-            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
-            color: #000; font-weight: 700; font-size: 0.95rem; cursor: pointer;
-            font-family: 'DM Sans', sans-serif; transition: transform 0.15s;
-        }
-        .login-box button:hover { transform: scale(1.02); }
-        .login-error { color: var(--red); font-size: 0.82rem; margin-top: 12px; display: none; }
+        /* Blink animation */
+        @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
-        /* ===== DASHBOARD ===== */
-        .dashboard { display: none; max-width: 1100px; margin: 0 auto; padding: 24px 20px 40px; }
+        /* === DASHBOARD === */
+        .dashboard { max-width: 1140px; margin: 0 auto; padding: 28px 20px 60px; animation: fadeIn .4s ease; }
+
         .dash-header {
             display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+            margin-bottom: 32px; padding-bottom: 18px;
+            border-bottom: 1px solid var(--border);
         }
         .dash-header-left h1 {
-            font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 800;
+            font-size: 1.25rem; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; color: var(--green);
         }
-        .dash-header-left h1 span { color: var(--accent); }
-        .dash-header-left p { color: var(--text-muted); font-size: 0.78rem; margin-top: 2px; }
-        .dash-header-right { display: flex; gap: 10px; align-items: center; }
-        .refresh-btn, .logout-btn {
-            padding: 8px 16px; border-radius: 10px; font-size: 0.78rem;
-            font-family: 'DM Sans', sans-serif; cursor: pointer; border: 1px solid var(--border);
+        .dash-header-left h1 .blink {
+            font-size: .72rem; color: var(--green2); margin-left: 14px;
+            animation: blink 1s step-end infinite; letter-spacing: 0.05em;
+        }
+        .dash-header-left p {
+            color: var(--text-muted); font-size: 0.72rem; margin-top: 4px;
+            letter-spacing: 0.08em; text-transform: uppercase;
+        }
+        .dash-header-right { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+        .hdr-btn {
+            padding: 8px 16px; border-radius: 6px; font-size: 0.72rem;
+            font-family: 'JetBrains Mono', monospace; cursor: pointer;
+            border: 1px solid var(--border); background: var(--bg-card);
+            color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em;
             transition: all 0.2s;
         }
-        .refresh-btn { background: var(--bg-card); color: var(--text-secondary); }
-        .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
-        .logout-btn { background: transparent; color: var(--text-muted); }
-        .logout-btn:hover { border-color: var(--red); color: var(--red); }
+        .hdr-btn:hover { border-color: var(--green); color: var(--green); box-shadow: 0 0 8px rgba(0,255,65,0.15); }
+        .hdr-btn.danger:hover { border-color: var(--red); color: var(--red); }
+        .hdr-btn.back { border-color: rgba(0,255,255,0.25); color: var(--cyan); }
+        .hdr-btn.back:hover { border-color: var(--cyan); box-shadow: 0 0 8px rgba(0,255,255,0.15); }
 
-        /* ===== STAT CARDS ===== */
+        /* === STAT CARDS === */
         .stats-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 16px; margin-bottom: 28px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px; margin-bottom: 28px;
         }
         .stat-card {
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 16px; padding: 22px 24px;
-            transition: background 0.2s;
+            border-radius: 8px; padding: 20px 22px;
+            transition: border-color .2s;
         }
-        .stat-card:hover { background: var(--bg-card-hover); }
-        .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
-        .stat-value { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 800; }
+        .stat-card:hover { border-color: var(--border-bright); }
+        .stat-label {
+            font-size: 0.66rem; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px;
+        }
+        .stat-value {
+            font-size: 2rem; font-weight: 700; color: var(--green);
+            letter-spacing: -0.02em; line-height: 1;
+        }
         .stat-value.cyan { color: var(--cyan); }
-        .stat-value.green { color: var(--green); }
-        .stat-value.purple { color: var(--purple); }
-        .stat-value.accent { color: var(--accent); }
+        .stat-value.yellow { color: var(--yellow); }
+        .stat-value.red { color: var(--red); }
 
-        /* ===== CHARTS ===== */
-        .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 28px; }
+        /* === CHARTS === */
+        .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-bottom: 28px; }
         .chart-card {
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 16px; padding: 24px;
+            border-radius: 8px; padding: 22px;
         }
-        .chart-card h3 { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px; font-weight: 600; }
-        .chart-container { position: relative; height: 240px; }
+        .chart-card h3 {
+            font-size: 0.68rem; color: var(--text-muted); margin-bottom: 16px;
+            text-transform: uppercase; letter-spacing: 0.1em;
+        }
+        .chart-container { position: relative; height: 220px; }
 
-        /* ===== TABLE ===== */
+        /* === TABLE === */
         .table-card {
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 16px; padding: 24px; overflow-x: auto; margin-bottom: 28px;
+            border-radius: 8px; padding: 22px; overflow-x: auto; margin-bottom: 24px;
         }
-        .table-card h3 { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px; font-weight: 600; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-        th { text-align: left; color: var(--text-muted); font-weight: 600; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; }
-        td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text-secondary); }
-        tr:hover td { background: rgba(255,255,255,0.02); }
-        .badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; }
-        .badge-algebra { background: rgba(56,189,248,0.12); color: var(--cyan); }
-        .msg-preview { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .table-card h3 {
+            font-size: 0.68rem; color: var(--text-muted); margin-bottom: 16px;
+            text-transform: uppercase; letter-spacing: 0.1em;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+        th {
+            text-align: left; color: var(--text-muted); font-weight: 600; padding: 10px 12px;
+            border-bottom: 1px solid var(--border); font-size: 0.66rem;
+            text-transform: uppercase; letter-spacing: 0.08em;
+        }
+        td {
+            padding: 10px 12px; border-bottom: 1px solid rgba(0,255,65,0.05);
+            color: var(--text-dim);
+        }
+        tr:hover td { background: rgba(0,255,65,0.03); }
 
-        /* ===== TOKEN BAR ===== */
+        /* Row highlights */
+        tr.row-admin td:first-child { border-left: 3px solid var(--green); }
+        tr.row-superadmin td:first-child { border-left: 3px solid var(--yellow); }
+
+        /* Role badge */
+        .role-badge {
+            display: inline-block; padding: 2px 9px; border-radius: 4px;
+            font-size: 0.66rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+        }
+        .role-user { background: rgba(100,100,100,0.18); color: #888; border: 1px solid rgba(100,100,100,0.2); }
+        .role-admin { background: rgba(0,255,65,0.1); color: var(--green); border: 1px solid rgba(0,255,65,0.25); }
+        .role-superadmin { background: rgba(255,255,0,0.1); color: var(--yellow); border: 1px solid rgba(255,255,0,0.3); }
+
+        /* Role action buttons */
+        .role-btn {
+            padding: 3px 9px; border-radius: 4px; font-size: 0.66rem;
+            font-family: 'JetBrains Mono', monospace; cursor: pointer;
+            border: 1px solid var(--border); background: transparent;
+            color: var(--text-dim); transition: all .15s; margin-right: 4px;
+        }
+        .role-btn.make-admin:hover { border-color: var(--green); color: var(--green); }
+        .role-btn.remove-admin:hover { border-color: var(--red); color: var(--red); }
+
+        /* Token bar */
         .token-bar-wrap { display: flex; align-items: center; gap: 8px; }
-        .token-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; min-width: 60px; }
-        .token-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #38bdf8, #0ea5e9); transition: width 0.3s; }
-        .token-bar-fill.warn { background: linear-gradient(90deg, #f59e0b, #d97706); }
-        .token-bar-fill.danger { background: linear-gradient(90deg, #f87171, #ef4444); }
-        .token-pct { font-size: 0.72rem; color: var(--text-muted); min-width: 32px; text-align: right; }
+        .token-bar { flex:1; height:5px; background:rgba(0,255,65,0.08); border-radius:3px; min-width:50px; }
+        .token-bar-fill { height:100%; border-radius:3px; background: var(--green); transition:width .3s; }
+        .token-bar-fill.warn { background: var(--yellow); }
+        .token-bar-fill.danger { background: var(--red); }
+        .token-pct { font-size:0.68rem; color:var(--text-muted); min-width:32px; text-align:right; }
 
-        .loading { text-align: center; padding: 60px; color: var(--text-muted); }
-        .empty-state { text-align: center; padding: 40px; color: var(--text-muted); font-size: 0.85rem; }
+        /* Interaction table badge */
+        .badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.68rem; font-weight:600; }
+        .badge-algebra { background:rgba(0,255,255,0.08); color:var(--cyan); border:1px solid rgba(0,255,255,0.2); }
+        .msg-preview { max-width:280px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-        /* ===== FEEDBACK SECTION ===== */
-        .feedback-avg { display: flex; align-items: baseline; gap: 8px; margin-bottom: 16px; }
-        .feedback-avg-num { font-family: 'Outfit', sans-serif; font-size: 2.8rem; font-weight: 800; color: #fbbf24; line-height: 1; }
-        .feedback-avg-sub { font-size: 0.8rem; color: var(--text-muted); }
-        .star-dist { display: flex; flex-direction: column; gap: 7px; }
-        .star-row-dist { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--text-secondary); }
-        .star-row-dist .star-label { width: 28px; text-align: right; flex-shrink: 0; }
-        .star-row-dist .star-bar { flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
-        .star-row-dist .star-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #fbbf24, #f59e0b); transition: width 0.4s; }
-        .star-row-dist .star-count { width: 24px; text-align: right; color: var(--text-muted); flex-shrink: 0; }
-        .feedback-comments { display: flex; flex-direction: column; gap: 10px; }
-        .feedback-comment { background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
-        .feedback-comment-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
-        .feedback-comment-stars { color: #fbbf24; font-size: 0.85rem; letter-spacing: 1px; }
-        .feedback-comment-meta { font-size: 0.72rem; color: var(--text-muted); }
-        .feedback-comment-text { font-size: 0.83rem; color: var(--text-secondary); line-height: 1.5; }
+        .loading { text-align:center; padding:60px; color:var(--text-muted); letter-spacing:.08em; }
+        .empty-state { text-align:center; padding:36px; color:var(--text-muted); font-size:0.78rem; }
 
-        @media (max-width: 768px) {
-            .charts-row { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        /* === FEEDBACK === */
+        .feedback-avg { display:flex; align-items:baseline; gap:8px; margin-bottom:14px; }
+        .feedback-avg-num { font-size:2.6rem; font-weight:700; color:var(--yellow); line-height:1; }
+        .feedback-avg-sub { font-size:0.72rem; color:var(--text-muted); }
+        .star-dist { display:flex; flex-direction:column; gap:6px; }
+        .star-row-dist { display:flex; align-items:center; gap:8px; font-size:0.74rem; color:var(--text-dim); }
+        .star-row-dist .star-label { width:24px; text-align:right; flex-shrink:0; color:var(--yellow); }
+        .star-row-dist .star-bar { flex:1; height:6px; background:rgba(255,255,0,0.07); border-radius:3px; overflow:hidden; }
+        .star-row-dist .star-bar-fill { height:100%; border-radius:3px; background:var(--yellow); transition:width .4s; }
+        .star-row-dist .star-count { width:22px; text-align:right; color:var(--text-muted); flex-shrink:0; }
+        .feedback-comments { display:flex; flex-direction:column; gap:10px; }
+        .feedback-comment { background:var(--bg-input); border:1px solid var(--border); border-radius:6px; padding:12px 14px; }
+        .feedback-comment-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+        .feedback-comment-stars { color:var(--yellow); font-size:0.82rem; letter-spacing:2px; }
+        .feedback-comment-meta { font-size:0.68rem; color:var(--text-muted); }
+        .feedback-comment-text { font-size:0.8rem; color:var(--text-dim); line-height:1.5; }
+
+        /* === PRINT === */
+        @media print {
+            body { background:#fff; color:#000; font-family:monospace; }
+            body::before { display:none; }
+            .dash-header-right, .hdr-btn { display:none !important; }
+            .chart-card,.stat-card,.table-card { border:1px solid #ccc; background:#fff; break-inside:avoid; }
+            .stat-label,.chart-card h3,.table-card h3 { color:#555; }
+            .stat-value,td,th { color:#000; }
+            .charts-row { display:block; }
+            .charts-row > * { margin-bottom:20px; }
         }
 
-        /* ===== PRINT ===== */
-        .print-btn { padding: 8px 16px; border-radius: 10px; font-size: 0.78rem; font-family: 'DM Sans', sans-serif; cursor: pointer; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-secondary); transition: all 0.2s; }
-        .print-btn:hover { border-color: var(--accent); color: var(--accent); }
-        @media print {
-            body { background: #fff; color: #000; }
-            .login-screen { display: none !important; }
-            .dash-header-right { display: none !important; }
-            .chart-card, .stat-card, .table-card { border: 1px solid #ccc; background: #fff; break-inside: avoid; }
-            .stat-label, .chart-card h3, .table-card h3 { color: #555; }
-            .stat-value, td, th { color: #000; }
-            .charts-row { display: block; }
-            .charts-row > * { margin-bottom: 20px; }
+        @media(max-width:768px) {
+            .charts-row { grid-template-columns:1fr; }
+            .stats-grid { grid-template-columns:repeat(2,1fr); }
+            .dash-header { flex-direction:column; align-items:flex-start; gap:14px; }
         }
     </style>
 </head>
 <body>
-    <!-- LOGIN -->
-    <div class="login-screen" id="loginScreen">
-        <div class="login-box">
-            <h1>Algor<span>IA</span> Admin</h1>
-            <p>Panel de administración · Ingresá tu email y PIN</p>
-            <input type="email" id="adminEmailInput" placeholder="Email de administrador" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()">
-            <input type="text" id="adminPinInput" placeholder="PIN (4 dígitos)" maxlength="4" inputmode="numeric" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()">
-            <button onclick="doLogin()">Ingresar</button>
-            <div class="login-error" id="loginError">Credenciales incorrectas. Intentá de nuevo.</div>
-        </div>
-    </div>
-
-    <!-- DASHBOARD -->
     <div class="dashboard" id="dashboard">
         <header class="dash-header">
             <div class="dash-header-left">
-                <h1>Algor<span>IA</span> Admin</h1>
+                <h1>AlgorIA // ADMIN PANEL <span class="blink">SYSTEM ONLINE</span></h1>
                 <p>Panel de administración · UAI</p>
             </div>
             <div class="dash-header-right">
-                <button class="print-btn" onclick="window.print()">Exportar PDF</button>
-                <button class="refresh-btn" onclick="loadDashboard()">↻ Actualizar</button>
-                <button class="logout-btn" onclick="doLogout()">Salir</button>
+                <button class="hdr-btn back" onclick="window.location.href='index.html'">← Volver al chat</button>
+                <button class="hdr-btn" onclick="window.print()">Exportar PDF</button>
+                <button class="hdr-btn" onclick="loadDashboard()">↻ Actualizar</button>
+                <button class="hdr-btn danger" onclick="doLogout()">Salir</button>
             </div>
         </header>
 
         <!-- STATS -->
         <div class="stats-grid" id="statsGrid">
-            <div class="stat-card"><div class="stat-label">Total interacciones</div><div class="stat-value cyan" id="statTotal">—</div></div>
-            <div class="stat-card"><div class="stat-label">Sesiones únicas</div><div class="stat-value green" id="statSessions">—</div></div>
-            <div class="stat-card"><div class="stat-label">Largo promedio respuesta</div><div class="stat-value purple" id="statAvgLen">—</div></div>
-            <div class="stat-card"><div class="stat-label">Interacciones hoy</div><div class="stat-value accent" id="statToday">—</div></div>
-            <div class="stat-card"><div class="stat-label">Usuarios registrados</div><div class="stat-value cyan" id="statUsers">—</div></div>
+            <div class="stat-card"><div class="stat-label">Total interacciones</div><div class="stat-value" id="statTotal">—</div></div>
+            <div class="stat-card"><div class="stat-label">Sesiones únicas</div><div class="stat-value cyan" id="statSessions">—</div></div>
+            <div class="stat-card"><div class="stat-label">Largo promedio respuesta</div><div class="stat-value yellow" id="statAvgLen">—</div></div>
+            <div class="stat-card"><div class="stat-label">Interacciones hoy</div><div class="stat-value cyan" id="statToday">—</div></div>
+            <div class="stat-card"><div class="stat-label">Usuarios registrados</div><div class="stat-value" id="statUsers">—</div></div>
         </div>
 
         <!-- CHARTS -->
@@ -217,12 +248,12 @@
                 <div class="chart-container"><canvas id="dailyChart"></canvas></div>
             </div>
             <div class="chart-card">
-                <h3>Distribución</h3>
+                <h3>Distribución de temas</h3>
                 <div class="chart-container"><canvas id="topicChart"></canvas></div>
             </div>
         </div>
 
-        <!-- RAG + FEEDBACK CHARTS -->
+        <!-- RAG + FEEDBACK -->
         <div class="charts-row" id="ragFeedbackRow" style="display:none">
             <div class="chart-card">
                 <h3>Confianza RAG — distribución</h3>
@@ -230,7 +261,7 @@
             </div>
             <div class="chart-card" id="feedbackStatsCard">
                 <h3>Feedback — Calificaciones</h3>
-                <div id="feedbackStatsContent"><p style="color:var(--text-muted);font-size:.84rem">Sin datos de feedback aún.</p></div>
+                <div id="feedbackStatsContent"><p style="color:var(--text-muted);font-size:.78rem">Sin datos de feedback aún.</p></div>
             </div>
         </div>
 
@@ -240,12 +271,12 @@
             <div class="feedback-comments" id="feedbackComments"></div>
         </div>
 
-        <!-- USUARIOS REGISTRADOS -->
+        <!-- USUARIOS -->
         <div class="table-card">
             <h3>Usuarios registrados</h3>
             <table>
-                <thead><tr><th>Nombre</th><th>Email</th><th>Fecha de registro</th><th>Tokens usados</th><th>Límite</th></tr></thead>
-                <tbody id="usersBody"><tr><td colspan="5" class="empty-state">Cargando...</td></tr></tbody>
+                <thead><tr><th>Nombre</th><th>Email</th><th>Registro</th><th>Rol</th><th>Tokens usados</th><th>Límite</th><th id="actionsHeader" style="display:none">Acciones</th></tr></thead>
+                <tbody id="usersBody"><tr><td colspan="7" class="loading">Cargando...</td></tr></tbody>
             </table>
         </div>
 
@@ -253,66 +284,43 @@
         <div class="table-card">
             <h3>Últimas interacciones</h3>
             <table>
-                <thead><tr><th>Fecha</th><th>Usuario</th><th>Sesión</th><th>Tema</th><th>Largo pregunta</th><th>Largo respuesta</th><th>Tiempo (ms)</th></tr></thead>
-                <tbody id="interactionsBody"><tr><td colspan="7" class="empty-state">Cargando...</td></tr></tbody>
+                <thead><tr><th>Fecha</th><th>Usuario</th><th>Sesión</th><th>Tema</th><th>Long. pregunta</th><th>Long. respuesta</th><th>Tiempo (ms)</th></tr></thead>
+                <tbody id="interactionsBody"><tr><td colspan="7" class="loading">Cargando...</td></tr></tbody>
             </table>
         </div>
     </div>
 
     <script>
         const BACKEND = 'https://chatbot-educativo-de-lgebra-con-ia-uai-production.up.railway.app';
-        let adminEmail = sessionStorage.getItem('algoria_admin_email') || '';
-        let adminPin = sessionStorage.getItem('algoria_admin_pin') || '';
+
+        // Read email from query param
+        const adminEmail = new URLSearchParams(window.location.search).get('email') || '';
+        let isSuperAdmin = false;
+
+        function adminHeaders() {
+            return { 'X-Admin-Email': adminEmail };
+        }
+
+        function doLogout() {
+            window.location.href = 'index.html';
+        }
+
         let dailyChartInstance = null;
         let topicChartInstance = null;
         let ragChartInstance = null;
 
-        function adminHeaders() {
-            return { 'X-Admin-Email': adminEmail, 'X-Admin-Pin': adminPin };
-        }
-
-        // Auto-login if credentials in sessionStorage
-        if (adminEmail && adminPin) {
-            fetch(`${BACKEND}/admin/stats`, { headers: adminHeaders() })
-                .then(r => { if (r.ok) { showDashboard(); loadDashboard(); } })
-                .catch(() => {});
-        }
-
-        function showDashboard() {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-        }
-
-        function doLogin() {
-            adminEmail = document.getElementById('adminEmailInput').value.trim();
-            adminPin = document.getElementById('adminPinInput').value.trim();
-            if (!adminEmail || !adminPin) return;
-            fetch(`${BACKEND}/admin/stats`, { headers: adminHeaders() })
-                .then(r => {
-                    if (!r.ok) throw new Error('bad credentials');
-                    return r.json();
-                })
-                .then(() => {
-                    sessionStorage.setItem('algoria_admin_email', adminEmail);
-                    sessionStorage.setItem('algoria_admin_pin', adminPin);
-                    showDashboard();
-                    loadDashboard();
-                })
-                .catch(() => {
-                    document.getElementById('loginError').style.display = 'block';
-                });
-        }
-
-        function doLogout() {
-            adminEmail = '';
-            adminPin = '';
-            sessionStorage.removeItem('algoria_admin_email');
-            sessionStorage.removeItem('algoria_admin_pin');
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('adminEmailInput').value = '';
-            document.getElementById('adminPinInput').value = '';
-            document.getElementById('loginError').style.display = 'none';
+        // Verify access on load
+        async function init() {
+            if (!adminEmail) { window.location.href = 'index.html'; return; }
+            try {
+                const res = await fetch(`${BACKEND}/admin/check-access`, { headers: adminHeaders() });
+                if (!res.ok) { window.location.href = 'index.html'; return; }
+                const data = await res.json();
+                if (!data.is_admin && !data.is_superadmin) { window.location.href = 'index.html'; return; }
+                isSuperAdmin = !!data.is_superadmin;
+                if (isSuperAdmin) document.getElementById('actionsHeader').style.display = '';
+            } catch(e) { window.location.href = 'index.html'; return; }
+            loadDashboard();
         }
 
         async function loadDashboard() {
@@ -321,20 +329,20 @@
                     fetch(`${BACKEND}/admin/stats`, { headers: adminHeaders() }),
                     fetch(`${BACKEND}/admin/interactions`, { headers: adminHeaders() }),
                     fetch(`${BACKEND}/admin/users`, { headers: adminHeaders() }),
-                    fetch(`${BACKEND}/admin/feedback`, { headers: adminHeaders() }).catch(() => null),
+                    fetch(`${BACKEND}/admin/feedback`, { headers: adminHeaders() }).catch(()=>null),
                 ]);
                 const stats = await statsRes.json();
                 const interactions = await intRes.json();
                 const users = usersRes.ok ? await usersRes.json() : [];
-                const feedback = feedbackRes && feedbackRes.ok ? await feedbackRes.json().catch(() => null) : null;
+                const feedback = feedbackRes && feedbackRes.ok ? await feedbackRes.json().catch(()=>null) : null;
                 renderStats(stats, users);
                 renderDailyChart(stats.interactions_by_day || []);
                 renderTopicChart(stats.top_topics || []);
                 renderRagChart(stats.rag_stats || null);
                 renderFeedback(feedback);
                 renderUsersTable(users);
-                renderTable(interactions);
-            } catch (e) {
+                renderInteractionsTable(interactions);
+            } catch(e) {
                 console.error('Dashboard error:', e);
             }
         }
@@ -343,8 +351,8 @@
             document.getElementById('statTotal').textContent = s.total_interactions || 0;
             document.getElementById('statSessions').textContent = s.unique_sessions || 0;
             document.getElementById('statAvgLen').textContent = s.avg_response_length ? Math.round(s.avg_response_length) + ' chars' : '—';
-            const today = new Date().toISOString().slice(0, 10);
-            const todayData = (s.interactions_by_day || []).find(d => d.date === today);
+            const today = new Date().toISOString().slice(0,10);
+            const todayData = (s.interactions_by_day||[]).find(d=>d.date===today);
             document.getElementById('statToday').textContent = todayData ? todayData.count : 0;
             document.getElementById('statUsers').textContent = Array.isArray(users) ? users.length : '—';
         }
@@ -355,21 +363,19 @@
             dailyChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: data.map(d => d.date.slice(5)),
+                    labels: data.map(d=>d.date.slice(5)),
                     datasets: [{
-                        label: 'Interacciones',
-                        data: data.map(d => d.count),
-                        backgroundColor: 'rgba(56, 189, 248, 0.5)',
-                        borderColor: 'rgba(56, 189, 248, 0.8)',
-                        borderWidth: 1, borderRadius: 4,
+                        label: 'Interacciones', data: data.map(d=>d.count),
+                        backgroundColor: 'rgba(0,255,65,0.25)',
+                        borderColor: '#00ff41', borderWidth: 1, borderRadius: 3,
                     }]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { display: false } },
-                        y: { ticks: { color: '#64748b', stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true }
+                    responsive:true, maintainAspectRatio:false,
+                    plugins:{ legend:{display:false} },
+                    scales:{
+                        x:{ ticks:{color:'rgba(0,255,65,0.4)',font:{size:9,family:'JetBrains Mono'}}, grid:{display:false} },
+                        y:{ ticks:{color:'rgba(0,255,65,0.4)',stepSize:1,font:{size:9,family:'JetBrains Mono'}}, grid:{color:'rgba(0,255,65,0.05)'}, beginAtZero:true }
                     }
                 }
             });
@@ -378,50 +384,22 @@
         function renderTopicChart(data) {
             const ctx = document.getElementById('topicChart').getContext('2d');
             if (topicChartInstance) topicChartInstance.destroy();
-            if (!data.length) { data = [{ topic: 'algebra', count: 1 }]; }
+            if (!data.length) data = [{topic:'algebra',count:1}];
             topicChartInstance = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: data.map(d => d.topic),
+                    labels: data.map(d=>d.topic),
                     datasets: [{
-                        data: data.map(d => d.count),
-                        backgroundColor: ['#38bdf8', '#34d399', '#a78bfa', '#f59e0b', '#f87171'],
+                        data: data.map(d=>d.count),
+                        backgroundColor: ['#00ff41','#00ffff','#ffff00','#ff0040','#7f00ff'],
                         borderWidth: 0,
                     }]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 }, padding: 12 } }
-                    }
+                    responsive:true, maintainAspectRatio:false,
+                    plugins:{ legend:{ position:'bottom', labels:{ color:'rgba(0,255,65,0.55)', font:{size:10,family:'JetBrains Mono'}, padding:12 } } }
                 }
             });
-        }
-
-        function renderUsersTable(users) {
-            const tbody = document.getElementById('usersBody');
-            if (!Array.isArray(users) || !users.length) {
-                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Sin usuarios registrados aún.</td></tr>';
-                return;
-            }
-            tbody.innerHTML = users.map(u => {
-                const pct = u.token_limit ? Math.min(100, Math.round((u.tokens_used / u.token_limit) * 100)) : 0;
-                const fillClass = pct >= 90 ? 'danger' : pct >= 70 ? 'warn' : '';
-                const fecha = u.created_at ? u.created_at.slice(0, 10) : '—';
-                return `
-                <tr>
-                    <td>${u.name || '—'}</td>
-                    <td style="font-family:'JetBrains Mono',monospace;font-size:0.78rem">${u.email || '—'}</td>
-                    <td>${fecha}</td>
-                    <td>
-                        <div class="token-bar-wrap">
-                            <div class="token-bar"><div class="token-bar-fill ${fillClass}" style="width:${pct}%"></div></div>
-                            <span class="token-pct">${(u.tokens_used || 0).toLocaleString()}</span>
-                        </div>
-                    </td>
-                    <td>${(u.token_limit || 0).toLocaleString()}</td>
-                </tr>`;
-            }).join('');
         }
 
         function renderRagChart(ragStats) {
@@ -430,34 +408,19 @@
             row.style.display = 'grid';
             const ctx = document.getElementById('ragChart').getContext('2d');
             if (ragChartInstance) ragChartInstance.destroy();
-            const labels = ['Alta', 'Media', 'Baja', 'Sin RAG'];
-            const keys = ['high', 'medium', 'low', 'none'];
-            const colors = ['#34d399', '#fbbf24', '#f87171', '#64748b'];
-            const values = keys.map(k => ragStats[k] || 0);
+            const labels = ['Alta','Media','Baja','Sin RAG'];
+            const keys = ['high','medium','low','none'];
+            const colors = ['#00ff41','#ffff00','#ff0040','rgba(0,255,65,0.2)'];
             ragChartInstance = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels,
-                    datasets: [{
-                        data: values,
-                        backgroundColor: colors,
-                        borderWidth: 0,
-                        hoverOffset: 6,
-                    }]
+                    labels, datasets: [{ data: keys.map(k=>ragStats[k]||0), backgroundColor:colors, borderWidth:0, hoverOffset:6 }]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 }, padding: 14 } },
-                        tooltip: {
-                            callbacks: {
-                                label: function(ctx) {
-                                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                                    const pct = total ? Math.round((ctx.parsed / total) * 100) : 0;
-                                    return ` ${ctx.label}: ${ctx.parsed} (${pct}%)`;
-                                }
-                            }
-                        }
+                    responsive:true, maintainAspectRatio:false,
+                    plugins:{
+                        legend:{ position:'bottom', labels:{ color:'rgba(0,255,65,0.55)', font:{size:10,family:'JetBrains Mono'}, padding:14 } },
+                        tooltip:{ callbacks:{ label(ctx){ const t=ctx.dataset.data.reduce((a,b)=>a+b,0); const p=t?Math.round(ctx.parsed/t*100):0; return ` ${ctx.label}: ${ctx.parsed} (${p}%)`; } } }
                     }
                 }
             });
@@ -466,74 +429,119 @@
         function renderFeedback(feedback) {
             const row = document.getElementById('ragFeedbackRow');
             if (!feedback) return;
-            // Show RAG+feedback row even if RAG wasn't shown yet
             row.style.display = 'grid';
-
-            // Stats card
             const statsEl = document.getElementById('feedbackStatsContent');
             const items = Array.isArray(feedback) ? feedback : (feedback.items || []);
             if (!items.length) {
-                statsEl.innerHTML = '<p style="color:var(--text-muted);font-size:.84rem">Sin datos de feedback aún.</p>';
+                statsEl.innerHTML = '<p style="color:var(--text-muted);font-size:.78rem">Sin datos de feedback aún.</p>';
                 return;
             }
-            const avg = items.reduce((a, b) => a + (b.rating || 0), 0) / items.length;
-            const dist = [5, 4, 3, 2, 1].map(star => ({
-                star,
-                count: items.filter(i => i.rating === star).length
-            }));
-            const maxCount = Math.max(...dist.map(d => d.count), 1);
-
+            const avg = items.reduce((a,b)=>a+(b.rating||0),0)/items.length;
+            const dist = [5,4,3,2,1].map(star=>({star,count:items.filter(i=>i.rating===star).length}));
+            const maxCount = Math.max(...dist.map(d=>d.count),1);
             statsEl.innerHTML = `
                 <div class="feedback-avg">
                     <span class="feedback-avg-num">${avg.toFixed(1)}</span>
-                    <span class="feedback-avg-sub">/ 5 &nbsp;·&nbsp; ${items.length} calificación${items.length !== 1 ? 'es' : ''}</span>
+                    <span class="feedback-avg-sub">/ 5 &nbsp;·&nbsp; ${items.length} calificación${items.length!==1?'es':''}</span>
                 </div>
                 <div class="star-dist">
-                    ${dist.map(d => `
+                    ${dist.map(d=>`
                     <div class="star-row-dist">
                         <span class="star-label">${d.star}★</span>
-                        <div class="star-bar"><div class="star-bar-fill" style="width:${Math.round((d.count / maxCount) * 100)}%"></div></div>
+                        <div class="star-bar"><div class="star-bar-fill" style="width:${Math.round(d.count/maxCount*100)}%"></div></div>
                         <span class="star-count">${d.count}</span>
                     </div>`).join('')}
                 </div>`;
-
-            // Comments card
-            const withComments = items.filter(i => i.message && i.message.trim()).slice(0, 10);
+            const withComments = items.filter(i=>i.message&&i.message.trim()).slice(0,10);
             if (!withComments.length) return;
             document.getElementById('feedbackCommentsCard').style.display = 'block';
-            document.getElementById('feedbackComments').innerHTML = withComments.map(i => {
-                const stars = '★'.repeat(i.rating || 0) + '☆'.repeat(5 - (i.rating || 0));
-                const date = i.created_at ? i.created_at.slice(0, 16).replace('T', ' ') : '';
-                const email = i.user_email || '';
-                return `
-                <div class="feedback-comment">
+            document.getElementById('feedbackComments').innerHTML = withComments.map(i=>{
+                const stars = '★'.repeat(i.rating||0)+'☆'.repeat(5-(i.rating||0));
+                const date = i.created_at ? i.created_at.slice(0,16).replace('T',' ') : '';
+                return `<div class="feedback-comment">
                     <div class="feedback-comment-header">
                         <span class="feedback-comment-stars">${stars}</span>
-                        <span class="feedback-comment-meta">${email}${date ? ' · ' + date : ''}</span>
+                        <span class="feedback-comment-meta">${i.user_email||''}${date?' · '+date:''}</span>
                     </div>
-                    <div class="feedback-comment-text">${i.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                    <div class="feedback-comment-text">${i.message.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
                 </div>`;
             }).join('');
         }
 
-        function renderTable(rows) {
-            const tbody = document.getElementById('interactionsBody');
-            if (!rows.length) {
-                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Sin interacciones aún. Mandá un mensaje al chatbot para empezar.</td></tr>';
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('usersBody');
+            if (!Array.isArray(users)||!users.length) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Sin usuarios registrados aún.</td></tr>';
                 return;
             }
-            tbody.innerHTML = rows.map(r => `
+            tbody.innerHTML = users.map(u => {
+                const pct = u.token_limit ? Math.min(100,Math.round(u.tokens_used/u.token_limit*100)) : 0;
+                const fillClass = pct>=90?'danger':pct>=70?'warn':'';
+                const fecha = u.created_at ? u.created_at.slice(0,10) : '—';
+                const role = u.role || 'user';
+                const roleBadge = `<span class="role-badge role-${role}">${role}</span>`;
+                const rowClass = role==='superadmin'?'row-superadmin':role==='admin'?'row-admin':'';
+                let actions = '';
+                if (isSuperAdmin && role !== 'superadmin') {
+                    if (role === 'admin') {
+                        actions = `<button class="role-btn remove-admin" onclick="setRole('${escapeHtml(u.email)}','user')">Quitar Admin</button>`;
+                    } else {
+                        actions = `<button class="role-btn make-admin" onclick="setRole('${escapeHtml(u.email)}','admin')">Hacer Admin</button>`;
+                    }
+                }
+                return `<tr class="${rowClass}">
+                    <td>${escapeHtml(u.name||'—')}</td>
+                    <td style="font-size:0.72rem">${escapeHtml(u.email||'—')}</td>
+                    <td>${fecha}</td>
+                    <td>${roleBadge}</td>
+                    <td>
+                        <div class="token-bar-wrap">
+                            <div class="token-bar"><div class="token-bar-fill ${fillClass}" style="width:${pct}%"></div></div>
+                            <span class="token-pct">${(u.tokens_used||0).toLocaleString()}</span>
+                        </div>
+                    </td>
+                    <td>${(u.token_limit||0).toLocaleString()}</td>
+                    <td>${isSuperAdmin&&role!=='superadmin'?actions:'—'}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        async function setRole(targetEmail, newRole) {
+            try {
+                const res = await fetch(`${BACKEND}/admin/set-role`, {
+                    method: 'POST',
+                    headers: { ...adminHeaders(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ target_email: targetEmail, role: newRole })
+                });
+                if (res.ok) loadDashboard();
+                else console.error('set-role failed');
+            } catch(e) { console.error(e); }
+        }
+
+        function renderInteractionsTable(rows) {
+            const tbody = document.getElementById('interactionsBody');
+            if (!rows.length) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Sin interacciones aún.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = rows.map(r=>`
                 <tr>
-                    <td>${r.timestamp ? r.timestamp.slice(0, 16).replace('T', ' ') : '—'}</td>
-                    <td style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--text-muted)">${r.user_email || '—'}</td>
-                    <td style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--text-muted)">${(r.session_id || '').slice(0, 16)}…</td>
-                    <td><span class="badge badge-algebra">${r.topic || 'algebra'}</span></td>
-                    <td>${r.user_message_length || 0}</td>
-                    <td>${r.bot_response_length || 0}</td>
-                    <td>${r.response_time_ms || 0}</td>
+                    <td>${r.timestamp?r.timestamp.slice(0,16).replace('T',' '):'—'}</td>
+                    <td style="font-size:0.72rem;color:var(--text-muted)">${escapeHtml(r.user_email||'—')}</td>
+                    <td style="font-size:0.68rem;color:var(--text-muted)">${(r.session_id||'').slice(0,16)}…</td>
+                    <td><span class="badge badge-algebra">${r.topic||'algebra'}</span></td>
+                    <td>${r.user_message_length||0}</td>
+                    <td>${r.bot_response_length||0}</td>
+                    <td>${r.response_time_ms||0}</td>
                 </tr>
             `).join('');
         }
+
+        function escapeHtml(t) {
+            const d = document.createElement('div'); d.textContent = t; return d.innerHTML;
+        }
+
+        init();
     </script>
 </body>
 </html>
