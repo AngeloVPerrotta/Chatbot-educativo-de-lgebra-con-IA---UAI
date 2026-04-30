@@ -52,17 +52,15 @@
         .gpanel{width:280px;min-width:280px;background:var(--bg-card);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
         .gp-header{padding:10px 12px 8px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
         .gp-header-title{font-size:.78rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em}
-        .gp-kbd-toggle{background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:.72rem;padding:3px 8px;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
-        .gp-kbd-toggle:hover{border-color:var(--accent);color:var(--accent)}
         .gp-exprs{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px;scrollbar-width:thin;scrollbar-color:var(--accent-glow) transparent}
         .gp-exprs::-webkit-scrollbar{width:3px}
         .gp-exprs::-webkit-scrollbar-thumb{background:var(--accent-glow);border-radius:3px}
 
         /* Expression row */
-        .expr-row{background:var(--bg-input);border:1px solid var(--border);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:6px;transition:border-color .2s}
+        .expr-row{background:var(--bg-input);border:1px solid var(--border);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:6px;transition:border-color .2s;position:relative}
         .expr-row:focus-within{border-color:rgba(56,189,248,0.35)}
         .expr-row.error{border-color:rgba(248,113,113,0.5)}
-        .expr-row-top{display:flex;align-items:center;gap:6px}
+        .expr-row-top{display:flex;align-items:center;gap:6px;position:relative}
         .expr-color{width:14px;height:14px;border-radius:3px;cursor:pointer;flex-shrink:0;transition:transform .15s}
         .expr-color:hover{transform:scale(1.25)}
         .expr-input{flex:1;background:transparent;border:none;color:var(--text-primary);font-family:'JetBrains Mono',monospace;font-size:.82rem;outline:none;min-width:0}
@@ -70,9 +68,23 @@
         .expr-eye{background:transparent;border:none;color:var(--text-muted);cursor:pointer;font-size:.85rem;padding:0 2px;transition:color .15s;flex-shrink:0;line-height:1}
         .expr-eye:hover{color:var(--text-primary)}
         .expr-eye.hidden-icon{color:var(--text-muted);opacity:.4}
-        .expr-del{background:transparent;border:none;color:var(--text-muted);cursor:pointer;font-size:.9rem;padding:0 2px;transition:color .15s;flex-shrink:0;line-height:1}
-        .expr-del:hover{color:#f87171}
         .expr-label{font-size:.68rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;padding:0 2px}
+
+        /* Color picker franja */
+        .expr-colorpicker{position:absolute;top:calc(100% + 4px);left:0;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:6px 8px;display:flex;gap:6px;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,0.4)}
+        .expr-colorpicker-circle{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s,border-color .15s;flex-shrink:0}
+        .expr-colorpicker-circle:hover{transform:scale(1.2);border-color:rgba(255,255,255,0.5)}
+        .expr-colorpicker-circle.active{border-color:#fff}
+
+        /* Three-dot menu button */
+        .expr-menu-btn{background:transparent;border:none;color:var(--text-muted);cursor:pointer;font-size:1.1rem;padding:0 3px;transition:color .15s;flex-shrink:0;line-height:1}
+        .expr-menu-btn:hover{color:var(--text-primary)}
+
+        /* Dropdown menu */
+        .expr-dropdown{position:absolute;right:0;top:100%;margin-top:2px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.4);z-index:200;min-width:130px;overflow:hidden}
+        .expr-dropdown-item{display:block;width:100%;background:transparent;border:none;color:var(--text-secondary);font-family:'DM Sans',sans-serif;font-size:.82rem;padding:8px 14px;text-align:left;cursor:pointer;transition:background .15s,color .15s}
+        .expr-dropdown-item:hover{background:var(--accent-subtle);color:var(--accent)}
+        .expr-dropdown-item.danger:hover{background:rgba(248,113,113,0.1);color:#f87171}
 
         /* Slider within expr */
         .expr-slider-wrap{display:flex;align-items:center;gap:8px;padding:2px 0}
@@ -80,8 +92,8 @@
         .expr-slider-val{font-size:.75rem;font-family:'JetBrains Mono',monospace;color:var(--accent);min-width:38px;text-align:right}
 
         /* Add button */
-        .gp-add-btn{margin:8px;background:transparent;border:1px dashed var(--border);color:var(--text-secondary);font-size:.82rem;padding:9px;border-radius:8px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;text-align:center}
-        .gp-add-btn:hover{border-color:var(--accent);color:var(--accent)}
+        .gp-add-btn{margin:8px;background:var(--accent-subtle);border:1px solid rgba(56,189,248,0.3);color:var(--accent);font-size:.82rem;font-weight:600;padding:9px;border-radius:8px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;text-align:center}
+        .gp-add-btn:hover{background:rgba(56,189,248,0.12);box-shadow:0 0 12px var(--accent-glow)}
 
         /* === CANVAS AREA === */
         .gcanvas-wrap{flex:1;position:relative;overflow:hidden;background:var(--bg-primary)}
@@ -100,23 +112,40 @@
         .gcanvas-col{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 
         /* === KEYBOARD PANEL === */
-        .gkbd{background:var(--bg-card);border-top:1px solid var(--border);flex-shrink:0;overflow:hidden;transition:max-height .35s cubic-bezier(0.4,0,0.2,1)}
-        .gkbd.open{max-height:210px}
-        .gkbd.closed{max-height:0}
-        .gkbd-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 8px;flex-shrink:0}
-        .gkbd-tab{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-muted);font-size:.76rem;padding:6px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap}
+        .gkbd{background:var(--bg-card);border-top:1px solid var(--border);flex-shrink:0}
+        .gkbd-bar{display:flex;align-items:center;border-bottom:1px solid var(--border);padding:0 8px;height:32px;flex-shrink:0}
+        .gkbd-tabs{display:flex;flex:1;gap:0}
+        .gkbd-tab{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-muted);font-size:.76rem;padding:0 14px;height:32px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap}
         .gkbd-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-        .gkbd-body{padding:5px 10px 6px;height:163px;overflow:hidden}
+        .gkbd-collapse-btn{background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:.7rem;width:24px;height:24px;border-radius:6px;cursor:pointer;transition:all .2s;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+        .gkbd-collapse-btn:hover{border-color:var(--accent);color:var(--accent)}
+        .gkbd-body{padding:5px 10px 6px;overflow:hidden;transition:max-height .35s cubic-bezier(0.4,0,0.2,1)}
+        .gkbd.open .gkbd-body{max-height:163px}
+        .gkbd.closed .gkbd-body{max-height:0;padding:0}
         .gkbd-zones{display:flex;height:100%;gap:0}
         .gkbd-zone{display:flex;flex-direction:column;gap:3px}
         .gkbd-zone-left{border-right:1px solid var(--border);padding-right:8px;margin-right:8px;flex-shrink:0}
         .gkbd-zone-right{flex:1}
-        .gkbd-single{display:flex;flex-direction:column;gap:3px;height:100%}
+        .gkbd-single{display:flex;flex-direction:column;gap:3px;height:158px}
         .gkbd-row{display:flex;gap:3px;flex:1}
         .gkbd-key{background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:.78rem;padding:2px 7px;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .15s;min-width:30px;text-align:center;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;justify-content:center}
         .gkbd-key:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-subtle)}
         .gkbd-key-special{background:rgba(13,18,32,0.9);border-color:rgba(56,189,248,0.18)}
         .gkbd-key-wide{flex:1;min-width:50px}
+
+        /* === ANALYSIS MODAL === */
+        .ganalysis-overlay{position:fixed;inset:0;z-index:800;background:rgba(11,15,25,0.8);display:none;align-items:center;justify-content:center;padding:20px}
+        .ganalysis-overlay.open{display:flex}
+        .ganalysis-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:24px 24px 20px;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;box-shadow:0 8px 48px rgba(0,0,0,0.5)}
+        .ganalysis-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+        .ganalysis-title{font-family:'Outfit',sans-serif;font-size:1.05rem;font-weight:700;color:var(--text-primary)}
+        .ganalysis-close{background:transparent;border:none;color:var(--text-muted);font-size:1.1rem;cursor:pointer;line-height:1}
+        .ganalysis-close:hover{color:var(--text-primary)}
+        .ganalysis-row{display:flex;gap:8px;margin-bottom:8px;font-size:.84rem}
+        .ganalysis-label{color:var(--text-muted);min-width:120px;flex-shrink:0}
+        .ganalysis-value{color:var(--text-primary);font-family:'JetBrains Mono',monospace;font-size:.8rem}
+        .ganalysis-desc{margin-top:14px;padding:10px 12px;background:var(--bg-input);border-radius:8px;font-size:.82rem;color:var(--text-secondary);line-height:1.5}
+        .ganalysis-section{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin:12px 0 6px}
 
         /* === HELP MODAL === */
         .ghelp-overlay{position:fixed;inset:0;z-index:800;background:rgba(11,15,25,0.8);display:none;align-items:center;justify-content:center;padding:20px}
@@ -174,7 +203,6 @@
         <div class="gpanel">
             <div class="gp-header">
                 <span class="gp-header-title">Expresiones</span>
-                <button class="gp-kbd-toggle" id="kbdToggleBtn" onclick="toggleKeyboard()">⌨ Teclado</button>
             </div>
             <div class="gp-exprs" id="exprList"></div>
             <button class="gp-add-btn" onclick="addExprRow()">+ Agregar expresión</button>
@@ -195,18 +223,32 @@
             </div>
 
             <!-- KEYBOARD PANEL -->
-            <div class="gkbd closed" id="gkbd">
-                <div class="gkbd-tabs">
-                    <button class="gkbd-tab active" onclick="switchKbdTab(0,this)">123</button>
-                    <button class="gkbd-tab" onclick="switchKbdTab(1,this)">f(x)</button>
-                    <button class="gkbd-tab" onclick="switchKbdTab(2,this)">ABC</button>
-                    <button class="gkbd-tab" onclick="switchKbdTab(3,this)">#&amp;¬</button>
+            <div class="gkbd open" id="gkbd">
+                <div class="gkbd-bar">
+                    <div class="gkbd-tabs" id="kbdTabs">
+                        <button class="gkbd-tab active" data-tab="0">123</button>
+                        <button class="gkbd-tab" data-tab="1">f(x)</button>
+                        <button class="gkbd-tab" data-tab="2">ABC</button>
+                        <button class="gkbd-tab" data-tab="3">#&amp;¬</button>
+                    </div>
+                    <button class="gkbd-collapse-btn" id="kbdCollapseBtn" onclick="toggleKeyboard()">▼</button>
                 </div>
                 <div class="gkbd-body" id="kbdBody"></div>
             </div>
         </div>
     </div>
 
+</div>
+
+<!-- ANALYSIS MODAL -->
+<div class="ganalysis-overlay" id="analysisOverlay">
+    <div class="ganalysis-card">
+        <div class="ganalysis-header">
+            <span class="ganalysis-title">Análisis de expresión</span>
+            <button class="ganalysis-close" onclick="closeAnalysis()">✕</button>
+        </div>
+        <div id="analysisContent"></div>
+    </div>
 </div>
 
 <!-- HELP OVERLAY -->
@@ -253,7 +295,6 @@
             <table class="ghelp-table">
                 <tr><td>Arrastrar</td><td>Mover el plano</td></tr>
                 <tr><td>Rueda del mouse</td><td>Zoom in/out</td></tr>
-                <tr><td>Ctrl+Z / botón</td><td>—</td></tr>
                 <tr><td>Drag de puntos</td><td>Reposicionar puntos en el canvas</td></tr>
             </table>
         </div>
@@ -270,8 +311,8 @@ let paletteIdx = 0;
 function nextColor() { const c = PALETTE[paletteIdx % PALETTE.length]; paletteIdx++; return c; }
 
 // ── Estado global ────────────────────────────────────────────────────────────
-const expressions = [];   // [{id, raw, type, color, visible, parsed, error, sliderVal, sliderMin, sliderMax, sliderStep, pointX, pointY}]
-let activeInputId = null; // id de la expr actualmente enfocada
+const expressions = [];
+let activeInputId = null;
 let eidCounter = 0;
 
 // ── Canvas & viewport ────────────────────────────────────────────────────────
@@ -280,8 +321,8 @@ const ctx = canvas.getContext('2d');
 const wrap = document.getElementById('canvasWrap');
 
 let W = 0, H = 0;
-let originX = 0, originY = 0; // origen en píxeles
-let scale = 60;               // píxeles por unidad
+let originX = 0, originY = 0;
+let scale = 60;
 
 function resetView() {
     scale = 60;
@@ -304,7 +345,6 @@ function screenToWorld(sx, sy) {
     return { x: (sx - originX) / scale, y: (originY - sy) / scale };
 }
 
-// ResizeObserver
 const ro = new ResizeObserver(() => {
     W = wrap.clientWidth;
     H = wrap.clientHeight;
@@ -322,12 +362,11 @@ ro.observe(wrap);
 let dragging = false;
 let dragStart = { x: 0, y: 0 };
 let originAtDragStart = { x: 0, y: 0 };
-let draggedPoint = null; // {exprId, startWorldX, startWorldY}
+let draggedPoint = null;
 
 canvas.addEventListener('mousedown', e => {
     if (e.button !== 0) return;
     const mx = e.offsetX, my = e.offsetY;
-    // Check if clicking near a point
     for (const expr of expressions) {
         if (!expr.visible || expr.type !== 'point') continue;
         const sp = worldToScreen(expr.pointX, expr.pointY);
@@ -364,7 +403,6 @@ canvas.addEventListener('mousemove', e => {
         originY = originAtDragStart.y + (my - dragStart.y);
         requestDraw();
     }
-    // Hover tooltip for intersections
     showIntersectionTooltip(mx, my);
 });
 
@@ -387,7 +425,6 @@ canvas.addEventListener('wheel', e => {
     e.preventDefault();
     const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
     const mx = e.offsetX, my = e.offsetY;
-    // Zoom towards mouse
     const wx = (mx - originX) / scale;
     const wy = (originY - my) / scale;
     scale *= factor;
@@ -415,10 +452,8 @@ function draw() {
 }
 
 function drawGrid() {
-    // Determine grid spacing in world units
-    const rawStep = 1;
     const minPixels = 40;
-    let step = rawStep;
+    let step = 1;
     while (step * scale < minPixels) step *= 2;
     while (step * scale > minPixels * 4) step /= 2;
     step = +step.toPrecision(1);
@@ -441,19 +476,17 @@ function drawGrid() {
     }
     ctx.stroke();
 
-    // Axis labels
     ctx.fillStyle = 'rgba(100,116,139,0.7)';
     ctx.font = '11px JetBrains Mono, monospace';
     ctx.textAlign = 'center';
-    const labelStep = step;
-    for (let x = Math.ceil(xStart / labelStep) * labelStep; x <= xEnd; x += labelStep) {
+    for (let x = Math.ceil(xStart / step) * step; x <= xEnd; x += step) {
         if (Math.abs(x) < 1e-9) continue;
         const px = originX + x * scale;
         const labelY = Math.min(Math.max(originY + 14, 14), H - 4);
         ctx.fillText(fmtNum(x), px, labelY);
     }
     ctx.textAlign = 'right';
-    for (let y = Math.ceil(yStart / labelStep) * labelStep; y <= yEnd; y += labelStep) {
+    for (let y = Math.ceil(yStart / step) * step; y <= yEnd; y += step) {
         if (Math.abs(y) < 1e-9) continue;
         const py = originY - y * scale;
         const labelX = Math.min(Math.max(originX - 6, 4), W - 4);
@@ -471,11 +504,9 @@ function drawAxes() {
     const arrSize = 8;
     ctx.strokeStyle = 'rgba(56,189,248,0.35)';
     ctx.lineWidth = 1.5;
-    // X axis
     ctx.beginPath();
     ctx.moveTo(0, originY); ctx.lineTo(W, originY);
     ctx.stroke();
-    // X arrow
     ctx.beginPath();
     ctx.moveTo(W, originY);
     ctx.lineTo(W - arrSize, originY - arrSize / 2);
@@ -483,12 +514,10 @@ function drawAxes() {
     ctx.closePath();
     ctx.fillStyle = 'rgba(56,189,248,0.35)';
     ctx.fill();
-    // Y axis
     ctx.beginPath();
     ctx.strokeStyle = 'rgba(56,189,248,0.35)';
     ctx.moveTo(originX, H); ctx.lineTo(originX, 0);
     ctx.stroke();
-    // Y arrow
     ctx.beginPath();
     ctx.moveTo(originX, 0);
     ctx.lineTo(originX - arrSize / 2, arrSize);
@@ -496,7 +525,6 @@ function drawAxes() {
     ctx.closePath();
     ctx.fillStyle = 'rgba(56,189,248,0.35)';
     ctx.fill();
-    // Axis labels
     ctx.fillStyle = 'rgba(56,189,248,0.5)';
     ctx.font = '13px JetBrains Mono, monospace';
     ctx.textAlign = 'left';
@@ -529,7 +557,7 @@ function drawFunction(expr) {
     const xRight = (W - originX) / scale;
     const N = 2000;
     const dx = (xRight - xLeft) / N;
-    const DISC_THRESH = (H / scale) * 3; // discontinuity threshold in world units
+    const DISC_THRESH = (H / scale) * 3;
 
     ctx.save();
     ctx.strokeStyle = expr.color;
@@ -551,7 +579,6 @@ function drawFunction(expr) {
         const sy = originY - wy * scale;
         const sx = originX + wx * scale;
 
-        // Discontinuity check
         if (prevY !== null && Math.abs(wy - prevY) > DISC_THRESH) {
             penDown = false;
         }
@@ -602,14 +629,12 @@ function drawVLine(expr) {
 }
 
 function drawLine(expr) {
-    // ax + by = c → y = (c - ax) / b, or x = c/a if b=0
     const { a, b, c } = expr.lineCoeffs;
     ctx.save();
     ctx.strokeStyle = expr.color;
     ctx.lineWidth = 2;
     ctx.beginPath();
     if (Math.abs(b) < 1e-9) {
-        // Vertical-ish, handled by vline
         const px = originX + (c / a) * scale;
         ctx.moveTo(px, 0); ctx.lineTo(px, H);
     } else {
@@ -649,7 +674,6 @@ function computeIntersections() {
                 if (!isFinite(ya) || !isFinite(yb)) { prevDiff = null; continue; }
                 const diff = ya - yb;
                 if (prevDiff !== null && diff * prevDiff < 0) {
-                    // Sign change — bisect
                     let lo = x - dx, hi = x;
                     for (let k = 0; k < 30; k++) {
                         const mid = (lo + hi) / 2;
@@ -705,7 +729,6 @@ function parseExpression(raw, expr) {
     const s = raw.trim();
     expr.error = false;
 
-    // 1. Slider: name = [min, max, step]
     const sliderMatch = s.match(/^([a-zA-Z]\w*)\s*=\s*\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]$/);
     if (sliderMatch) {
         expr.type = 'slider';
@@ -718,7 +741,6 @@ function parseExpression(raw, expr) {
         return;
     }
 
-    // 2. Point: A = (x, y) or (x, y)
     const pointMatch = s.match(/^([A-Z]\w*)?\s*=?\s*\(\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\)$/);
     if (pointMatch) {
         expr.type = 'point';
@@ -728,7 +750,6 @@ function parseExpression(raw, expr) {
         return;
     }
 
-    // 3. Vertical line: x = number
     const vlineMatch = s.match(/^x\s*=\s*(-?[\d.]+(?:\/[\d.]+)?)$/);
     if (vlineMatch) {
         expr.type = 'vline';
@@ -737,7 +758,6 @@ function parseExpression(raw, expr) {
         return;
     }
 
-    // 4. General line: ax + by = c or ax + by + c = 0
     const genLineMatch = s.match(/^(-?[\d.]*)\s*\*?\s*x\s*([+\-]\s*[\d.]*)\s*\*?\s*y\s*=\s*(-?[\d.]+)$/i);
     if (genLineMatch) {
         const a = parseFloat(genLineMatch[1] || '1');
@@ -751,17 +771,12 @@ function parseExpression(raw, expr) {
         }
     }
 
-    // 5. Function y = f(x) or f(x) alone
     let fnStr = s;
-    // Strip "y = " or "y=" prefix
     fnStr = fnStr.replace(/^\s*y\s*=\s*/i, '');
-    // Also handle f(x) = expr → strip "f(x) ="
     fnStr = fnStr.replace(/^\s*[a-z]\(x\)\s*=\s*/i, '');
 
-    // Attempt to parse
     try {
-        const node = math.parse(fnStr);
-        // Try evaluating at x=1 to validate
+        math.parse(fnStr);
         const scope = getSliderScope();
         math.evaluate(fnStr, { ...scope, x: 1 });
         expr.type = 'function';
@@ -781,7 +796,6 @@ function addExprRow(initialValue = '') {
     if (initialValue) parseExpression(initialValue, expr);
     expressions.push(expr);
     renderExprRow(expr);
-    // focus input
     setTimeout(() => {
         const el = document.getElementById(`einput-${id}`);
         if (el) { el.focus(); activeInputId = id; }
@@ -800,17 +814,37 @@ function renderExprRow(expr) {
 
     row.innerHTML = `
         <div class="expr-row-top">
-            <div class="expr-color" id="ecolor-${expr.id}" style="background:${expr.color}" title="Cambiar color" onclick="cycleColor(${expr.id})"></div>
-            <input class="expr-input" id="einput-${expr.id}" type="text" value="${escHtml(expr.raw)}" placeholder="y = x^2  o  A = (2,3)  o  a = [0,10,1]" spellcheck="false">
+            <div class="expr-color" id="ecolor-${expr.id}" style="background:${expr.color}" title="Cambiar color" onclick="toggleColorPicker(${expr.id})"></div>
+            <input class="expr-input" id="einput-${expr.id}" type="text" value="${escHtml(expr.raw)}" placeholder="Expresión..." spellcheck="false">
             <button class="expr-eye" id="eeye-${expr.id}" onclick="toggleVisible(${expr.id})" title="Mostrar/ocultar">${eyeIcon}</button>
-            <button class="expr-del" onclick="deleteExpr(${expr.id})" title="Eliminar">✕</button>
+            <button class="expr-menu-btn" id="emenu-${expr.id}" onclick="openExprMenu(${expr.id})" title="Opciones">⋮</button>
+            <div class="expr-dropdown" id="edrop-${expr.id}" style="display:none">
+                <button class="expr-dropdown-item" onclick="duplicateExpr(${expr.id})">Duplicar</button>
+                <button class="expr-dropdown-item danger" onclick="deleteExpr(${expr.id})">Eliminar</button>
+                <button class="expr-dropdown-item" onclick="analyzeExpr(${expr.id})">Análisis</button>
+            </div>
         </div>
+        <div class="expr-colorpicker" id="ecolorpick-${expr.id}" style="display:none"></div>
         <div id="eslider-${expr.id}" style="display:none" class="expr-slider-wrap">
             <input type="range" class="expr-slider" id="erange-${expr.id}">
             <span class="expr-slider-val" id="erangeval-${expr.id}"></span>
         </div>
         <div class="expr-label" id="elabel-${expr.id}"></div>
     `;
+
+    // Build color picker circles
+    const picker = row.querySelector(`#ecolorpick-${expr.id}`);
+    PALETTE.forEach(c => {
+        const circle = document.createElement('div');
+        circle.className = 'expr-colorpicker-circle' + (c === expr.color ? ' active' : '');
+        circle.style.background = c;
+        circle.title = c;
+        circle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            applyColor(expr.id, c);
+        });
+        picker.appendChild(circle);
+    });
 
     list.appendChild(row);
 
@@ -855,11 +889,11 @@ function updateExprRowUI(expr) {
     } else {
         sliderWrap.style.display = 'none';
         if (expr.type === 'point') {
-            labelEl.textContent = `Punto (arrastrable)`;
+            labelEl.textContent = 'Punto (arrastrable)';
         } else if (expr.type === 'vline') {
-            labelEl.textContent = `Recta vertical`;
+            labelEl.textContent = 'Recta vertical';
         } else if (expr.type === 'line') {
-            labelEl.textContent = `Recta`;
+            labelEl.textContent = 'Recta';
         } else if (expr.type === 'function') {
             labelEl.textContent = expr.error ? 'Error de sintaxis' : 'Función';
         } else {
@@ -868,14 +902,239 @@ function updateExprRowUI(expr) {
     }
 }
 
-function cycleColor(id) {
+// ── Color picker ─────────────────────────────────────────────────────────────
+let openPickerId = null;
+
+function toggleColorPicker(id) {
+    if (openPickerId === id) {
+        closeColorPicker();
+        return;
+    }
+    closeColorPicker();
+    openPickerId = id;
+    const picker = document.getElementById(`ecolorpick-${id}`);
+    if (picker) picker.style.display = 'flex';
+}
+
+function closeColorPicker() {
+    if (openPickerId !== null) {
+        const picker = document.getElementById(`ecolorpick-${openPickerId}`);
+        if (picker) picker.style.display = 'none';
+        openPickerId = null;
+    }
+}
+
+function applyColor(id, color) {
     const expr = expressions.find(e => e.id === id);
     if (!expr) return;
-    const idx = PALETTE.indexOf(expr.color);
-    expr.color = PALETTE[(idx + 1) % PALETTE.length];
+    expr.color = color;
     const colorEl = document.getElementById(`ecolor-${id}`);
-    if (colorEl) colorEl.style.background = expr.color;
+    if (colorEl) colorEl.style.background = color;
+    // Update active circle
+    const picker = document.getElementById(`ecolorpick-${id}`);
+    if (picker) {
+        picker.querySelectorAll('.expr-colorpicker-circle').forEach((c, i) => {
+            c.classList.toggle('active', PALETTE[i] === color);
+        });
+    }
+    closeColorPicker();
     requestDraw();
+}
+
+// ── Expr dropdown menu ────────────────────────────────────────────────────────
+let openMenuId = null;
+
+function openExprMenu(id) {
+    if (openMenuId === id) {
+        closeExprMenu();
+        return;
+    }
+    closeExprMenu();
+    openMenuId = id;
+    const drop = document.getElementById(`edrop-${id}`);
+    if (drop) drop.style.display = 'block';
+}
+
+function closeExprMenu() {
+    if (openMenuId !== null) {
+        const drop = document.getElementById(`edrop-${openMenuId}`);
+        if (drop) drop.style.display = 'none';
+        openMenuId = null;
+    }
+}
+
+function duplicateExpr(id) {
+    closeExprMenu();
+    const expr = expressions.find(e => e.id === id);
+    if (!expr) return;
+    addExprRow(expr.raw);
+}
+
+function deleteExpr(id) {
+    closeExprMenu();
+    const idx = expressions.findIndex(e => e.id === id);
+    if (idx === -1) return;
+    expressions.splice(idx, 1);
+    const row = document.getElementById(`erow-${id}`);
+    if (row) row.remove();
+    if (activeInputId === id) activeInputId = null;
+    requestDraw();
+}
+
+// ── Analysis ─────────────────────────────────────────────────────────────────
+function findZeros(fnStr, xMin, xMax) {
+    const scope = getSliderScope();
+    const N = 600;
+    const dx = (xMax - xMin) / N;
+    const zeros = [];
+    let prevY = null, prevX = null;
+    for (let i = 0; i <= N; i++) {
+        const x = xMin + i * dx;
+        let y;
+        try { y = math.evaluate(fnStr, { ...scope, x }); } catch { prevY = null; continue; }
+        if (!isFinite(y)) { prevY = null; continue; }
+        if (prevY !== null && prevY * y < 0) {
+            let lo = prevX, hi = x;
+            const sign = prevY;
+            for (let k = 0; k < 40; k++) {
+                const mid = (lo + hi) / 2;
+                let ym;
+                try { ym = math.evaluate(fnStr, { ...scope, x: mid }); } catch { break; }
+                if (sign * ym < 0) hi = mid; else lo = mid;
+            }
+            const zx = (lo + hi) / 2;
+            if (!zeros.some(z => Math.abs(z - zx) < 0.01)) zeros.push(zx);
+        }
+        prevY = y; prevX = x;
+    }
+    return zeros;
+}
+
+function findFuncIntersections(targetExpr) {
+    const others = expressions.filter(e => e.visible && e.type === 'function' && !e.error && e.id !== targetExpr.id);
+    const scope = getSliderScope();
+    const xMin = -20, xMax = 20;
+    const N = 600;
+    const dx = (xMax - xMin) / N;
+    const pts = [];
+
+    for (const other of others) {
+        let prevDiff = null, prevX = null;
+        for (let i = 0; i <= N; i++) {
+            const x = xMin + i * dx;
+            let ya, yb;
+            try { ya = math.evaluate(targetExpr.fn, { ...scope, x }); } catch { prevDiff = null; continue; }
+            try { yb = math.evaluate(other.fn, { ...scope, x }); } catch { prevDiff = null; continue; }
+            if (!isFinite(ya) || !isFinite(yb)) { prevDiff = null; continue; }
+            const diff = ya - yb;
+            if (prevDiff !== null && diff * prevDiff < 0) {
+                let lo = prevX, hi = x;
+                const sign = prevDiff;
+                for (let k = 0; k < 40; k++) {
+                    const mid = (lo + hi) / 2;
+                    let yam, ybm;
+                    try { yam = math.evaluate(targetExpr.fn, { ...scope, x: mid }); } catch { break; }
+                    try { ybm = math.evaluate(other.fn, { ...scope, x: mid }); } catch { break; }
+                    if (sign * (yam - ybm) < 0) hi = mid; else lo = mid;
+                }
+                const ix = (lo + hi) / 2;
+                let iy;
+                try { iy = math.evaluate(targetExpr.fn, { ...scope, x: ix }); } catch { prevDiff = diff; continue; }
+                if (isFinite(iy) && !pts.some(p => Math.abs(p.x - ix) < 0.01)) {
+                    pts.push({ x: ix, y: iy, withExpr: other.raw || other.fn });
+                }
+            }
+            prevDiff = diff; prevX = x;
+        }
+    }
+    return pts;
+}
+
+function generateDescription(expr) {
+    const fn = expr.fn.toLowerCase();
+    const typeLabels = {
+        'function': 'Función',
+        'point': 'Punto',
+        'vline': 'Recta vertical',
+        'line': 'Recta',
+        'slider': 'Slider'
+    };
+
+    if (expr.type !== 'function') return typeLabels[expr.type] || 'Objeto matemático';
+
+    if (/sin|cos|tan|asin|acos|atan/.test(fn)) return 'Función trigonométrica.';
+    if (/log|ln/.test(fn)) return 'Función logarítmica.';
+    if (/exp\(|e\^/.test(fn)) return 'Función exponencial.';
+    if (/sqrt|nthroot/.test(fn)) return 'Función con raíz cuadrada.';
+    if (/abs/.test(fn)) return 'Función con valor absoluto.';
+    if (/x\^2/.test(fn) && !/x\^[3-9]/.test(fn)) return 'Función cuadrática (parábola).';
+    if (/x\^3/.test(fn)) return 'Función cúbica.';
+    if (/x\^[4-9]/.test(fn)) return 'Función polinómica de grado superior.';
+    if (/x\^/.test(fn)) return 'Función potencial.';
+    if (/^-?[\d.]*\s*\*?\s*x\s*([+\-]\s*[\d.]+)?$/.test(fn.trim())) return 'Función lineal (recta).';
+    return 'Función matemática.';
+}
+
+function analyzeExpr(id) {
+    closeExprMenu();
+    const expr = expressions.find(e => e.id === id);
+    if (!expr) return;
+
+    const content = document.getElementById('analysisContent');
+    let html = '';
+
+    const typeLabel = { function: 'Función', point: 'Punto', vline: 'Recta vertical', line: 'Recta', slider: 'Slider' }[expr.type] || expr.type;
+
+    html += `<div class="ganalysis-row"><span class="ganalysis-label">Tipo</span><span class="ganalysis-value">${typeLabel}</span></div>`;
+    html += `<div class="ganalysis-row"><span class="ganalysis-label">Expresión</span><span class="ganalysis-value">${escHtml(expr.raw)}</span></div>`;
+    html += `<div class="ganalysis-row"><span class="ganalysis-label">Color</span><span class="ganalysis-value"><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${expr.color};vertical-align:middle;margin-right:5px"></span>${expr.color}</span></div>`;
+
+    if (expr.type === 'function' && !expr.error) {
+        html += `<div class="ganalysis-section">Propiedades</div>`;
+
+        // Y-intercept
+        let yInt = '—';
+        try {
+            const scope = getSliderScope();
+            const val = math.evaluate(expr.fn, { ...scope, x: 0 });
+            if (isFinite(val)) yInt = `(0, ${val.toFixed(4)})`;
+        } catch {}
+        html += `<div class="ganalysis-row"><span class="ganalysis-label">Ordenada al origen</span><span class="ganalysis-value">${yInt}</span></div>`;
+
+        // Zeros
+        const zeros = findZeros(expr.fn, -20, 20);
+        const zerosStr = zeros.length > 0 ? zeros.map(z => `x ≈ ${z.toFixed(4)}`).join(', ') : 'Sin ceros en [−20, 20]';
+        html += `<div class="ganalysis-row"><span class="ganalysis-label">Ceros / raíces</span><span class="ganalysis-value">${escHtml(zerosStr)}</span></div>`;
+
+        // Intersections with other functions
+        const inters = findFuncIntersections(expr);
+        if (inters.length > 0) {
+            html += `<div class="ganalysis-section">Intersecciones con otras funciones</div>`;
+            inters.forEach(p => {
+                html += `<div class="ganalysis-row"><span class="ganalysis-label">${escHtml(p.withExpr)}</span><span class="ganalysis-value">(${p.x.toFixed(3)}, ${p.y.toFixed(3)})</span></div>`;
+            });
+        }
+    }
+
+    if (expr.type === 'point') {
+        html += `<div class="ganalysis-row"><span class="ganalysis-label">Coordenadas</span><span class="ganalysis-value">(${expr.pointX}, ${expr.pointY})</span></div>`;
+    }
+
+    if (expr.type === 'slider') {
+        html += `<div class="ganalysis-row"><span class="ganalysis-label">Rango</span><span class="ganalysis-value">[${expr.sliderMin}, ${expr.sliderMax}]</span></div>`;
+        html += `<div class="ganalysis-row"><span class="ganalysis-label">Paso</span><span class="ganalysis-value">${expr.sliderStep}</span></div>`;
+        html += `<div class="ganalysis-row"><span class="ganalysis-label">Valor actual</span><span class="ganalysis-value">${expr.sliderVal}</span></div>`;
+    }
+
+    const desc = generateDescription(expr);
+    html += `<div class="ganalysis-desc">${escHtml(desc)}</div>`;
+
+    content.innerHTML = html;
+    document.getElementById('analysisOverlay').classList.add('open');
+}
+
+function closeAnalysis() {
+    document.getElementById('analysisOverlay').classList.remove('open');
 }
 
 function toggleVisible(id) {
@@ -890,27 +1149,19 @@ function toggleVisible(id) {
     requestDraw();
 }
 
-function deleteExpr(id) {
-    const idx = expressions.findIndex(e => e.id === id);
-    if (idx === -1) return;
-    expressions.splice(idx, 1);
-    const row = document.getElementById(`erow-${id}`);
-    if (row) row.remove();
-    if (activeInputId === id) activeInputId = null;
-    requestDraw();
-}
-
 function escHtml(str) {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 // ── Keyboard ─────────────────────────────────────────────────────────────────
-let kbdOpen = false;
+let kbdOpen = true;
 let kbdTabIdx = 0;
-let kbdShift = false;
 
+// Tab 0: "123"  — 33 keys total (L=15, R=18)
+// Tab 1: "f(x)" — 25 keys total (L=12, R=13)
+// Tab 2: "ABC"  — 37 keys total
+// Tab 3: "#&¬"  — 35 keys total
 const KBD_DATA = [
-    // Tab 0: "123" — two zones
     { type: 'two',
       L: [
         [{l:'x',v:'x'},{l:'y',v:'y'},{l:'z',v:'z'},{l:'π',v:'pi'}],
@@ -925,7 +1176,6 @@ const KBD_DATA = [
         [{l:'0',v:'0'},{l:'.',v:'.'},{l:'↵',v:'ENTER',s:1,w:1}],
       ]
     },
-    // Tab 1: "f(x)" — two zones
     { type: 'two',
       L: [
         [{l:'sen',v:'sin('},{l:'cos',v:'cos('},{l:'tg',v:'tan('}],
@@ -940,30 +1190,29 @@ const KBD_DATA = [
         [{l:'↵',v:'ENTER',s:1,w:1}],
       ]
     },
-    // Tab 2: "ABC" — single zone QWERTY
     { type: 'one',
       rows: [
         [{l:'q',v:'q'},{l:'w',v:'w'},{l:'e',v:'e'},{l:'r',v:'r'},{l:'t',v:'t'},{l:'y',v:'y'},{l:'u',v:'u'},{l:'i',v:'i'},{l:'o',v:'o'},{l:'p',v:'p'}],
         [{l:'a',v:'a'},{l:'s',v:'s'},{l:'d',v:'d'},{l:'f',v:'f'},{l:'g',v:'g'},{l:'h',v:'h'},{l:'j',v:'j'},{l:'k',v:'k'},{l:'l',v:'l'},{l:'ñ',v:'ñ'}],
         [{l:'⇧',v:'SHIFT',s:1},{l:'z',v:'z'},{l:'x',v:'x'},{l:'c',v:'c'},{l:'v',v:'v'},{l:'b',v:'b'},{l:'n',v:'n'},{l:'m',v:'m'},{l:'ï',v:'ï'},{l:'ü',v:'ü'},{l:'⌫',v:'BACKSPACE',s:1}],
-        [{l:'αβγ',v:'ALPHA',s:1},{l:',',v:','},{l:'(',v:'('},{l:')',v:')'},{l:'',v:' ',w:1},{l:'↵',v:'ENTER',s:1}],
+        [{l:'αβγ',v:'ALPHA',s:1},{l:',',v:','},{l:'(',v:'('},{l:')',v:')'},{l:' ',v:' ',w:1},{l:'↵',v:'ENTER',s:1}],
       ]
     },
-    // Tab 3: "#&¬" — single zone symbols
     { type: 'one',
       rows: [
         [{l:'∞',v:'Infinity'},{l:'≜',v:'≜'},{l:'≠',v:'!='},{l:'∧',v:'and '},{l:'∨',v:'or '},{l:'¬',v:'not '},{l:'⊗',v:'⊗'},{l:'[',v:'['},{l:']',v:']'}],
         [{l:'‖',v:'‖'},{l:'⊥',v:'⊥'},{l:'∈',v:'∈'},{l:'⊂',v:'⊂'},{l:'⊆',v:'⊆'},{l:'∠',v:'∠'},{l:'→',v:'->'},{l:'□',v:'□'},{l:'◇',v:'◇'}],
         [{l:'·',v:'·'},{l:'∘',v:'∘'},{l:'∗',v:'∗'},{l:'\\',v:'\\'},{l:'&',v:'&'},{l:'@',v:'@'},{l:'#',v:'#'},{l:'$',v:'$'},{l:'⌫',v:'BACKSPACE',s:1}],
-        [{l:';',v:';'},{l:':',v:':'},{l:"'",v:"'"},{l:'"',v:'"'},{l:'\u2018',v:'\u2018'},{l:'\u201C',v:'\u201C'},{l:'',v:' ',w:1},{l:'↵',v:'ENTER',s:1}],
+        [{l:';',v:';'},{l:':',v:':'},{l:"'",v:"'"},{l:'"',v:'"'},{l:'\u2018',v:'\u2018'},{l:'\u201C',v:'\u201C'},{l:' ',v:' ',w:1},{l:'↵',v:'ENTER',s:1}],
       ]
     },
 ];
 
 function _buildKey(k) {
     const cls = ['gkbd-key', k.s ? 'gkbd-key-special' : '', k.w ? 'gkbd-key-wide' : ''].filter(Boolean).join(' ');
-    const lbl = k.l || '&nbsp;';
-    return `<button class="${cls}" onclick="insertKey(${JSON.stringify(k.v)})">${lbl}</button>`;
+    const lbl = k.l !== '' ? escHtml(k.l) : '&nbsp;';
+    const val = escHtml(k.v);
+    return `<button class="${cls}" data-kval="${val}">${lbl}</button>`;
 }
 
 function _buildRow(keys) {
@@ -982,36 +1231,47 @@ function buildKeyboard(tabIdx) {
     }
 }
 
-function switchKbdTab(idx, btn) {
+// Event delegation for keyboard — avoids inline HTML attribute injection issues
+document.getElementById('kbdBody').addEventListener('click', e => {
+    const btn = e.target.closest('.gkbd-key');
+    if (btn) insertKey(btn.dataset.kval);
+});
+
+// Tab switching via delegation
+document.getElementById('kbdTabs').addEventListener('click', e => {
+    const btn = e.target.closest('.gkbd-tab');
+    if (!btn) return;
+    const idx = parseInt(btn.dataset.tab, 10);
     kbdTabIdx = idx;
     document.querySelectorAll('.gkbd-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
     buildKeyboard(idx);
-}
+});
 
 function toggleKeyboard() {
     kbdOpen = !kbdOpen;
     document.getElementById('gkbd').className = 'gkbd ' + (kbdOpen ? 'open' : 'closed');
-    const btn = document.getElementById('kbdToggleBtn');
-    btn.style.borderColor = kbdOpen ? 'var(--accent)' : '';
-    btn.style.color = kbdOpen ? 'var(--accent)' : '';
+    const btn = document.getElementById('kbdCollapseBtn');
+    if (btn) btn.textContent = kbdOpen ? '▼' : '▲';
     if (kbdOpen) buildKeyboard(kbdTabIdx);
 }
+
+let kbdShift = false;
 
 function insertKey(val) {
     if (activeInputId === null) {
         if (expressions.length === 0) { addExprRow(); return; }
         activeInputId = expressions[expressions.length - 1].id;
     }
-    // Special: tab-switching actions (no input needed)
     if (val === 'SHIFT') {
         kbdShift = !kbdShift;
         buildKeyboard(kbdTabIdx);
         return;
     }
     if (val === 'ALPHA') {
-        const btn = document.querySelectorAll('.gkbd-tab')[3];
-        if (btn) switchKbdTab(3, btn);
+        kbdTabIdx = 3;
+        document.querySelectorAll('.gkbd-tab').forEach((t, i) => t.classList.toggle('active', i === 3));
+        buildKeyboard(3);
         return;
     }
     const input = document.getElementById(`einput-${activeInputId}`);
@@ -1042,14 +1302,28 @@ function insertKey(val) {
 
 // ── Export ────────────────────────────────────────────────────────────────────
 function exportImage() {
+    // Draw watermark on canvas temporarily
+    ctx.save();
+    ctx.font = '12px JetBrains Mono, monospace';
+    ctx.fillStyle = 'rgba(148, 163, 184, 0.6)';
+    ctx.textAlign = 'right';
+    ctx.fillText('Hecho con AlgorIA \u00B7 algoria.angeloperrotta.online', canvas.width - 12, canvas.height - 12);
+    ctx.restore();
+    const dataURL = canvas.toDataURL('image/png');
+    // Restore canvas without watermark
+    requestDraw();
     const link = document.createElement('a');
     link.download = 'algoria-grafico.png';
-    link.href = canvas.toDataURL('image/png');
+    link.href = dataURL;
     link.click();
 }
 
 function exportExpressions() {
-    const text = expressions.map(e => e.raw).filter(Boolean).join('\n');
+    const lines = expressions.map(e => e.raw).filter(Boolean);
+    lines.push('');
+    lines.push('---');
+    lines.push('Hecho con AlgorIA \u00B7 algoria.angeloperrotta.online');
+    const text = lines.join('\n');
     const blob = new Blob([text], { type: 'text/plain' });
     const link = document.createElement('a');
     link.download = 'algoria-expresiones.txt';
@@ -1064,11 +1338,34 @@ function closeHelp() { document.getElementById('helpOverlay').classList.remove('
 document.getElementById('helpOverlay').addEventListener('click', e => {
     if (e.target === document.getElementById('helpOverlay')) closeHelp();
 });
+document.getElementById('analysisOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('analysisOverlay')) closeAnalysis();
+});
+
+// ── Close pickers/menus on outside click ────────────────────────────────────
+document.addEventListener('mousedown', e => {
+    // Close color picker
+    if (openPickerId !== null) {
+        const picker = document.getElementById(`ecolorpick-${openPickerId}`);
+        const colorBtn = document.getElementById(`ecolor-${openPickerId}`);
+        if (picker && !picker.contains(e.target) && e.target !== colorBtn) {
+            closeColorPicker();
+        }
+    }
+    // Close dropdown menu
+    if (openMenuId !== null) {
+        const drop = document.getElementById(`edrop-${openMenuId}`);
+        const menuBtn = document.getElementById(`emenu-${openMenuId}`);
+        if (drop && !drop.contains(e.target) && e.target !== menuBtn) {
+            closeExprMenu();
+        }
+    }
+});
 
 // ── Init ──────────────────────────────────────────────────────────────────────
-// Load default expressions to demo the tool
 addExprRow('y = x^2');
 addExprRow('y = 2*x + 1');
+buildKeyboard(0);
 
 </script>
 </body>
