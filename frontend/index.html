@@ -27,7 +27,7 @@
             --border: rgba(56,189,248,0.1);
             --user-bubble: linear-gradient(135deg,#0ea5e9,#0284c7);
             --bot-bubble: #1a2238;
-            --panel-width: 280px;
+            --panel-width: 260px;
         }
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'DM Sans',sans-serif;background:var(--bg-primary);color:var(--text-primary);height:100vh;overflow:hidden;position:relative}
@@ -39,7 +39,7 @@
         /* === LAYOUT === */
         .root-layout{position:relative;z-index:1;display:flex;height:100vh;overflow:hidden}
 
-        /* === HISTORY PANEL (fixed left) === */
+        /* === HISTORY PANEL === */
         .history-panel{width:var(--panel-width);min-width:var(--panel-width);background:var(--bg-card);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .25s ease,min-width .25s ease;flex-shrink:0}
         .history-panel.collapsed{width:0;min-width:0;border-right:none}
         .history-header{padding:16px 14px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;white-space:nowrap;overflow:hidden}
@@ -55,7 +55,7 @@
         .history-session:hover{background:rgba(255,255,255,0.04)}
         .history-session.active{border-left-color:var(--accent);background:rgba(56,189,248,0.06)}
         .history-session-date{font-size:.68rem;color:var(--text-muted);margin-bottom:2px}
-        .history-session-preview{font-size:.79rem;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:230px}
+        .history-session-preview{font-size:.79rem;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:210px}
         .history-empty{padding:32px 14px;text-align:center;color:var(--text-muted);font-size:.82rem}
 
         /* Mobile overlay */
@@ -136,16 +136,20 @@
         .clear-btn{background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:.76rem;padding:5px 12px;border-radius:8px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
         .clear-btn:hover{border-color:#f87171;color:#f87171;background:rgba(248,113,113,0.08)}
 
-        /* --- Auth overlay --- */
-        .auth-overlay{position:fixed;inset:0;z-index:500;background:rgba(11,15,25,0.97);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeUp .5s ease}
-        .auth-card{background:var(--bg-card);border:1px solid var(--border);border-radius:24px;padding:40px 36px;width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;gap:20px;box-shadow:0 8px 48px rgba(0,0,0,0.5)}
-        .auth-logo{width:64px;height:64px;background:var(--user-bubble);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#fff;box-shadow:0 4px 24px var(--accent-glow)}
-        .auth-card h2{font-family:'Outfit',sans-serif;font-size:1.6rem;font-weight:800;color:var(--text-primary);letter-spacing:-0.03em}
+        /* --- Login button --- */
+        .login-btn{background:transparent;border:1px solid var(--accent);color:var(--accent);font-size:.8rem;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;font-weight:500}
+        .login-btn:hover{background:var(--accent-subtle)}
+
+        /* --- Shared overlay base --- */
+        .overlay-base{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;padding:20px}
+
+        /* --- Save progress popup --- */
+        .save-popup{background:rgba(11,15,25,0.75);animation:fadeUp .4s ease}
+        .auth-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:36px 32px;width:100%;max-width:400px;display:flex;flex-direction:column;align-items:center;gap:18px;box-shadow:0 8px 48px rgba(0,0,0,0.5)}
+        .auth-logo{width:60px;height:60px;background:var(--user-bubble);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#fff;box-shadow:0 4px 24px var(--accent-glow)}
+        .auth-card h2{font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:800;color:var(--text-primary);letter-spacing:-0.03em;text-align:center}
         .auth-card h2 span{color:var(--accent)}
-        .auth-subtitle{font-size:.83rem;color:var(--text-muted);margin-top:-10px}
-        .auth-tabs{display:flex;gap:8px;background:var(--bg-input);border-radius:10px;padding:4px;width:100%}
-        .auth-tab{flex:1;padding:8px;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;background:transparent;color:var(--text-muted)}
-        .auth-tab.active{background:var(--user-bubble);color:#fff;box-shadow:0 2px 10px var(--accent-glow)}
+        .auth-subtitle{font-size:.83rem;color:var(--text-muted);margin-top:-8px;text-align:center;max-width:300px;line-height:1.5}
         .auth-form{display:flex;flex-direction:column;gap:12px;width:100%}
         .auth-input{width:100%;padding:12px 16px;background:var(--bg-input);border:1px solid var(--border);border-radius:12px;color:var(--text-primary);font-family:'DM Sans',sans-serif;font-size:.91rem;outline:none;transition:all .2s}
         .auth-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
@@ -153,10 +157,23 @@
         .auth-btn{width:100%;padding:13px;background:var(--user-bubble);border:none;border-radius:12px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s}
         .auth-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 4px 18px var(--accent-glow)}
         .auth-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
-        .auth-error{font-size:.83rem;color:#f87171;text-align:center;min-height:20px}
+        .auth-error{font-size:.83rem;color:#f87171;text-align:center;min-height:18px}
+        .save-dismiss{font-size:.83rem;color:var(--text-muted);cursor:pointer;text-decoration:none;transition:color .2s;margin-top:-4px}
+        .save-dismiss:hover{color:var(--text-secondary)}
 
         /* --- UAI badge --- */
-        .uai-badge{display:none;align-items:center;gap:6px;color:var(--green);font-size:.82rem;background:var(--green-glow);border:1px solid rgba(52,211,153,0.25);padding:6px 12px;border-radius:8px}
+        .uai-badge{display:none;align-items:center;gap:6px;color:var(--green);font-size:.79rem;background:var(--green-glow);border:1px solid rgba(52,211,153,0.25);padding:5px 12px;border-radius:8px}
+
+        /* --- Admin popup --- */
+        .admin-popup{background:rgba(11,15,25,0.88);z-index:700;animation:fadeUp .3s ease}
+        .admin-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:32px 28px;width:100%;max-width:340px;display:flex;flex-direction:column;align-items:center;gap:16px;box-shadow:0 8px 40px rgba(0,0,0,0.6)}
+        .admin-popup-title{font-family:'Outfit',sans-serif;font-size:1.15rem;font-weight:700;color:var(--text-primary)}
+        .admin-popup-sub{font-size:.82rem;color:var(--text-muted);text-align:center}
+        .admin-step{display:flex;flex-direction:column;gap:12px;width:100%}
+        .otp-row{display:flex;gap:8px;justify-content:center;width:100%}
+        .otp-input{width:44px;height:52px;text-align:center;background:var(--bg-input);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-family:'JetBrains Mono',monospace;font-size:1.35rem;font-weight:600;outline:none;transition:all .2s}
+        .otp-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+        .admin-error{font-size:.82rem;color:#f87171;text-align:center;min-height:18px}
 
         /* --- Theme toggle --- */
         .theme-toggle{width:34px;height:34px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:all .2s;color:var(--text-secondary);padding:0}
@@ -193,7 +210,7 @@
         .feedback-btns{display:flex;gap:10px;width:100%}
         .feedback-btns .auth-btn{flex:1}
 
-        @media(max-width:640px){.app-container{padding:0 12px}.header-title h1{font-size:1.2rem}.welcome h2{font-size:1.35rem}.quick-prompts{flex-direction:column;align-items:center}.message{max-width:92%}.status-badge span:last-child{display:none}.auth-card{padding:30px 22px}}
+        @media(max-width:640px){.app-container{padding:0 12px}.header-title h1{font-size:1.2rem}.welcome h2{font-size:1.35rem}.quick-prompts{flex-direction:column;align-items:center}.message{max-width:92%}.status-badge span:last-child{display:none}.auth-card{padding:26px 18px}.otp-input{width:38px;height:46px;font-size:1.15rem}}
     </style>
 </head>
 <body>
@@ -202,18 +219,63 @@
     <!-- History backdrop (mobile only) -->
     <div class="history-backdrop" id="historyBackdrop" onclick="closePanelMobile()"></div>
 
+    <!-- Save progress popup -->
+    <div class="overlay-base save-popup" id="savePopup" style="display:none">
+        <div class="auth-card">
+            <div class="auth-logo">∑</div>
+            <h2>¡Guardá tu <span>progreso</span>!</h2>
+            <p class="auth-subtitle">Ingresá tu nombre y email para guardar tu historial de conversaciones.</p>
+            <div class="auth-form">
+                <input class="auth-input" type="text" id="saveNameInput" placeholder="Tu nombre" autocomplete="off">
+                <input class="auth-input" type="email" id="saveEmailInput" placeholder="tu.email@alumnos.uai.edu.ar" autocomplete="off">
+                <div class="uai-badge" id="saveUaiBadge">&#10003; Email UAI</div>
+                <button class="auth-btn" id="saveBtnSubmit" onclick="doAuth()">Guardar</button>
+            </div>
+            <p class="auth-error" id="saveError"></p>
+            <a href="#" class="save-dismiss" onclick="hideSavePopup(true);return false">Ahora no</a>
+        </div>
+    </div>
+
+    <!-- Admin verify popup -->
+    <div class="overlay-base admin-popup" id="adminPopup" style="display:none">
+        <div class="admin-card">
+            <p class="admin-popup-title">Acceso Admin</p>
+            <!-- Step 1: email (only if not logged in) -->
+            <div id="adminStepEmail" class="admin-step">
+                <p class="admin-popup-sub">Ingresá tu email de administrador</p>
+                <input class="auth-input" type="email" id="adminEmailInput" placeholder="admin@example.com" autocomplete="off">
+                <button class="auth-btn" onclick="adminNextStep()">Continuar</button>
+            </div>
+            <!-- Step 2: OTP PIN -->
+            <div id="adminStepPin" class="admin-step" style="display:none">
+                <p class="admin-popup-sub">Ingresá el PIN de acceso</p>
+                <div class="otp-row">
+                    <input class="otp-input" id="otp0" type="text" maxlength="1" inputmode="numeric" autocomplete="off">
+                    <input class="otp-input" id="otp1" type="text" maxlength="1" inputmode="numeric" autocomplete="off">
+                    <input class="otp-input" id="otp2" type="text" maxlength="1" inputmode="numeric" autocomplete="off">
+                    <input class="otp-input" id="otp3" type="text" maxlength="1" inputmode="numeric" autocomplete="off">
+                    <input class="otp-input" id="otp4" type="text" maxlength="1" inputmode="numeric" autocomplete="off">
+                    <input class="otp-input" id="otp5" type="text" maxlength="1" inputmode="numeric" autocomplete="off">
+                </div>
+                <button class="auth-btn" onclick="doAdminVerify()">Acceder</button>
+            </div>
+            <p class="admin-error" id="adminError"></p>
+            <a href="#" class="save-dismiss" onclick="hideAdminPopup();return false">Cancelar</a>
+        </div>
+    </div>
+
     <!-- Feedback popup -->
     <div class="feedback-overlay" id="feedbackOverlay" style="display:none">
         <div class="feedback-card">
-            <p class="feedback-title">¿Cómo viene la experiencia?</p>
+            <p class="feedback-title">&#191;C&#243;mo viene la experiencia?</p>
             <div class="star-row" id="starRow">
-                <span class="star" data-v="1">★</span>
-                <span class="star" data-v="2">★</span>
-                <span class="star" data-v="3">★</span>
-                <span class="star" data-v="4">★</span>
-                <span class="star" data-v="5">★</span>
+                <span class="star" data-v="1">&#9733;</span>
+                <span class="star" data-v="2">&#9733;</span>
+                <span class="star" data-v="3">&#9733;</span>
+                <span class="star" data-v="4">&#9733;</span>
+                <span class="star" data-v="5">&#9733;</span>
             </div>
-            <textarea id="feedbackMsg" placeholder="Dejanos un comentario (opcional)" rows="2"></textarea>
+            <textarea id="feedbackMsg" placeholder="Comentario opcional" rows="2"></textarea>
             <div class="feedback-btns">
                 <button class="auth-btn" onclick="submitFeedback()">Enviar</button>
                 <button class="clear-btn" onclick="closeFeedback()">Ahora no</button>
@@ -221,46 +283,16 @@
         </div>
     </div>
 
-    <!-- Auth overlay -->
-    <div class="auth-overlay" id="authOverlay">
-        <div class="auth-card">
-            <div class="auth-logo">∑</div>
-            <h2>Algor<span>IA</span></h2>
-            <p class="auth-subtitle">Tutor de Álgebra · UAI</p>
-
-            <div class="auth-tabs">
-                <button class="auth-tab active" id="tabRegister" onclick="switchTab('register')">Primera vez</button>
-                <button class="auth-tab" id="tabLogin" onclick="switchTab('login')">Ya tengo cuenta</button>
-            </div>
-
-            <!-- Register form -->
-            <div class="auth-form" id="formRegister">
-                <input class="auth-input" type="text" id="regName" placeholder="Tu nombre" autocomplete="off">
-                <input class="auth-input" type="email" id="regEmail" placeholder="Tu email universitario" autocomplete="off">
-                <div class="uai-badge" id="uaiBadge">✓ Email UAI verificado</div>
-                <button class="auth-btn" id="btnRegister" onclick="doRegister()">Crear cuenta</button>
-            </div>
-
-            <!-- Login form -->
-            <div class="auth-form" id="formLogin" style="display:none">
-                <input class="auth-input" type="email" id="loginEmail" placeholder="Tu email" autocomplete="off">
-                <button class="auth-btn" id="btnLogin" onclick="doLogin()">Ingresar</button>
-            </div>
-
-            <p class="auth-error" id="authError"></p>
-        </div>
-    </div>
-
     <div class="root-layout">
-        <!-- History panel (fixed left) -->
-        <div class="history-panel" id="historyPanel">
+        <!-- History panel -->
+        <div class="history-panel collapsed" id="historyPanel">
             <div class="history-header">
                 <h3>Conversaciones</h3>
-                <button class="history-close" onclick="collapsePanel()">✕</button>
+                <button class="history-close" onclick="collapsePanel()">&#10005;</button>
             </div>
-            <button class="history-new-btn" onclick="newConversation()">＋ Nueva conversación</button>
+            <button class="history-new-btn" onclick="newConversation()">&#43; Nueva</button>
             <div class="history-list" id="historyList">
-                <div class="history-empty">Iniciá sesión para ver tu historial.</div>
+                <div class="history-empty">No hay conversaciones anteriores.</div>
             </div>
         </div>
 
@@ -268,29 +300,30 @@
         <div class="app-container">
             <header class="header">
                 <div class="header-left">
-                    <button class="hamburger-btn" id="hamburgerBtn" onclick="openPanel()">☰</button>
-                    <div class="logo-mark">∑</div>
+                    <button class="hamburger-btn" id="hamburgerBtn" onclick="openPanel()">&#9776;</button>
+                    <div class="logo-mark">&#8721;</div>
                     <div class="header-title">
                         <h1>Algor<span>IA</span></h1>
-                        <p>Tutor inteligente de Álgebra · UAI</p>
+                        <p>Tutor inteligente de &#193;lgebra · UAI</p>
                     </div>
                 </div>
                 <div class="header-right">
                     <span class="user-name-badge" id="userNameBadge" style="display:none"></span>
-                    <button class="clear-btn" onclick="clearChat()" title="Limpiar conversación">✕ Limpiar</button>
-                    <button class="clear-btn" id="logoutBtn" onclick="doLogout()" style="display:none">Cerrar sesión</button>
-                    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
-                    <div class="status-badge"><div class="status-dot"></div><span>En línea</span></div>
+                    <button class="login-btn" id="loginBtn" onclick="showSavePopup()" style="display:none">Iniciar sesi&#243;n</button>
+                    <button class="clear-btn" onclick="clearChat()" title="Limpiar conversaci&#243;n">&#10005; Limpiar</button>
+                    <button class="clear-btn" id="logoutBtn" onclick="doLogout()" style="display:none">Cerrar sesi&#243;n</button>
+                    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Cambiar tema">&#127769;</button>
+                    <div class="status-badge"><div class="status-dot"></div><span>En l&#237;nea</span></div>
                 </div>
             </header>
             <div class="readonly-banner" id="readonlyBanner">
-                <span>Modo lectura — <span id="readonlyDate"></span></span>
-                <button onclick="exitReadonlyMode()">← Volver al chat</button>
+                <span>Modo lectura &#8212; <span id="readonlyDate"></span></span>
+                <button onclick="exitReadonlyMode()">&#8592; Volver al chat</button>
             </div>
             <div class="chat-area" id="chatArea">
                 <div class="welcome" id="welcome">
-                    <div class="welcome-icon">∑</div>
-                    <h2 id="welcomeTitle">¡Hola! Soy Algor<span>IA</span></h2>
+                    <div class="welcome-icon">&#8721;</div>
+                    <h2 id="welcomeTitle">&#161;Hola! Soy Algor<span>IA</span></h2>
                     <p class="welcome-greeting" id="welcomeGreeting"></p>
                     <p class="welcome-motive" id="welcomeMotive"></p>
                     <div class="quick-prompts" id="quickPrompts"></div>
@@ -306,7 +339,7 @@
                 <div class="char-counter" id="charCounter">0/500</div>
             </div>
             <footer class="footer">
-                <p>Hecho por <strong>Angelo Perrotta</strong> · Ingeniería en Sistemas · <a href="https://www.uai.edu.ar" target="_blank" rel="noopener">UAI</a></p>
+                <p>Hecho por <strong>Angelo Perrotta</strong> · Ingenier&#237;a en Sistemas · <a href="https://www.uai.edu.ar" target="_blank" rel="noopener">UAI</a></p>
             </footer>
         </div>
     </div>
@@ -316,7 +349,7 @@
         let sessionId = 'sess-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
         let isWaiting = false;
         let botMsgCount = 0;
-        let panelCollapsed = false;
+        let panelCollapsed = true;
         const isMobile = () => window.innerWidth <= 768;
 
         const chatArea = document.getElementById('chatArea');
@@ -324,7 +357,6 @@
         const sendBtn = document.getElementById('sendBtn');
         const welcome = document.getElementById('welcome');
 
-        // Feedback shown: per-account via localStorage
         let currentUser = null;
         try { currentUser = JSON.parse(localStorage.getItem('algoria_user')); } catch(e) {}
 
@@ -340,7 +372,7 @@
             } else {
                 document.getElementById('historyPanel').classList.add('collapsed');
             }
-            document.getElementById('hamburgerBtn').classList.add('visible');
+            if (currentUser) document.getElementById('hamburgerBtn').classList.add('visible');
         }
 
         function openPanel() {
@@ -360,110 +392,186 @@
             document.getElementById('historyBackdrop').classList.remove('open');
         }
 
-        // On mobile, start collapsed
-        if (isMobile()) {
-            collapsePanel();
-        } else {
-            // Desktop: panel visible, load history after login
-        }
-
-        // === AUTH ===
-        function switchTab(tab) {
-            document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
-            document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
-            document.getElementById('formRegister').style.display = tab === 'register' ? 'flex' : 'none';
-            document.getElementById('formLogin').style.display = tab === 'login' ? 'flex' : 'none';
-            document.getElementById('authError').textContent = '';
-        }
-
-        function setAuthError(msg) { document.getElementById('authError').textContent = msg; }
-
-        function setAuthLoading(btn, loading) {
-            btn.disabled = loading;
-            btn.textContent = loading ? 'Un momento...' : (btn.id === 'btnRegister' ? 'Crear cuenta' : 'Ingresar');
-        }
-
-        async function doRegister() {
-            const name = document.getElementById('regName').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            if (!name || !email) { setAuthError('Completá nombre y email.'); return; }
-            const btn = document.getElementById('btnRegister');
-            setAuthLoading(btn, true); setAuthError('');
-            try {
-                const res = await fetch(`${BACKEND}/register`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email })
-                });
-                const data = await res.json();
-                if (!res.ok) { setAuthError(data.detail || 'Error al registrarse.'); return; }
-                localStorage.setItem('algoria_user', JSON.stringify(data));
-                currentUser = data;
-                hideAuthOverlay();
-            } catch(e) {
-                setAuthError('No se pudo conectar. Revisá tu conexión.');
-            } finally { setAuthLoading(btn, false); }
-        }
-
-        async function doLogin() {
-            const email = document.getElementById('loginEmail').value.trim();
-            if (!email) { setAuthError('Ingresá tu email.'); return; }
-            const btn = document.getElementById('btnLogin');
-            setAuthLoading(btn, true); setAuthError('');
-            try {
-                const res = await fetch(`${BACKEND}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
-                });
-                const data = await res.json();
-                if (!res.ok) { setAuthError(data.detail || 'No te encontramos. ¿Ya te registraste?'); return; }
-                localStorage.setItem('algoria_user', JSON.stringify(data));
-                currentUser = data;
-                hideAuthOverlay();
-            } catch(e) {
-                setAuthError('No se pudo conectar. Revisá tu conexión.');
-            } finally { setAuthLoading(btn, false); }
-        }
-
-        function hideAuthOverlay() {
-            const overlay = document.getElementById('authOverlay');
-            overlay.style.opacity = '0';
-            overlay.style.transition = 'opacity .3s';
-            setTimeout(() => {
-                overlay.style.display = 'none';
-                updateUserUI();
-                setupWelcome();
-                msgInput.focus();
-                loadHistoryList();
-            }, 300);
-        }
-
-        function updateUserUI() {
+        // Initialize panel and user UI
+        function initUI() {
             if (currentUser) {
-                document.getElementById('logoutBtn').style.display = '';
-                const badge = document.getElementById('userNameBadge');
-                badge.textContent = currentUser.name || currentUser.email;
-                badge.style.display = '';
+                // Logged in: show panel on desktop, hamburger for toggle; on mobile, hamburger to open
+                if (isMobile()) {
+                    document.getElementById('hamburgerBtn').classList.add('visible');
+                } else {
+                    document.getElementById('historyPanel').classList.remove('collapsed');
+                    panelCollapsed = false;
+                    loadHistoryList();
+                }
             }
+            // Not logged in: panel stays collapsed, no hamburger
+            updateUserUI();
         }
 
-        // Allow Enter in auth inputs
-        document.getElementById('regEmail').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
-        document.getElementById('regName').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
-        document.getElementById('loginEmail').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+        // === SAVE PROGRESS POPUP ===
+        function showSavePopup() {
+            document.getElementById('saveNameInput').value = '';
+            document.getElementById('saveEmailInput').value = '';
+            document.getElementById('saveUaiBadge').style.display = 'none';
+            document.getElementById('saveError').textContent = '';
+            const btn = document.getElementById('saveBtnSubmit');
+            btn.disabled = false; btn.textContent = 'Guardar';
+            document.getElementById('savePopup').style.display = 'flex';
+            document.getElementById('saveNameInput').focus();
+        }
 
-        // UAI email badge
-        document.getElementById('regEmail').addEventListener('input', function() {
+        function hideSavePopup(dismiss) {
+            document.getElementById('savePopup').style.display = 'none';
+            if (dismiss) sessionStorage.setItem('auth_dismissed', '1');
+        }
+
+        document.getElementById('saveEmailInput').addEventListener('input', function() {
             const v = this.value.trim().toLowerCase();
-            const badge = document.getElementById('uaiBadge');
+            const badge = document.getElementById('saveUaiBadge');
             badge.style.display = (v.endsWith('@alumnos.uai.edu.ar') || v.endsWith('@uai.edu.ar')) ? 'flex' : 'none';
         });
 
-        if (currentUser) {
-            document.getElementById('authOverlay').style.display = 'none';
+        document.getElementById('saveNameInput').addEventListener('keydown', e => { if (e.key === 'Enter') doAuth(); });
+        document.getElementById('saveEmailInput').addEventListener('keydown', e => { if (e.key === 'Enter') doAuth(); });
+
+        async function doAuth() {
+            const name = document.getElementById('saveNameInput').value.trim();
+            const email = document.getElementById('saveEmailInput').value.trim();
+            if (!email) { document.getElementById('saveError').textContent = 'Ingresá tu email.'; return; }
+            const btn = document.getElementById('saveBtnSubmit');
+            btn.disabled = true; btn.textContent = 'Un momento...';
+            document.getElementById('saveError').textContent = '';
+            try {
+                const body = { email };
+                if (name) body.name = name;
+                const res = await fetch(`${BACKEND}/auth`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                if (res.status === 404) {
+                    // User doesn't exist and no name provided
+                    document.getElementById('saveError').textContent = 'Ingresá tu nombre para registrarte.';
+                    document.getElementById('saveNameInput').focus();
+                    return;
+                }
+                const data = await res.json();
+                if (!res.ok) {
+                    document.getElementById('saveError').textContent = (data && data.detail) ? JSON.stringify(data.detail) : 'Error al conectarse.';
+                    return;
+                }
+                localStorage.setItem('algoria_user', JSON.stringify(data));
+                currentUser = data;
+                hideSavePopup(false);
+                onUserLoggedIn();
+            } catch(e) {
+                document.getElementById('saveError').textContent = 'No se pudo conectar. Revisá tu conexión.';
+            } finally {
+                btn.disabled = false; btn.textContent = 'Guardar';
+            }
+        }
+
+        function onUserLoggedIn() {
             updateUserUI();
+            setupWelcome();
+            if (!isMobile()) {
+                document.getElementById('historyPanel').classList.remove('collapsed');
+                panelCollapsed = false;
+                document.getElementById('hamburgerBtn').classList.remove('visible');
+            } else {
+                document.getElementById('hamburgerBtn').classList.add('visible');
+            }
             loadHistoryList();
+            msgInput.focus();
+        }
+
+        // === ADMIN POPUP ===
+        let adminPopupEmail = '';
+        const otpInputs = [0,1,2,3,4,5].map(i => document.getElementById('otp' + i));
+
+        otpInputs.forEach((input, idx) => {
+            input.addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g,'').slice(-1);
+                if (this.value && idx < 5) otpInputs[idx + 1].focus();
+            });
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !this.value && idx > 0) otpInputs[idx - 1].focus();
+            });
+        });
+        document.getElementById('otp5').addEventListener('keydown', e => { if (e.key === 'Enter') doAdminVerify(); });
+        document.getElementById('adminEmailInput').addEventListener('keydown', e => { if (e.key === 'Enter') adminNextStep(); });
+
+        function showAdminPopup() {
+            document.getElementById('adminError').textContent = '';
+            otpInputs.forEach(i => i.value = '');
+            if (currentUser) {
+                adminPopupEmail = currentUser.email;
+                document.getElementById('adminStepEmail').style.display = 'none';
+                document.getElementById('adminStepPin').style.display = 'flex';
+                setTimeout(() => otpInputs[0].focus(), 80);
+            } else {
+                adminPopupEmail = '';
+                document.getElementById('adminEmailInput').value = '';
+                document.getElementById('adminStepEmail').style.display = 'flex';
+                document.getElementById('adminStepPin').style.display = 'none';
+                setTimeout(() => document.getElementById('adminEmailInput').focus(), 80);
+            }
+            document.getElementById('adminPopup').style.display = 'flex';
+        }
+
+        function hideAdminPopup() {
+            document.getElementById('adminPopup').style.display = 'none';
+        }
+
+        function adminNextStep() {
+            const email = document.getElementById('adminEmailInput').value.trim();
+            if (!email) { document.getElementById('adminError').textContent = 'Ingresá tu email.'; return; }
+            adminPopupEmail = email;
+            document.getElementById('adminStepEmail').style.display = 'none';
+            document.getElementById('adminStepPin').style.display = 'flex';
+            document.getElementById('adminError').textContent = '';
+            setTimeout(() => otpInputs[0].focus(), 80);
+        }
+
+        async function doAdminVerify() {
+            const pin = otpInputs.map(i => i.value).join('');
+            const errEl = document.getElementById('adminError');
+            if (pin.length < 6) { errEl.textContent = 'Ingresá los 6 dígitos del PIN.'; return; }
+            errEl.textContent = '';
+            try {
+                const res = await fetch(`${BACKEND}/admin/verify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: adminPopupEmail, pin })
+                });
+                const data = await res.json();
+                if (data.access) {
+                    window.location.href = `admin.html?email=${encodeURIComponent(adminPopupEmail)}&pin=${encodeURIComponent(pin)}`;
+                } else if (data.reason === 'pin') {
+                    errEl.textContent = 'PIN incorrecto.';
+                    otpInputs.forEach(i => i.value = '');
+                    otpInputs[0].focus();
+                } else {
+                    errEl.textContent = 'No tenés permisos de administrador.';
+                }
+            } catch(e) {
+                errEl.textContent = 'Error de conexión.';
+            }
+        }
+
+        // === USER UI ===
+        function updateUserUI() {
+            if (currentUser) {
+                document.getElementById('logoutBtn').style.display = '';
+                document.getElementById('loginBtn').style.display = 'none';
+                const badge = document.getElementById('userNameBadge');
+                badge.textContent = currentUser.name || currentUser.email;
+                badge.style.display = '';
+            } else {
+                document.getElementById('logoutBtn').style.display = 'none';
+                document.getElementById('loginBtn').style.display = '';
+                document.getElementById('userNameBadge').style.display = 'none';
+            }
         }
 
         function doLogout() {
@@ -517,7 +625,6 @@
             document.getElementById('quickPrompts').innerHTML = shuffled.slice(0, 4)
                 .map(q => `<button class="quick-prompt" onclick="sendQuick(this)">${q}</button>`).join('');
         }
-        setupWelcome();
 
         // === PARTICLES ===
         (function() {
@@ -581,38 +688,30 @@
         }
         function hideTyping() { const el = document.getElementById('typingIndicator'); if (el) el.remove(); }
 
+        // === SEND MESSAGE ===
         async function sendMessage() {
             const text = msgInput.value.trim();
             if (!text || isWaiting) return;
 
-            // /admin command interception
+            // /admin command — intercept, don't show in chat
             if (text === '/admin') {
                 msgInput.value = ''; msgInput.style.height = 'auto';
-                addMessage('user', text);
-                if (!currentUser) { addMessage('bot', 'Tenés que iniciar sesión para usar este comando.'); return; }
-                showTyping();
-                try {
-                    const res = await fetch(`${BACKEND}/admin/check-access`, {
-                        headers: { 'X-Admin-Email': currentUser.email }
-                    });
-                    hideTyping();
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data.is_admin || data.is_superadmin) {
-                            window.location.href = 'admin.html?email=' + encodeURIComponent(currentUser.email);
-                            return;
-                        }
-                    }
-                    addMessage('bot', 'No tenés permisos de administrador.');
-                } catch(e) {
-                    hideTyping();
-                    addMessage('bot', 'Error al verificar permisos.');
-                }
+                updateCharCounter(0);
+                showAdminPopup();
                 return;
             }
 
-            isWaiting = true; sendBtn.disabled = true; msgInput.value = ''; msgInput.style.height = 'auto';
+            // Track message count (for save popup, only when not logged in)
+            let localMsgCount = 0;
+            if (!currentUser) {
+                localMsgCount = parseInt(sessionStorage.getItem('msg_count') || '0') + 1;
+                sessionStorage.setItem('msg_count', String(localMsgCount));
+            }
+
+            isWaiting = true; sendBtn.disabled = true;
+            msgInput.value = ''; msgInput.style.height = 'auto'; updateCharCounter(0);
             addMessage('user', text); showTyping();
+
             try {
                 const body = { message: text, materia: 'algebra', session_id: sessionId };
                 if (currentUser) body.user_email = currentUser.email;
@@ -635,6 +734,10 @@
                 addSuggestions(data.response);
                 botMsgCount++;
                 if (botMsgCount === 5 && !feedbackAlreadyShown()) showFeedbackPopup();
+                // Show save popup after 3rd message if not logged in and not dismissed
+                if (!currentUser && localMsgCount === 3 && !sessionStorage.getItem('auth_dismissed')) {
+                    setTimeout(showSavePopup, 700);
+                }
             } catch (err) {
                 hideTyping();
                 addMessage('bot', `Error de conexión: ${err.message}\n\nReintentá en unos segundos.`);
@@ -651,7 +754,6 @@
             msgInput.disabled = false; sendBtn.disabled = false;
             msgInput.placeholder = 'Escribí tu pregunta de Álgebra...';
             botMsgCount = 0;
-            // Remove active from all sessions
             document.querySelectorAll('.history-session').forEach(s => s.classList.remove('active'));
             if (isMobile()) closePanelMobile();
         }
@@ -661,8 +763,6 @@
             chatArea.querySelectorAll('.message,.typing-indicator,.suggestions').forEach(el => el.remove());
             if (welcome) welcome.style.display = 'flex';
         }
-
-        if (currentUser) msgInput.focus();
 
         // === THEME ===
         (function() {
@@ -801,8 +901,6 @@
 
         function closeFeedback() {
             document.getElementById('feedbackOverlay').style.display = 'none';
-            const k = feedbackKey();
-            if (k) localStorage.setItem(k, '1');
         }
 
         document.getElementById('starRow').addEventListener('click', function(e) {
@@ -824,8 +922,16 @@
                     body:JSON.stringify({user_email,rating:selectedRating,message})
                 });
             } catch(e) {}
+            // Mark as given so it doesn't show again
+            const k = feedbackKey();
+            if (k) localStorage.setItem(k, '1');
             closeFeedback();
         }
+
+        // === INIT ===
+        initUI();
+        setupWelcome();
+        if (currentUser) msgInput.focus();
     </script>
 </body>
 </html>

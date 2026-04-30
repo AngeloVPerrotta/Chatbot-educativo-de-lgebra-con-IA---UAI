@@ -293,12 +293,13 @@
     <script>
         const BACKEND = 'https://chatbot-educativo-de-lgebra-con-ia-uai-production.up.railway.app';
 
-        // Read email from query param
-        const adminEmail = new URLSearchParams(window.location.search).get('email') || '';
+        const _params = new URLSearchParams(window.location.search);
+        const adminEmail = _params.get('email') || '';
+        const adminPin = _params.get('pin') || '';
         let isSuperAdmin = false;
 
         function adminHeaders() {
-            return { 'X-Admin-Email': adminEmail };
+            return { 'X-Admin-Email': adminEmail, 'X-Admin-Pin': adminPin };
         }
 
         function doLogout() {
@@ -311,14 +312,18 @@
 
         // Verify access on load
         async function init() {
-            if (!adminEmail) { window.location.href = 'index.html'; return; }
+            if (!adminEmail || !adminPin) { window.location.href = 'index.html'; return; }
             try {
-                const res = await fetch(`${BACKEND}/admin/check-access`, { headers: adminHeaders() });
-                if (!res.ok) { window.location.href = 'index.html'; return; }
-                const data = await res.json();
-                if (!data.is_admin && !data.is_superadmin) { window.location.href = 'index.html'; return; }
-                isSuperAdmin = !!data.is_superadmin;
-                if (isSuperAdmin) document.getElementById('actionsHeader').style.display = '';
+                // Verify PIN + role with a protected endpoint
+                const statsRes = await fetch(`${BACKEND}/admin/stats`, { headers: adminHeaders() });
+                if (!statsRes.ok) { window.location.href = 'index.html'; return; }
+                // Get superadmin flag (check-access doesn't need PIN)
+                const accessRes = await fetch(`${BACKEND}/admin/check-access`, { headers: { 'X-Admin-Email': adminEmail } });
+                if (accessRes.ok) {
+                    const data = await accessRes.json();
+                    isSuperAdmin = !!data.is_superadmin;
+                    if (isSuperAdmin) document.getElementById('actionsHeader').style.display = '';
+                }
             } catch(e) { window.location.href = 'index.html'; return; }
             loadDashboard();
         }
