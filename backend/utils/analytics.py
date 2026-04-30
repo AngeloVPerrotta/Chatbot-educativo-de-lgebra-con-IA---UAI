@@ -111,15 +111,21 @@ def log_interaction(
 
 # --- User management ---
 
-def register_user(name: str, email: str) -> dict:
-    """Returns {'ok': True, 'user': {...}} or {'ok': False, 'error': '...'}."""
+def get_or_create_user(name: Optional[str], email: str) -> dict:
+    """Returns {'ok': True, 'user': {...}, 'created': bool} or {'ok': False, 'error': '...'}."""
+    existing = get_user_by_email(email)
+    if existing:
+        return {"ok": True, "user": existing, "created": False}
+    if not name:
+        return {"ok": False, "error": "not_found"}
     try:
         with _get_conn() as conn:
             conn.execute("INSERT INTO users (name, email) VALUES (?, ?)", (name, email))
             conn.commit()
-        return {"ok": True, "user": get_user_by_email(email)}
+        return {"ok": True, "user": get_user_by_email(email), "created": True}
     except sqlite3.IntegrityError:
-        return {"ok": False, "error": "El email ya está registrado"}
+        existing = get_user_by_email(email)
+        return {"ok": True, "user": existing, "created": False}
 
 
 def get_user_by_email(email: str) -> Optional[dict]:

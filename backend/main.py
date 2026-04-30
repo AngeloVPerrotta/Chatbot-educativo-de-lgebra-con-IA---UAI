@@ -16,7 +16,7 @@ from utils.session_manager import get_session, append_message, get_messages, cle
 from utils.analytics import (
     get_stats,
     get_recent_interactions,
-    register_user,
+    get_or_create_user,
     get_user_by_email,
     add_tokens_used,
     check_token_limit,
@@ -65,12 +65,13 @@ class ChatResponse(BaseModel):
     response: str
     session_id: str
 
-class UserRegisterRequest(BaseModel):
-    name: str
+class AuthRequest(BaseModel):
     email: str
+    name: Optional[str] = None
 
-class UserLoginRequest(BaseModel):
+class AdminVerifyRequest(BaseModel):
     email: str
+    pin: str
 
 class FeedbackRequest(BaseModel):
     user_email: str
@@ -94,24 +95,19 @@ def health_check():
     return {"status": "ok"}
 
 
-# --- POST /register ---
+# --- POST /auth ---
+# Si el email existe → devuelve el user (name ignorado).
+# Si no existe y viene name → crea y devuelve el user.
+# Si no existe y no viene name → 404 con {exists: false}.
 
-@app.post("/register")
-def register_endpoint(payload: UserRegisterRequest):
-    result = register_user(payload.name.strip(), payload.email.strip().lower())
+@app.post("/auth")
+def auth_endpoint(payload: AuthRequest):
+    email = payload.email.strip().lower()
+    name = payload.name.strip() if payload.name else None
+    result = get_or_create_user(name, email)
     if not result["ok"]:
-        raise HTTPException(status_code=409, detail=result["error"])
+        raise HTTPException(status_code=404, detail={"exists": False})
     return result["user"]
-
-
-# --- POST /login ---
-
-@app.post("/login")
-def login_endpoint(payload: UserLoginRequest):
-    user = get_user_by_email(payload.email.strip().lower())
-    if not user:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado. ¿Ya te registraste?")
-    return user
 
 
 # --- POST /chat ---
@@ -200,9 +196,24 @@ def reset_session(payload: dict):
 
 def _require_admin(request: Request) -> str:
     email = request.headers.get("X-Admin-Email", "").strip().lower()
-    if not email or not is_admin_or_super(email):
+    pin = request.headers.get("X-Admin-Pin", "")
+    admin_pin = os.getenv("ADMIN_PIN", "")
+    if not email or not pin or pin != admin_pin or not is_admin_or_super(email):
         raise HTTPException(status_code=403, detail="Forbidden")
     return email
+
+
+# --- POST /admin/verify ---
+
+@app.post("/admin/verify")
+def admin_verify(payload: AdminVerifyRequest):
+    admin_pin = os.getenv("ADMIN_PIN", "")
+    if payload.pin != admin_pin:
+        return {"access": False, "reason": "pin"}
+    email = payload.email.strip().lower()
+    if not is_admin_or_super(email):
+        return {"access": False, "reason": "role"}
+    return {"access": True, "is_superadmin": is_superadmin(email)}
 
 
 # --- GET /admin/check-access ---
