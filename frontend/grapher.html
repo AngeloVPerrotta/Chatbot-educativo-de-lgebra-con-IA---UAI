@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlgorIA — Graficador</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mathjs@13.0.0/lib/browser/math.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-card: #161d30;
+            --bg-input: #131a2c;
+            --accent: #38bdf8;
+            --accent-soft: #67e8f9;
+            --accent-glow: rgba(56,189,248,0.2);
+            --accent-subtle: rgba(56,189,248,0.06);
+            --green: #34d399;
+            --green-glow: rgba(52,211,153,0.15);
+            --text-primary: #e8edf5;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: rgba(56,189,248,0.1);
+            --user-bubble: linear-gradient(135deg,#0ea5e9,#0284c7);
+            --bot-bubble: #1a2238;
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--bg-primary);color:var(--text-primary)}
+
+        /* === LAYOUT === */
+        .root{display:flex;flex-direction:column;height:100vh}
+
+        /* === HEADER === */
+        .gh{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--bg-card);border-bottom:1px solid var(--border);flex-shrink:0;gap:12px}
+        .gh-left{display:flex;align-items:center;gap:10px}
+        .gh-logo{width:36px;height:36px;background:var(--user-bubble);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;box-shadow:0 2px 12px var(--accent-glow);flex-shrink:0}
+        .gh-title{font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:800;letter-spacing:-0.02em}
+        .gh-title span{color:var(--accent)}
+        .gh-sub{font-size:.73rem;color:var(--text-muted)}
+        .gh-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+        .g-btn{display:flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--border);color:var(--text-secondary);font-size:.78rem;padding:6px 12px;border-radius:8px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+        .g-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-subtle)}
+        .g-btn.back{border-color:rgba(56,189,248,0.3);color:var(--accent)}
+        .g-btn.back:hover{background:var(--accent-subtle)}
+
+        /* === MAIN BODY === */
+        .gmain{display:flex;flex:1;overflow:hidden}
+
+        /* === LEFT PANEL === */
+        .gpanel{width:280px;min-width:280px;background:var(--bg-card);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+        .gp-header{padding:10px 12px 8px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+        .gp-header-title{font-size:.78rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em}
+        .gp-kbd-toggle{background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:.72rem;padding:3px 8px;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+        .gp-kbd-toggle:hover{border-color:var(--accent);color:var(--accent)}
+        .gp-exprs{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px;scrollbar-width:thin;scrollbar-color:var(--accent-glow) transparent}
+        .gp-exprs::-webkit-scrollbar{width:3px}
+        .gp-exprs::-webkit-scrollbar-thumb{background:var(--accent-glow);border-radius:3px}
+
+        /* Expression row */
+        .expr-row{background:var(--bg-input);border:1px solid var(--border);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:6px;transition:border-color .2s}
+        .expr-row:focus-within{border-color:rgba(56,189,248,0.35)}
+        .expr-row.error{border-color:rgba(248,113,113,0.5)}
+        .expr-row-top{display:flex;align-items:center;gap:6px}
+        .expr-color{width:14px;height:14px;border-radius:3px;cursor:pointer;flex-shrink:0;transition:transform .15s}
+        .expr-color:hover{transform:scale(1.25)}
+        .expr-input{flex:1;background:transparent;border:none;color:var(--text-primary);font-family:'JetBrains Mono',monospace;font-size:.82rem;outline:none;min-width:0}
+        .expr-input::placeholder{color:var(--text-muted)}
+        .expr-eye{background:transparent;border:none;color:var(--text-muted);cursor:pointer;font-size:.85rem;padding:0 2px;transition:color .15s;flex-shrink:0;line-height:1}
+        .expr-eye:hover{color:var(--text-primary)}
+        .expr-eye.hidden-icon{color:var(--text-muted);opacity:.4}
+        .expr-del{background:transparent;border:none;color:var(--text-muted);cursor:pointer;font-size:.9rem;padding:0 2px;transition:color .15s;flex-shrink:0;line-height:1}
+        .expr-del:hover{color:#f87171}
+        .expr-label{font-size:.68rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;padding:0 2px}
+
+        /* Slider within expr */
+        .expr-slider-wrap{display:flex;align-items:center;gap:8px;padding:2px 0}
+        .expr-slider{flex:1;accent-color:var(--accent);cursor:pointer;height:4px}
+        .expr-slider-val{font-size:.75rem;font-family:'JetBrains Mono',monospace;color:var(--accent);min-width:38px;text-align:right}
+
+        /* Add button */
+        .gp-add-btn{margin:8px;background:transparent;border:1px dashed var(--border);color:var(--text-secondary);font-size:.82rem;padding:9px;border-radius:8px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;text-align:center}
+        .gp-add-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+        /* === CANVAS AREA === */
+        .gcanvas-wrap{flex:1;position:relative;overflow:hidden;background:var(--bg-primary)}
+        #gcanvas{display:block;width:100%;height:100%}
+
+        /* Canvas controls overlay */
+        .gctrl{position:absolute;top:12px;right:12px;display:flex;flex-direction:column;gap:6px}
+        .gctrl-btn{width:34px;height:34px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-secondary);font-size:16px;transition:all .2s}
+        .gctrl-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--bg-input)}
+        .gctrl-sep{height:6px}
+
+        /* Coords display */
+        .gcoords{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(22,29,48,0.85);border:1px solid var(--border);border-radius:8px;padding:4px 12px;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text-muted);pointer-events:none;backdrop-filter:blur(4px)}
+
+        /* === KEYBOARD PANEL === */
+        .gkbd{background:var(--bg-card);border-top:1px solid var(--border);flex-shrink:0;overflow:hidden;transition:max-height .3s ease}
+        .gkbd.open{max-height:220px}
+        .gkbd.closed{max-height:0}
+        .gkbd-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 10px}
+        .gkbd-tab{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-muted);font-size:.76rem;padding:7px 12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+        .gkbd-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+        .gkbd-body{padding:8px 10px}
+        .gkbd-grid{display:flex;flex-wrap:wrap;gap:5px}
+        .gkbd-key{background:var(--bg-input);border:1px solid var(--border);border-radius:7px;color:var(--text-secondary);font-size:.82rem;padding:6px 10px;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .15s;min-width:38px;text-align:center}
+        .gkbd-key:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-subtle)}
+        .gkbd-key.wide{min-width:60px}
+        .gkbd-key.fn{color:var(--accent-soft)}
+
+        /* === HELP MODAL === */
+        .ghelp-overlay{position:fixed;inset:0;z-index:800;background:rgba(11,15,25,0.8);display:none;align-items:center;justify-content:center;padding:20px}
+        .ghelp-overlay.open{display:flex}
+        .ghelp-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:28px 28px 24px;width:100%;max-width:520px;max-height:80vh;overflow-y:auto;box-shadow:0 8px 48px rgba(0,0,0,0.5)}
+        .ghelp-title{font-family:'Outfit',sans-serif;font-size:1.15rem;font-weight:700;margin-bottom:16px;color:var(--text-primary)}
+        .ghelp-close{float:right;background:transparent;border:none;color:var(--text-muted);font-size:1.2rem;cursor:pointer;line-height:1}
+        .ghelp-close:hover{color:var(--text-primary)}
+        .ghelp-section{margin-bottom:14px}
+        .ghelp-section h4{font-size:.78rem;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+        .ghelp-table{width:100%;border-collapse:collapse;font-size:.82rem}
+        .ghelp-table td{padding:5px 8px;border-bottom:1px solid rgba(56,189,248,0.06);color:var(--text-secondary);vertical-align:top}
+        .ghelp-table td:first-child{font-family:'JetBrains Mono',monospace;color:var(--accent-soft);white-space:nowrap;width:46%}
+
+        /* Help FAB */
+        .gfab{position:fixed;bottom:20px;right:20px;width:40px;height:40px;background:var(--user-bubble);border:none;border-radius:50%;color:#fff;font-size:1.1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px var(--accent-glow);transition:transform .2s}
+        .gfab:hover{transform:scale(1.1)}
+
+        /* Intersection tooltip */
+        .gtooltip{position:absolute;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text-primary);pointer-events:none;display:none;box-shadow:0 4px 16px rgba(0,0,0,0.4);white-space:nowrap;z-index:10}
+    </style>
+</head>
+<body>
+<div class="root">
+
+    <!-- HEADER -->
+    <header class="gh">
+        <div class="gh-left">
+            <div class="gh-logo">&#8721;</div>
+            <div>
+                <div class="gh-title">Algor<span>IA</span> Graficador</div>
+                <div class="gh-sub">Graficador matemático interactivo</div>
+            </div>
+        </div>
+        <div class="gh-right">
+            <button class="g-btn" onclick="exportImage()" title="Exportar como imagen PNG">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                Exportar PNG
+            </button>
+            <button class="g-btn" onclick="exportExpressions()" title="Exportar expresiones como texto">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Exportar .txt
+            </button>
+            <button class="g-btn back" onclick="window.location.href='index.html'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                ← Chat
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <div class="gmain">
+
+        <!-- LEFT PANEL -->
+        <div class="gpanel">
+            <div class="gp-header">
+                <span class="gp-header-title">Expresiones</span>
+                <button class="gp-kbd-toggle" id="kbdToggleBtn" onclick="toggleKeyboard()">⌨ Teclado</button>
+            </div>
+            <div class="gp-exprs" id="exprList"></div>
+            <button class="gp-add-btn" onclick="addExprRow()">+ Agregar expresión</button>
+        </div>
+
+        <!-- CANVAS -->
+        <div class="gcanvas-wrap" id="canvasWrap">
+            <canvas id="gcanvas"></canvas>
+            <div class="gctrl">
+                <button class="gctrl-btn" onclick="zoom(1.25)" title="Zoom +">+</button>
+                <button class="gctrl-btn" onclick="zoom(0.8)" title="Zoom −">−</button>
+                <div class="gctrl-sep"></div>
+                <button class="gctrl-btn" onclick="resetView()" title="Reset vista" style="font-size:12px">⌂</button>
+            </div>
+            <div class="gcoords" id="gcoords">x: 0.00  y: 0.00</div>
+            <div class="gtooltip" id="gtooltip"></div>
+        </div>
+    </div>
+
+    <!-- KEYBOARD PANEL -->
+    <div class="gkbd closed" id="gkbd">
+        <div class="gkbd-tabs">
+            <button class="gkbd-tab active" onclick="switchKbdTab(0,this)">Números y ops</button>
+            <button class="gkbd-tab" onclick="switchKbdTab(1,this)">Funciones</button>
+            <button class="gkbd-tab" onclick="switchKbdTab(2,this)">Variables</button>
+        </div>
+        <div class="gkbd-body" id="kbdBody"></div>
+    </div>
+
+</div>
+
+<!-- HELP OVERLAY -->
+<div class="ghelp-overlay" id="helpOverlay">
+    <div class="ghelp-card">
+        <button class="ghelp-close" onclick="closeHelp()">✕</button>
+        <div class="ghelp-title">Guía rápida de sintaxis</div>
+        <div class="ghelp-section">
+            <h4>Funciones</h4>
+            <table class="ghelp-table">
+                <tr><td>y = x^2</td><td>Parábola</td></tr>
+                <tr><td>y = sin(x)</td><td>Seno</td></tr>
+                <tr><td>y = 2*x + 1</td><td>Recta pendiente 2</td></tr>
+                <tr><td>y = sqrt(x)</td><td>Raíz cuadrada</td></tr>
+                <tr><td>y = log(x)</td><td>Logaritmo natural (ln)</td></tr>
+                <tr><td>y = abs(x - 2)</td><td>Valor absoluto</td></tr>
+                <tr><td>x^3 - 2*x</td><td>Expresión pura en x (sin "y =")</td></tr>
+            </table>
+        </div>
+        <div class="ghelp-section">
+            <h4>Rectas especiales</h4>
+            <table class="ghelp-table">
+                <tr><td>x = 3</td><td>Recta vertical en x=3</td></tr>
+                <tr><td>2x + 3y = 6</td><td>Forma general ax + by = c</td></tr>
+            </table>
+        </div>
+        <div class="ghelp-section">
+            <h4>Puntos</h4>
+            <table class="ghelp-table">
+                <tr><td>A = (2, 3)</td><td>Punto con etiqueta A</td></tr>
+                <tr><td>(−1, 4)</td><td>Punto sin etiqueta</td></tr>
+            </table>
+        </div>
+        <div class="ghelp-section">
+            <h4>Sliders</h4>
+            <table class="ghelp-table">
+                <tr><td>a = [0, 10, 1]</td><td>Slider a de 0 a 10, paso 1</td></tr>
+                <tr><td>m = [−5, 5, 0.1]</td><td>Slider m con paso decimal</td></tr>
+            </table>
+            <p style="font-size:.78rem;color:var(--text-muted);margin-top:6px">Usá la variable del slider en otras expresiones: <span style="font-family:'JetBrains Mono',monospace;color:var(--accent-soft)">y = a*x^2 + b</span></p>
+        </div>
+        <div class="ghelp-section">
+            <h4>Controles</h4>
+            <table class="ghelp-table">
+                <tr><td>Arrastrar</td><td>Mover el plano</td></tr>
+                <tr><td>Rueda del mouse</td><td>Zoom in/out</td></tr>
+                <tr><td>Ctrl+Z / botón</td><td>—</td></tr>
+                <tr><td>Drag de puntos</td><td>Reposicionar puntos en el canvas</td></tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- HELP FAB -->
+<button class="gfab" onclick="openHelp()" title="Ayuda">?</button>
+
+<script>
+// ── Paleta de colores ────────────────────────────────────────────────────────
+const PALETTE = ['#38bdf8','#34d399','#f472b6','#fb923c','#a78bfa','#facc15','#f87171','#818cf8'];
+let paletteIdx = 0;
+function nextColor() { const c = PALETTE[paletteIdx % PALETTE.length]; paletteIdx++; return c; }
+
+// ── Estado global ────────────────────────────────────────────────────────────
+const expressions = [];   // [{id, raw, type, color, visible, parsed, error, sliderVal, sliderMin, sliderMax, sliderStep, pointX, pointY}]
+let activeInputId = null; // id de la expr actualmente enfocada
+let eidCounter = 0;
+
+// ── Canvas & viewport ────────────────────────────────────────────────────────
+const canvas = document.getElementById('gcanvas');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('canvasWrap');
+
+let W = 0, H = 0;
+let originX = 0, originY = 0; // origen en píxeles
+let scale = 60;               // píxeles por unidad
+
+function resetView() {
+    scale = 60;
+    originX = W / 2;
+    originY = H / 2;
+    requestDraw();
+}
+
+function zoom(factor) {
+    scale *= factor;
+    scale = Math.max(4, Math.min(scale, 2000));
+    requestDraw();
+}
+
+function worldToScreen(wx, wy) {
+    return { x: originX + wx * scale, y: originY - wy * scale };
+}
+
+function screenToWorld(sx, sy) {
+    return { x: (sx - originX) / scale, y: (originY - sy) / scale };
+}
+
+// ResizeObserver
+const ro = new ResizeObserver(() => {
+    W = wrap.clientWidth;
+    H = wrap.clientHeight;
+    canvas.width = W;
+    canvas.height = H;
+    if (originX === 0 && originY === 0) {
+        originX = W / 2;
+        originY = H / 2;
+    }
+    requestDraw();
+});
+ro.observe(wrap);
+
+// ── Mouse interaction ────────────────────────────────────────────────────────
+let dragging = false;
+let dragStart = { x: 0, y: 0 };
+let originAtDragStart = { x: 0, y: 0 };
+let draggedPoint = null; // {exprId, startWorldX, startWorldY}
+
+canvas.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    const mx = e.offsetX, my = e.offsetY;
+    // Check if clicking near a point
+    for (const expr of expressions) {
+        if (!expr.visible || expr.type !== 'point') continue;
+        const sp = worldToScreen(expr.pointX, expr.pointY);
+        if (Math.hypot(sp.x - mx, sp.y - my) < 10) {
+            draggedPoint = { exprId: expr.id };
+            canvas.style.cursor = 'grabbing';
+            return;
+        }
+    }
+    dragging = true;
+    dragStart = { x: mx, y: my };
+    originAtDragStart = { x: originX, y: originY };
+    canvas.style.cursor = 'grabbing';
+});
+
+canvas.addEventListener('mousemove', e => {
+    const mx = e.offsetX, my = e.offsetY;
+    const wp = screenToWorld(mx, my);
+    document.getElementById('gcoords').textContent = `x: ${wp.x.toFixed(2)}  y: ${wp.y.toFixed(2)}`;
+    if (draggedPoint) {
+        const expr = expressions.find(x => x.id === draggedPoint.exprId);
+        if (expr) {
+            expr.pointX = parseFloat(wp.x.toFixed(3));
+            expr.pointY = parseFloat(wp.y.toFixed(3));
+            expr.raw = `${expr.label ? expr.label + ' = ' : ''}(${expr.pointX}, ${expr.pointY})`;
+            const el = document.getElementById(`einput-${expr.id}`);
+            if (el) el.value = expr.raw;
+            requestDraw();
+        }
+        return;
+    }
+    if (dragging) {
+        originX = originAtDragStart.x + (mx - dragStart.x);
+        originY = originAtDragStart.y + (my - dragStart.y);
+        requestDraw();
+    }
+    // Hover tooltip for intersections
+    showIntersectionTooltip(mx, my);
+});
+
+canvas.addEventListener('mouseup', () => {
+    dragging = false;
+    draggedPoint = null;
+    canvas.style.cursor = 'crosshair';
+});
+
+canvas.addEventListener('mouseleave', () => {
+    dragging = false;
+    draggedPoint = null;
+    canvas.style.cursor = 'crosshair';
+    document.getElementById('gtooltip').style.display = 'none';
+});
+
+canvas.style.cursor = 'crosshair';
+
+canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+    const mx = e.offsetX, my = e.offsetY;
+    // Zoom towards mouse
+    const wx = (mx - originX) / scale;
+    const wy = (originY - my) / scale;
+    scale *= factor;
+    scale = Math.max(4, Math.min(scale, 2000));
+    originX = mx - wx * scale;
+    originY = my + wy * scale;
+    requestDraw();
+}, { passive: false });
+
+// ── Draw loop ────────────────────────────────────────────────────────────────
+let rafPending = false;
+function requestDraw() {
+    if (!rafPending) {
+        rafPending = true;
+        requestAnimationFrame(() => { rafPending = false; draw(); });
+    }
+}
+
+function draw() {
+    ctx.clearRect(0, 0, W, H);
+    drawGrid();
+    drawAxes();
+    drawExpressions();
+    drawIntersections();
+}
+
+function drawGrid() {
+    // Determine grid spacing in world units
+    const rawStep = 1;
+    const minPixels = 40;
+    let step = rawStep;
+    while (step * scale < minPixels) step *= 2;
+    while (step * scale > minPixels * 4) step /= 2;
+    step = +step.toPrecision(1);
+
+    const xStart = Math.floor((0 - originX) / scale / step) * step;
+    const xEnd   = Math.ceil((W - originX) / scale / step) * step;
+    const yStart = Math.floor((originY - H) / scale / step) * step;
+    const yEnd   = Math.ceil(originY / scale / step) * step;
+
+    ctx.strokeStyle = 'rgba(56,189,248,0.06)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let x = xStart; x <= xEnd; x += step) {
+        const px = originX + x * scale;
+        ctx.moveTo(px, 0); ctx.lineTo(px, H);
+    }
+    for (let y = yStart; y <= yEnd; y += step) {
+        const py = originY - y * scale;
+        ctx.moveTo(0, py); ctx.lineTo(W, py);
+    }
+    ctx.stroke();
+
+    // Axis labels
+    ctx.fillStyle = 'rgba(100,116,139,0.7)';
+    ctx.font = '11px JetBrains Mono, monospace';
+    ctx.textAlign = 'center';
+    const labelStep = step;
+    for (let x = Math.ceil(xStart / labelStep) * labelStep; x <= xEnd; x += labelStep) {
+        if (Math.abs(x) < 1e-9) continue;
+        const px = originX + x * scale;
+        const labelY = Math.min(Math.max(originY + 14, 14), H - 4);
+        ctx.fillText(fmtNum(x), px, labelY);
+    }
+    ctx.textAlign = 'right';
+    for (let y = Math.ceil(yStart / labelStep) * labelStep; y <= yEnd; y += labelStep) {
+        if (Math.abs(y) < 1e-9) continue;
+        const py = originY - y * scale;
+        const labelX = Math.min(Math.max(originX - 6, 4), W - 4);
+        ctx.fillText(fmtNum(y), labelX, py + 4);
+    }
+}
+
+function fmtNum(n) {
+    if (Math.abs(n) >= 1000) return n.toExponential(0);
+    if (Number.isInteger(n)) return String(n);
+    return +n.toPrecision(4) + '';
+}
+
+function drawAxes() {
+    const arrSize = 8;
+    ctx.strokeStyle = 'rgba(56,189,248,0.35)';
+    ctx.lineWidth = 1.5;
+    // X axis
+    ctx.beginPath();
+    ctx.moveTo(0, originY); ctx.lineTo(W, originY);
+    ctx.stroke();
+    // X arrow
+    ctx.beginPath();
+    ctx.moveTo(W, originY);
+    ctx.lineTo(W - arrSize, originY - arrSize / 2);
+    ctx.lineTo(W - arrSize, originY + arrSize / 2);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(56,189,248,0.35)';
+    ctx.fill();
+    // Y axis
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(56,189,248,0.35)';
+    ctx.moveTo(originX, H); ctx.lineTo(originX, 0);
+    ctx.stroke();
+    // Y arrow
+    ctx.beginPath();
+    ctx.moveTo(originX, 0);
+    ctx.lineTo(originX - arrSize / 2, arrSize);
+    ctx.lineTo(originX + arrSize / 2, arrSize);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(56,189,248,0.35)';
+    ctx.fill();
+    // Axis labels
+    ctx.fillStyle = 'rgba(56,189,248,0.5)';
+    ctx.font = '13px JetBrains Mono, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('x', W - 16, originY - 10);
+    ctx.textAlign = 'center';
+    ctx.fillText('y', originX + 14, 14);
+}
+
+function drawExpressions() {
+    for (const expr of expressions) {
+        if (!expr.visible || expr.type === 'slider') continue;
+        if (expr.type === 'function') drawFunction(expr);
+        else if (expr.type === 'point') drawPoint(expr);
+        else if (expr.type === 'vline') drawVLine(expr);
+        else if (expr.type === 'line') drawLine(expr);
+    }
+}
+
+function getSliderScope() {
+    const scope = {};
+    for (const expr of expressions) {
+        if (expr.type === 'slider') scope[expr.sliderName] = expr.sliderVal;
+    }
+    return scope;
+}
+
+function drawFunction(expr) {
+    const scope = getSliderScope();
+    const xLeft  = (0 - originX) / scale;
+    const xRight = (W - originX) / scale;
+    const N = 2000;
+    const dx = (xRight - xLeft) / N;
+    const DISC_THRESH = (H / scale) * 3; // discontinuity threshold in world units
+
+    ctx.save();
+    ctx.strokeStyle = expr.color;
+    ctx.lineWidth = 2;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    let penDown = false;
+    let prevY = null;
+
+    for (let i = 0; i <= N; i++) {
+        const wx = xLeft + i * dx;
+        let wy;
+        try {
+            wy = math.evaluate(expr.fn, { ...scope, x: wx });
+            if (typeof wy !== 'number' || !isFinite(wy)) { penDown = false; prevY = null; continue; }
+        } catch { penDown = false; prevY = null; continue; }
+
+        const sy = originY - wy * scale;
+        const sx = originX + wx * scale;
+
+        // Discontinuity check
+        if (prevY !== null && Math.abs(wy - prevY) > DISC_THRESH) {
+            penDown = false;
+        }
+
+        if (!penDown) { ctx.moveTo(sx, sy); penDown = true; }
+        else ctx.lineTo(sx, sy);
+        prevY = wy;
+    }
+    ctx.stroke();
+    ctx.restore();
+}
+
+function drawPoint(expr) {
+    const sp = worldToScreen(expr.pointX, expr.pointY);
+    ctx.save();
+    ctx.fillStyle = expr.color;
+    ctx.strokeStyle = 'rgba(11,15,25,0.6)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(sp.x, sp.y, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    if (expr.label) {
+        ctx.fillStyle = expr.color;
+        ctx.font = '13px JetBrains Mono, monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(`${expr.label}(${fmtNum(expr.pointX)}, ${fmtNum(expr.pointY)})`, sp.x + 10, sp.y - 6);
+    }
+    ctx.restore();
+}
+
+function drawVLine(expr) {
+    const px = originX + expr.vx * scale;
+    if (px < 0 || px > W) return;
+    ctx.save();
+    ctx.strokeStyle = expr.color;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(px, 0); ctx.lineTo(px, H);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = expr.color;
+    ctx.font = '12px JetBrains Mono, monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(`x = ${fmtNum(expr.vx)}`, px, 18);
+    ctx.restore();
+}
+
+function drawLine(expr) {
+    // ax + by = c → y = (c - ax) / b, or x = c/a if b=0
+    const { a, b, c } = expr.lineCoeffs;
+    ctx.save();
+    ctx.strokeStyle = expr.color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if (Math.abs(b) < 1e-9) {
+        // Vertical-ish, handled by vline
+        const px = originX + (c / a) * scale;
+        ctx.moveTo(px, 0); ctx.lineTo(px, H);
+    } else {
+        const x1 = (0 - originX) / scale;
+        const x2 = (W - originX) / scale;
+        const y1 = (c - a * x1) / b;
+        const y2 = (c - a * x2) / b;
+        ctx.moveTo(0, originY - y1 * scale);
+        ctx.lineTo(W, originY - y2 * scale);
+    }
+    ctx.stroke();
+    ctx.restore();
+}
+
+// ── Intersections ────────────────────────────────────────────────────────────
+let intersectionPoints = [];
+
+function computeIntersections() {
+    intersectionPoints = [];
+    const funcs = expressions.filter(e => e.visible && e.type === 'function' && !e.error);
+    if (funcs.length < 2) return;
+    const scope = getSliderScope();
+    const xLeft  = (0 - originX) / scale;
+    const xRight = (W - originX) / scale;
+    const N = 800;
+    const dx = (xRight - xLeft) / N;
+
+    for (let fi = 0; fi < funcs.length - 1; fi++) {
+        for (let fj = fi + 1; fj < funcs.length; fj++) {
+            const fa = funcs[fi], fb = funcs[fj];
+            let prevDiff = null;
+            for (let i = 0; i <= N; i++) {
+                const x = xLeft + i * dx;
+                let ya, yb;
+                try { ya = math.evaluate(fa.fn, { ...scope, x }); } catch { prevDiff = null; continue; }
+                try { yb = math.evaluate(fb.fn, { ...scope, x }); } catch { prevDiff = null; continue; }
+                if (!isFinite(ya) || !isFinite(yb)) { prevDiff = null; continue; }
+                const diff = ya - yb;
+                if (prevDiff !== null && diff * prevDiff < 0) {
+                    // Sign change — bisect
+                    let lo = x - dx, hi = x;
+                    for (let k = 0; k < 30; k++) {
+                        const mid = (lo + hi) / 2;
+                        let yam, ybm;
+                        try { yam = math.evaluate(fa.fn, { ...scope, x: mid }); } catch { break; }
+                        try { ybm = math.evaluate(fb.fn, { ...scope, x: mid }); } catch { break; }
+                        if ((yam - ybm) * prevDiff < 0) hi = mid; else lo = mid;
+                    }
+                    const ix = (lo + hi) / 2;
+                    let iy;
+                    try { iy = math.evaluate(fa.fn, { ...scope, x: ix }); } catch { prevDiff = diff; continue; }
+                    if (isFinite(iy)) intersectionPoints.push({ x: ix, y: iy });
+                }
+                prevDiff = diff;
+            }
+        }
+    }
+}
+
+function drawIntersections() {
+    computeIntersections();
+    for (const pt of intersectionPoints) {
+        const sp = worldToScreen(pt.x, pt.y);
+        ctx.save();
+        ctx.fillStyle = '#facc15';
+        ctx.strokeStyle = 'rgba(11,15,25,0.7)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(sp.x, sp.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+    }
+}
+
+function showIntersectionTooltip(mx, my) {
+    const tooltip = document.getElementById('gtooltip');
+    for (const pt of intersectionPoints) {
+        const sp = worldToScreen(pt.x, pt.y);
+        if (Math.hypot(sp.x - mx, sp.y - my) < 12) {
+            tooltip.textContent = `(${pt.x.toFixed(2)}, ${pt.y.toFixed(2)})`;
+            tooltip.style.display = 'block';
+            tooltip.style.left = (mx + 12) + 'px';
+            tooltip.style.top  = (my - 8) + 'px';
+            return;
+        }
+    }
+    tooltip.style.display = 'none';
+}
+
+// ── Expression parser ────────────────────────────────────────────────────────
+function parseExpression(raw, expr) {
+    const s = raw.trim();
+    expr.error = false;
+
+    // 1. Slider: name = [min, max, step]
+    const sliderMatch = s.match(/^([a-zA-Z]\w*)\s*=\s*\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]$/);
+    if (sliderMatch) {
+        expr.type = 'slider';
+        expr.sliderName = sliderMatch[1];
+        expr.sliderMin  = parseFloat(sliderMatch[2]);
+        expr.sliderMax  = parseFloat(sliderMatch[3]);
+        expr.sliderStep = parseFloat(sliderMatch[4]);
+        if (expr.sliderVal === undefined || expr.sliderVal < expr.sliderMin || expr.sliderVal > expr.sliderMax)
+            expr.sliderVal = expr.sliderMin;
+        return;
+    }
+
+    // 2. Point: A = (x, y) or (x, y)
+    const pointMatch = s.match(/^([A-Z]\w*)?\s*=?\s*\(\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\)$/);
+    if (pointMatch) {
+        expr.type = 'point';
+        expr.label = pointMatch[1] || '';
+        expr.pointX = parseFloat(pointMatch[2]);
+        expr.pointY = parseFloat(pointMatch[3]);
+        return;
+    }
+
+    // 3. Vertical line: x = number
+    const vlineMatch = s.match(/^x\s*=\s*(-?[\d.]+(?:\/[\d.]+)?)$/);
+    if (vlineMatch) {
+        expr.type = 'vline';
+        try { expr.vx = math.evaluate(vlineMatch[1]); }
+        catch { expr.error = true; }
+        return;
+    }
+
+    // 4. General line: ax + by = c or ax + by + c = 0
+    const genLineMatch = s.match(/^(-?[\d.]*)\s*\*?\s*x\s*([+\-]\s*[\d.]*)\s*\*?\s*y\s*=\s*(-?[\d.]+)$/i);
+    if (genLineMatch) {
+        const a = parseFloat(genLineMatch[1] || '1');
+        const bRaw = genLineMatch[2].replace(/\s/g, '');
+        const b = parseFloat(bRaw || '1');
+        const c = parseFloat(genLineMatch[3]);
+        if (isFinite(a) && isFinite(b) && isFinite(c)) {
+            expr.type = 'line';
+            expr.lineCoeffs = { a, b, c };
+            return;
+        }
+    }
+
+    // 5. Function y = f(x) or f(x) alone
+    let fnStr = s;
+    // Strip "y = " or "y=" prefix
+    fnStr = fnStr.replace(/^\s*y\s*=\s*/i, '');
+    // Also handle f(x) = expr → strip "f(x) ="
+    fnStr = fnStr.replace(/^\s*[a-z]\(x\)\s*=\s*/i, '');
+
+    // Attempt to parse
+    try {
+        const node = math.parse(fnStr);
+        // Try evaluating at x=1 to validate
+        const scope = getSliderScope();
+        math.evaluate(fnStr, { ...scope, x: 1 });
+        expr.type = 'function';
+        expr.fn = fnStr;
+    } catch (e) {
+        expr.type = 'function';
+        expr.fn = fnStr;
+        expr.error = true;
+    }
+}
+
+// ── Expression list UI ───────────────────────────────────────────────────────
+function addExprRow(initialValue = '') {
+    const id = ++eidCounter;
+    const color = nextColor();
+    const expr = { id, raw: initialValue, type: 'function', color, visible: true, error: false, fn: '', sliderVal: undefined };
+    if (initialValue) parseExpression(initialValue, expr);
+    expressions.push(expr);
+    renderExprRow(expr);
+    // focus input
+    setTimeout(() => {
+        const el = document.getElementById(`einput-${id}`);
+        if (el) { el.focus(); activeInputId = id; }
+    }, 30);
+    requestDraw();
+    return expr;
+}
+
+function renderExprRow(expr) {
+    const list = document.getElementById('exprList');
+    const row = document.createElement('div');
+    row.className = 'expr-row' + (expr.error ? ' error' : '');
+    row.id = `erow-${expr.id}`;
+
+    const eyeIcon = expr.visible ? '👁' : '🚫';
+
+    row.innerHTML = `
+        <div class="expr-row-top">
+            <div class="expr-color" id="ecolor-${expr.id}" style="background:${expr.color}" title="Cambiar color" onclick="cycleColor(${expr.id})"></div>
+            <input class="expr-input" id="einput-${expr.id}" type="text" value="${escHtml(expr.raw)}" placeholder="y = x^2  o  A = (2,3)  o  a = [0,10,1]" spellcheck="false">
+            <button class="expr-eye" id="eeye-${expr.id}" onclick="toggleVisible(${expr.id})" title="Mostrar/ocultar">${eyeIcon}</button>
+            <button class="expr-del" onclick="deleteExpr(${expr.id})" title="Eliminar">✕</button>
+        </div>
+        <div id="eslider-${expr.id}" style="display:none" class="expr-slider-wrap">
+            <input type="range" class="expr-slider" id="erange-${expr.id}">
+            <span class="expr-slider-val" id="erangeval-${expr.id}"></span>
+        </div>
+        <div class="expr-label" id="elabel-${expr.id}"></div>
+    `;
+
+    list.appendChild(row);
+
+    const input = row.querySelector(`#einput-${expr.id}`);
+    input.addEventListener('focus', () => { activeInputId = expr.id; });
+    input.addEventListener('input', () => {
+        expr.raw = input.value;
+        parseExpression(expr.raw, expr);
+        updateExprRowUI(expr);
+        requestDraw();
+    });
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { addExprRow(); }
+    });
+
+    updateExprRowUI(expr);
+}
+
+function updateExprRowUI(expr) {
+    const row = document.getElementById(`erow-${expr.id}`);
+    if (!row) return;
+    row.classList.toggle('error', expr.error);
+
+    const sliderWrap = document.getElementById(`eslider-${expr.id}`);
+    const labelEl = document.getElementById(`elabel-${expr.id}`);
+
+    if (expr.type === 'slider') {
+        sliderWrap.style.display = 'flex';
+        const range = document.getElementById(`erange-${expr.id}`);
+        const valEl = document.getElementById(`erangeval-${expr.id}`);
+        range.min = expr.sliderMin;
+        range.max = expr.sliderMax;
+        range.step = expr.sliderStep;
+        range.value = expr.sliderVal;
+        valEl.textContent = expr.sliderVal;
+        range.oninput = () => {
+            expr.sliderVal = parseFloat(range.value);
+            valEl.textContent = expr.sliderVal;
+            requestDraw();
+        };
+        labelEl.textContent = `Slider: ${expr.sliderName} ∈ [${expr.sliderMin}, ${expr.sliderMax}]`;
+    } else {
+        sliderWrap.style.display = 'none';
+        if (expr.type === 'point') {
+            labelEl.textContent = `Punto (arrastrable)`;
+        } else if (expr.type === 'vline') {
+            labelEl.textContent = `Recta vertical`;
+        } else if (expr.type === 'line') {
+            labelEl.textContent = `Recta`;
+        } else if (expr.type === 'function') {
+            labelEl.textContent = expr.error ? 'Error de sintaxis' : 'Función';
+        } else {
+            labelEl.textContent = '';
+        }
+    }
+}
+
+function cycleColor(id) {
+    const expr = expressions.find(e => e.id === id);
+    if (!expr) return;
+    const idx = PALETTE.indexOf(expr.color);
+    expr.color = PALETTE[(idx + 1) % PALETTE.length];
+    const colorEl = document.getElementById(`ecolor-${id}`);
+    if (colorEl) colorEl.style.background = expr.color;
+    requestDraw();
+}
+
+function toggleVisible(id) {
+    const expr = expressions.find(e => e.id === id);
+    if (!expr) return;
+    expr.visible = !expr.visible;
+    const eyeEl = document.getElementById(`eeye-${id}`);
+    if (eyeEl) {
+        eyeEl.textContent = expr.visible ? '👁' : '🚫';
+        eyeEl.classList.toggle('hidden-icon', !expr.visible);
+    }
+    requestDraw();
+}
+
+function deleteExpr(id) {
+    const idx = expressions.findIndex(e => e.id === id);
+    if (idx === -1) return;
+    expressions.splice(idx, 1);
+    const row = document.getElementById(`erow-${id}`);
+    if (row) row.remove();
+    if (activeInputId === id) activeInputId = null;
+    requestDraw();
+}
+
+function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Keyboard ─────────────────────────────────────────────────────────────────
+let kbdOpen = false;
+let kbdTabIdx = 0;
+
+const KBD_TABS = [
+    // Tab 0: Numbers & ops
+    [
+        ['7','8','9','÷','(',')',
+         '4','5','6','×','^','√',
+         '1','2','3','−','π','e',
+         '0','.','=','+',',','⌫'],
+        ['7','8','9','/','(',')',
+         '4','5','6','*','^','sqrt(',
+         '1','2','3','-','pi','e',
+         '0','.','=','+',',','BACKSPACE'],
+    ],
+    // Tab 1: Functions
+    [
+        ['sin','cos','tan','asin','acos','atan',
+         'log','ln','exp','abs','ceil','floor',
+         'sqrt','cbrt'],
+        ['sin(','cos(','tan(','asin(','acos(','atan(',
+         'log(','log(','exp(','abs(','ceil(','floor(',
+         'sqrt(','cbrt('],
+    ],
+    // Tab 2: Variables
+    [
+        ['a','b','c','d','f','g',
+         'h','k','m','n','p','r',
+         't','x','y','z'],
+        ['a','b','c','d','f','g',
+         'h','k','m','n','p','r',
+         't','x','y','z'],
+    ],
+];
+
+function buildKeyboard(tabIdx) {
+    const body = document.getElementById('kbdBody');
+    const labels = KBD_TABS[tabIdx][0];
+    const values = KBD_TABS[tabIdx][1];
+    const isFn = tabIdx === 1;
+    body.innerHTML = `<div class="gkbd-grid">${labels.map((lbl, i) => {
+        const val = values[i];
+        const wide = lbl.length > 3 ? ' wide' : '';
+        const fn = isFn ? ' fn' : '';
+        return `<button class="gkbd-key${wide}${fn}" onclick="kbdInsert(${JSON.stringify(val)})">${lbl}</button>`;
+    }).join('')}</div>`;
+}
+
+function switchKbdTab(idx, btn) {
+    kbdTabIdx = idx;
+    document.querySelectorAll('.gkbd-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    buildKeyboard(idx);
+}
+
+function toggleKeyboard() {
+    kbdOpen = !kbdOpen;
+    document.getElementById('gkbd').className = 'gkbd ' + (kbdOpen ? 'open' : 'closed');
+    const btn = document.getElementById('kbdToggleBtn');
+    btn.style.borderColor = kbdOpen ? 'var(--accent)' : '';
+    btn.style.color = kbdOpen ? 'var(--accent)' : '';
+    if (kbdOpen) buildKeyboard(kbdTabIdx);
+}
+
+function kbdInsert(val) {
+    if (activeInputId === null) {
+        // If no active input, use last expression or create one
+        if (expressions.length === 0) { addExprRow(); return; }
+        activeInputId = expressions[expressions.length - 1].id;
+    }
+    const input = document.getElementById(`einput-${activeInputId}`);
+    if (!input) return;
+    input.focus();
+    if (val === 'BACKSPACE') {
+        const start = input.selectionStart;
+        const end = input.selectionEnd;
+        if (start === end && start > 0) {
+            input.value = input.value.slice(0, start - 1) + input.value.slice(end);
+            input.setSelectionRange(start - 1, start - 1);
+        } else {
+            input.value = input.value.slice(0, start) + input.value.slice(end);
+            input.setSelectionRange(start, start);
+        }
+    } else {
+        const start = input.selectionStart;
+        const end = input.selectionEnd;
+        input.value = input.value.slice(0, start) + val + input.value.slice(end);
+        input.setSelectionRange(start + val.length, start + val.length);
+    }
+    // Trigger input event
+    input.dispatchEvent(new Event('input'));
+}
+
+// ── Export ────────────────────────────────────────────────────────────────────
+function exportImage() {
+    const link = document.createElement('a');
+    link.download = 'algoria-grafico.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+}
+
+function exportExpressions() {
+    const text = expressions.map(e => e.raw).filter(Boolean).join('\n');
+    const blob = new Blob([text], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.download = 'algoria-expresiones.txt';
+    link.href = URL.createObjectURL(blob);
+    link.click();
+    URL.revokeObjectURL(link.href);
+}
+
+// ── Help ──────────────────────────────────────────────────────────────────────
+function openHelp() { document.getElementById('helpOverlay').classList.add('open'); }
+function closeHelp() { document.getElementById('helpOverlay').classList.remove('open'); }
+document.getElementById('helpOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('helpOverlay')) closeHelp();
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+// Load default expressions to demo the tool
+addExprRow('y = x^2');
+addExprRow('y = 2*x + 1');
+
+</script>
+</body>
+</html>

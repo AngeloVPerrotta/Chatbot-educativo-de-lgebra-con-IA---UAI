@@ -34,14 +34,21 @@ def retrieve_context(query: str, top_k: int = 3) -> tuple:
 
     scores = []
     for chunk in chunks:
-        topic_tokens = _tokenize(chunk["topic"].replace("_", " "))
-        content_tokens = _tokenize(chunk["content"])
-        candidate_tokens = topic_tokens | content_tokens
+        tema_tokens    = _tokenize(chunk["tema"])
+        clase_tokens   = _tokenize(chunk["clase"])
+        content_tokens = _tokenize(chunk["contenido"])
+        keyword_tokens = set(chunk.get("keywords", []))
+        candidate_tokens = tema_tokens | content_tokens
 
         score = len(query_tokens & candidate_tokens)
-        # Bonus si la query hace match directo con el topic
-        if query_tokens & topic_tokens:
+        # Bonus por match directo en tema o clase
+        if query_tokens & tema_tokens:
             score += 3
+        if query_tokens & clase_tokens:
+            score += 1
+        # Bonus por match en keywords explícitas
+        if query_tokens & keyword_tokens:
+            score += 2
 
         scores.append((score, chunk))
 
@@ -54,6 +61,6 @@ def retrieve_context(query: str, top_k: int = 3) -> tuple:
     max_score = float(scores[0][0])
     parts = []
     for chunk in top_chunks:
-        parts.append(f"[{chunk['topic']}] {chunk['content']}")
+        parts.append(f"[{chunk['clase']} | {chunk['tema']}]\n{chunk['contenido']}")
 
     return "\n\n".join(parts), max_score

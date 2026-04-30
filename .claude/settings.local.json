@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m pip show openai)",
+      "Bash(python -c \"import openai; print\\(openai.__version__\\)\")",
+      "Bash(dir \"C:\\\\Users\\\\Usuario\\\\Desktop\\\\Chatbot ALGEBRA\" /B)",
+      "Bash(python3 -m pip install python-docx -q)",
+      "Bash(python -m pip install python-docx -q)",
+      "Bash(python -c ':*)",
+      "Bash(python -c:*)"
+    ]
+  }
+}

@@ -139,13 +139,15 @@
         /* --- Login button --- */
         .login-btn{background:transparent;border:1px solid var(--accent);color:var(--accent);font-size:.8rem;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;font-weight:500}
         .login-btn:hover{background:var(--accent-subtle)}
+        .grapher-btn{display:flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--accent);color:var(--accent);font-size:.8rem;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;font-weight:500}
+        .grapher-btn:hover{background:var(--accent-subtle);box-shadow:0 0 12px var(--accent-glow)}
 
         /* --- Shared overlay base --- */
         .overlay-base{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;padding:20px}
 
         /* --- Save progress popup --- */
         .save-popup{background:rgba(11,15,25,0.75);animation:fadeUp .4s ease}
-        .auth-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:36px 32px;width:100%;max-width:400px;display:flex;flex-direction:column;align-items:center;gap:18px;box-shadow:0 8px 48px rgba(0,0,0,0.5)}
+        .auth-card{position:relative;background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:36px 32px;width:100%;max-width:400px;display:flex;flex-direction:column;align-items:center;gap:18px;box-shadow:0 8px 48px rgba(0,0,0,0.5)}
         .auth-logo{width:60px;height:60px;background:var(--user-bubble);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#fff;box-shadow:0 4px 24px var(--accent-glow)}
         .auth-card h2{font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:800;color:var(--text-primary);letter-spacing:-0.03em;text-align:center}
         .auth-card h2 span{color:var(--accent)}
@@ -160,6 +162,8 @@
         .auth-error{font-size:.83rem;color:#f87171;text-align:center;min-height:18px}
         .save-dismiss{font-size:.83rem;color:var(--text-muted);cursor:pointer;text-decoration:none;transition:color .2s;margin-top:-4px}
         .save-dismiss:hover{color:var(--text-secondary)}
+        .auth-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:1.3rem;color:var(--text-muted);cursor:pointer;line-height:1;transition:color .2s}
+        .auth-close:hover{color:var(--text-primary)}
 
         /* --- UAI badge --- */
         .uai-badge{display:none;align-items:center;gap:6px;color:var(--green);font-size:.79rem;background:var(--green-glow);border:1px solid rgba(52,211,153,0.25);padding:5px 12px;border-radius:8px}
@@ -222,6 +226,7 @@
     <!-- Save progress popup -->
     <div class="overlay-base save-popup" id="savePopup" style="display:none">
         <div class="auth-card">
+            <button class="auth-close" onclick="hideSavePopup(true)" aria-label="Cerrar">&times;</button>
             <div class="auth-logo">∑</div>
             <h2>¡Guardá tu <span>progreso</span>!</h2>
             <p class="auth-subtitle">Ingresá tu nombre y email para guardar tu historial de conversaciones.</p>
@@ -312,6 +317,10 @@
                     <button class="login-btn" id="loginBtn" onclick="showSavePopup()" style="display:none">Iniciar sesi&#243;n</button>
                     <button class="clear-btn" onclick="clearChat()" title="Limpiar conversaci&#243;n">&#10005; Limpiar</button>
                     <button class="clear-btn" id="logoutBtn" onclick="doLogout()" style="display:none">Cerrar sesi&#243;n</button>
+                    <button class="grapher-btn" onclick="window.open('grapher.html','_blank')" title="Módulo graficador">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        Graficar
+                    </button>
                     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Cambiar tema">&#127769;</button>
                     <div class="status-badge"><div class="status-dot"></div><span>En l&#237;nea</span></div>
                 </div>
@@ -323,7 +332,6 @@
             <div class="chat-area" id="chatArea">
                 <div class="welcome" id="welcome">
                     <div class="welcome-icon">&#8721;</div>
-                    <h2 id="welcomeTitle">&#161;Hola! Soy Algor<span>IA</span></h2>
                     <p class="welcome-greeting" id="welcomeGreeting"></p>
                     <p class="welcome-motive" id="welcomeMotive"></p>
                     <div class="quick-prompts" id="quickPrompts"></div>
@@ -359,6 +367,13 @@
 
         let currentUser = null;
         try { currentUser = JSON.parse(localStorage.getItem('algoria_user')); } catch(e) {}
+
+        // Mostrar popup de login en primer ingreso
+        window.addEventListener('load', function() {
+            if (!currentUser && !localStorage.getItem('algoria_login_shown')) {
+                setTimeout(showSavePopup, 1500);
+            }
+        });
 
         function feedbackKey() { return currentUser ? 'algoria_feedback_' + currentUser.email : null; }
         function feedbackAlreadyShown() { const k = feedbackKey(); return k ? !!localStorage.getItem(k) : true; }
@@ -421,6 +436,7 @@
         }
 
         function hideSavePopup(dismiss) {
+            localStorage.setItem('algoria_login_shown', '1');
             document.getElementById('savePopup').style.display = 'none';
             if (dismiss) sessionStorage.setItem('auth_dismissed', '1');
         }
@@ -461,6 +477,7 @@
                     return;
                 }
                 localStorage.setItem('algoria_user', JSON.stringify(data));
+                localStorage.setItem('algoria_login_shown', '1');
                 currentUser = data;
                 hideSavePopup(false);
                 onUserLoggedIn();
@@ -594,33 +611,107 @@
             '¿Qué es la proyección ortogonal?','Ayudame con eliminación gaussiana','¿Cuándo un sistema no tiene solución?',
             '¿Qué es la base de un espacio vectorial?','¿Cómo calculo el módulo de un vector?','¿Qué es la traza de una matriz?'
         ];
-        const MOTIVATIONAL = [
+        // === SISTEMA DE SALUDOS ===
+        const SALUDOS = {
+            anonimo: {
+                madrugada: [
+                    'Trasnochando con Álgebra. Dale, que te ayudo.',
+                    'Sesión de madrugada. Las matrices no duermen.',
+                    '¿Todavía estudiando? Buena señal.',
+                ],
+                manana: [
+                    'Buen día. ¿Arrancamos con Álgebra?',
+                    'Mañana de estudio. ¿Por dónde empezamos?',
+                    '¿En qué tema arrancamos hoy?',
+                    'Buenos días. Las funciones te esperan.',
+                ],
+                tarde: [
+                    'Buenas tardes. ¿En qué tema andás?',
+                    'Tarde de práctica. ¿Qué estamos viendo?',
+                    '¿Seguimos donde lo dejamos?',
+                    'Buenas. ¿Sistemas o funciones hoy?',
+                ],
+                noche: [
+                    'Buenas noches. Sesión nocturna de Álgebra.',
+                    'Noche de estudio. ¿Qué tema necesitás?',
+                    '¿Qué tema tenemos para hoy a la noche?',
+                ],
+                lunes: ['Lunes. Buen momento para arrancar fuerte.', '¿Empezamos la semana con algo de práctica?'],
+                martes: ['Martes. ¿Qué tema trabajamos hoy?', 'Martes de Álgebra. ¿En qué andás?'],
+                miercoles: ['Mitad de semana. ¿Cómo vamos con el material?', 'Miércoles. ¿Repasamos algo?'],
+                jueves: ['Jueves. Ya casi. ¿Repasamos antes del fin de semana?', '¿Qué nos queda pendiente esta semana?'],
+                viernes: ['Viernes. Cerramos la semana con Álgebra.', '¡Viernes! ¿Cerramos con algo de práctica?'],
+                sabado: ['Sábado de estudio. Eso se respeta.', 'Sesión de sábado. ¿En qué tema estamos?'],
+                domingo: ['Domingo de estudio. ¿Arrancamos?', 'Domingo. ¿Repasamos antes de la semana?'],
+            },
+            conNombre: {
+                madrugada: [
+                    (n) => `Trasnochando, ${n}. Dale, que te ayudo.`,
+                    (n) => `${n}, ¿todavía estudiando? Buena señal.`,
+                ],
+                manana: [
+                    (n) => `Buen día, ${n}. ¿Arrancamos?`,
+                    (n) => `Buenos días, ${n}. ¿En qué tema empezamos?`,
+                    (n) => `${n} vuelve. ¿Dónde nos quedamos?`,
+                    (n) => `Buen día, ${n}. Las funciones te esperan.`,
+                ],
+                tarde: [
+                    (n) => `Buenas tardes, ${n}. ¿En qué tema andás?`,
+                    (n) => `${n}, ¿seguimos donde lo dejamos?`,
+                    (n) => `Buenas, ${n}. ¿Qué estamos viendo hoy?`,
+                ],
+                noche: [
+                    (n) => `Buenas noches, ${n}. Sesión nocturna de Álgebra.`,
+                    (n) => `${n}, ¿qué tema tenemos para hoy a la noche?`,
+                    (n) => `Noche de estudio, ${n}. ¿Qué necesitás?`,
+                ],
+                lunes: [(n) => `Lunes, ${n}. Arrancamos fuerte.`, (n) => `¿Empezamos la semana, ${n}?`],
+                martes: [(n) => `Martes, ${n}. ¿Qué tema trabajamos?`, (n) => `Martes de Álgebra, ${n}.`],
+                miercoles: [(n) => `Mitad de semana, ${n}. ¿Cómo vamos?`, (n) => `Miércoles, ${n}. ¿Repasamos?`],
+                jueves: [(n) => `Jueves, ${n}. Ya casi. ¿Repasamos?`, (n) => `¿Qué nos queda pendiente, ${n}?`],
+                viernes: [(n) => `Viernes, ${n}. Cerramos con Álgebra.`, (n) => `¡Viernes, ${n}! ¿Cerramos con práctica?`],
+                sabado: [(n) => `Sábado de estudio, ${n}. Eso se respeta.`, (n) => `Sesión de sábado, ${n}. ¿En qué estamos?`],
+                domingo: [(n) => `Domingo de estudio, ${n}. ¿Arrancamos?`, (n) => `Domingo, ${n}. ¿Repasamos antes de la semana?`],
+            }
+        };
+
+        const FRASES_MATEMATICAS = [
+            'Un sistema bien planteado ya está medio resuelto.',
             'Cada ejercicio resuelto te acerca al parcial aprobado.',
-            'Sistemas, matrices, funciones... elegí tu aventura.',
             'El álgebra es la base de todo algoritmo.',
             'Pensá como ingeniero, resolvé como matemático.',
-            'Un sistema bien planteado ya está medio resuelto.',
-            'La práctica hace al ingeniero — arrancá con algo.',
-            'Dale, que las matrices no se resuelven solas.'
+            'Dale, que las matrices no se resuelven solas.',
+            'Sistemas, vectores, funciones... elegí por dónde empezar.',
+            'La práctica hace al ingeniero. Arrancá con algo.',
+            'Sin álgebra, no hay ingeniería. Pero ya estás acá.',
         ];
 
-        function getTimeGreeting() {
-            const h = new Date().getHours();
-            if (h >= 6 && h < 12) return 'Buen día! Arrancamos con Álgebra?';
-            if (h >= 12 && h < 18) return 'Buenas tardes! ¿En qué tema andás?';
-            if (h >= 18 && h < 24) return 'Buenas noches! Sesión nocturna de Álgebra?';
-            return 'Trasnochando con Álgebra? Dale que te ayudo.';
+        function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+        function getSaludo(nombre) {
+            const now = new Date();
+            const h = now.getHours();
+            const dia = ['domingo','lunes','martes','miercoles','jueves','viernes','sabado'][now.getDay()];
+            const franja = h >= 0 && h < 6 ? 'madrugada' : h < 12 ? 'manana' : h < 18 ? 'tarde' : 'noche';
+            const usarDia = Math.random() < 0.3;
+            if (nombre) {
+                const pool = usarDia
+                    ? (SALUDOS.conNombre[dia] || SALUDOS.conNombre[franja])
+                    : SALUDOS.conNombre[franja];
+                const fn = pick(pool);
+                return typeof fn === 'function' ? fn(nombre) : fn;
+            } else {
+                const pool = usarDia
+                    ? (SALUDOS.anonimo[dia] || SALUDOS.anonimo[franja])
+                    : SALUDOS.anonimo[franja];
+                return pick(pool);
+            }
         }
 
         function setupWelcome() {
-            const greeting = getTimeGreeting();
-            if (currentUser) {
-                document.getElementById('welcomeGreeting').textContent = `Hola ${currentUser.name}! ${greeting}`;
-                document.getElementById('welcomeMotive').style.display = 'none';
-            } else {
-                document.getElementById('welcomeGreeting').textContent = greeting;
-                document.getElementById('welcomeMotive').textContent = MOTIVATIONAL[Math.floor(Math.random() * MOTIVATIONAL.length)];
-            }
+            const nombre = currentUser ? currentUser.name.split(' ')[0] : null;
+            document.getElementById('welcomeGreeting').textContent = getSaludo(nombre);
+            document.getElementById('welcomeMotive').textContent = pick(FRASES_MATEMATICAS);
             const shuffled = [...ALL_QUICK_PROMPTS].sort(() => Math.random() - 0.5);
             document.getElementById('quickPrompts').innerHTML = shuffled.slice(0, 4)
                 .map(q => `<button class="quick-prompt" onclick="sendQuick(this)">${q}</button>`).join('');

@@ -1,337 +1,2545 @@
 [
   {
-    "id": "ec_01",
-    "topic": "ecuaciones",
-    "content": "Una ecuación es una igualdad entre dos expresiones algebraicas que contiene una o más incógnitas. Resolver una ecuación significa encontrar el/los valores de la incógnita que hacen verdadera la igualdad. Esos valores se llaman soluciones o raíces. Ejemplo: $2x + 3 = 7 \\Rightarrow x = 2$."
-  },
-  {
-    "id": "ec_02",
-    "topic": "ecuaciones",
-    "content": "Ecuación de primer grado: $ax + b = 0$ con $a \\neq 0$. Solución: $x = -\\frac{b}{a}$. Ejemplo: $3x - 6 = 0 \\Rightarrow x = 2$. Propiedad: si se suma/resta/multiplica/divide por el mismo valor ambos lados, la igualdad se mantiene (excepto dividir por cero)."
-  },
-  {
-    "id": "ec_03",
-    "topic": "ecuaciones",
-    "content": "Ecuación de segundo grado: $ax^2 + bx + c = 0$ con $a \\neq 0$. Fórmula resolvente: $$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$ El discriminante $\\Delta = b^2 - 4ac$ determina la naturaleza de las raíces: $\\Delta > 0$ dos raíces reales distintas, $\\Delta = 0$ raíz doble, $\\Delta < 0$ sin raíces reales."
-  },
-  {
-    "id": "ec_04",
-    "topic": "ecuaciones",
-    "content": "Relaciones de Vieta para $ax^2 + bx + c = 0$: si $x_1, x_2$ son las raíces, entonces $x_1 + x_2 = -\\frac{b}{a}$ y $x_1 \\cdot x_2 = \\frac{c}{a}$. Útil para verificar resultados o construir ecuaciones a partir de raíces conocidas."
-  },
-  {
-    "id": "ec_05",
-    "topic": "ecuaciones",
-    "content": "Ecuaciones con valor absoluto: $|f(x)| = k$ con $k \\geq 0$ equivale a $f(x) = k$ o $f(x) = -k$. Si $k < 0$, no tiene solución. Ejemplo: $|2x - 1| = 3 \\Rightarrow 2x - 1 = 3$ (da $x = 2$) o $2x - 1 = -3$ (da $x = -1$)."
-  },
-  {
-    "id": "int_01",
-    "topic": "intervalos_inecuaciones",
-    "content": "Un intervalo es un subconjunto de $\\mathbb{R}$ formado por todos los reales entre dos extremos. Notación: $(a,b)$ abierto, $[a,b]$ cerrado, $[a,b)$ semiabierto. También: $(-\\infty, a)$, $(a, +\\infty)$. La unión $A \\cup B$ y la intersección $A \\cap B$ de intervalos se representan en la recta numérica."
-  },
-  {
-    "id": "int_02",
-    "topic": "intervalos_inecuaciones",
-    "content": "Inecuación de primer grado: $ax + b > 0$. Si $a > 0$: $x > -b/a$. Si $a < 0$: se invierte el signo de la desigualdad, $x < -b/a$. Regla clave: multiplicar o dividir por un número negativo invierte el sentido de la desigualdad."
-  },
-  {
-    "id": "int_03",
-    "topic": "intervalos_inecuaciones",
-    "content": "Inecuación de segundo grado: $ax^2 + bx + c > 0$. Método: hallar raíces $x_1, x_2$ (con $x_1 < x_2$), luego analizar signo en cada intervalo. Si $a > 0$: la parábola abre hacia arriba, la expresión es positiva en $(-\\infty, x_1) \\cup (x_2, +\\infty)$ y negativa en $(x_1, x_2)$."
-  },
-  {
-    "id": "int_04",
-    "topic": "intervalos_inecuaciones",
-    "content": "Inecuaciones con valor absoluto: $|f(x)| < k \\Leftrightarrow -k < f(x) < k$. $|f(x)| > k \\Leftrightarrow f(x) < -k$ o $f(x) > k$. Ejemplo: $|x - 2| < 3 \\Leftrightarrow -3 < x - 2 < 3 \\Leftrightarrow -1 < x < 5$, solución: $(-1, 5)$."
-  },
-  {
-    "id": "nc_01",
-    "topic": "numeros_complejos",
-    "content": "Los números complejos extienden los reales. Un número complejo es $z = a + bi$ donde $a, b \\in \\mathbb{R}$ e $i$ es la unidad imaginaria con $i^2 = -1$. $a = \\text{Re}(z)$ es la parte real y $b = \\text{Im}(z)$ es la parte imaginaria. Si $b = 0$, es real; si $a = 0$, es imaginario puro."
-  },
-  {
-    "id": "nc_02",
-    "topic": "numeros_complejos",
-    "content": "Operaciones: suma $(a+bi)+(c+di) = (a+c)+(b+d)i$; producto $(a+bi)(c+di) = (ac-bd)+(ad+bc)i$. Conjugado: $\\bar{z} = a - bi$. Módulo: $|z| = \\sqrt{a^2 + b^2}$. Propiedad: $z \\cdot \\bar{z} = |z|^2$. División: $\\frac{z_1}{z_2} = \\frac{z_1 \\cdot \\bar{z_2}}{|z_2|^2}$."
-  },
-  {
-    "id": "nc_03",
-    "topic": "numeros_complejos",
-    "content": "Forma trigonométrica (polar): $z = r(\\cos\\theta + i\\sin\\theta) = r\\,e^{i\\theta}$ donde $r = |z| = \\sqrt{a^2+b^2}$ y $\\theta = \\arg(z) = \\arctan(b/a)$ (ajustado al cuadrante). Producto en forma polar: $|z_1 z_2| = r_1 r_2$, $\\arg(z_1 z_2) = \\theta_1 + \\theta_2$."
-  },
-  {
-    "id": "nc_04",
-    "topic": "numeros_complejos",
-    "content": "Fórmula de De Moivre: $z^n = r^n(\\cos n\\theta + i\\sin n\\theta)$. Raíces $n$-ésimas de un complejo: $w_k = r^{1/n}\\left(\\cos\\frac{\\theta + 2\\pi k}{n} + i\\sin\\frac{\\theta + 2\\pi k}{n}\\right)$ para $k = 0, 1, \\ldots, n-1$. Hay exactamente $n$ raíces distintas equiespaciadas en la circunferencia de radio $r^{1/n}$."
-  },
-  {
-    "id": "nc_05",
-    "topic": "numeros_complejos",
-    "content": "Toda ecuación polinómica de grado $n$ tiene exactamente $n$ raíces en $\\mathbb{C}$ (Teorema Fundamental del Álgebra). Las raíces complejas de polinomios con coeficientes reales aparecen en pares conjugados: si $z = a + bi$ es raíz, entonces $\\bar{z} = a - bi$ también lo es."
-  },
-  {
-    "id": "rec_01",
-    "topic": "recta",
-    "content": "La recta en el plano puede representarse de varias formas. Ecuación explícita: $y = mx + b$, donde $m$ es la pendiente y $b$ la ordenada al origen. Ecuación implícita: $ax + by + c = 0$. Forma punto-pendiente: $y - y_0 = m(x - x_0)$ dado un punto $(x_0, y_0)$ y pendiente $m$."
-  },
-  {
-    "id": "rec_02",
-    "topic": "recta",
-    "content": "Pendiente entre dos puntos $(x_1, y_1)$ y $(x_2, y_2)$: $m = \\frac{y_2 - y_1}{x_2 - x_1}$ con $x_1 \\neq x_2$. Dos rectas son paralelas si tienen igual pendiente ($m_1 = m_2$) y perpendiculares si $m_1 \\cdot m_2 = -1$. La recta vertical $x = k$ no tiene pendiente definida."
-  },
-  {
-    "id": "rec_03",
-    "topic": "recta",
-    "content": "Distancia de un punto $P(x_0, y_0)$ a la recta $ax + by + c = 0$: $$d = \\frac{|ax_0 + by_0 + c|}{\\sqrt{a^2 + b^2}}$$ Punto medio del segmento entre $(x_1,y_1)$ y $(x_2,y_2)$: $M = \\left(\\frac{x_1+x_2}{2}, \\frac{y_1+y_2}{2}\\right)$."
-  },
-  {
-    "id": "rec_04",
-    "topic": "recta",
-    "content": "Ecuación de la recta que pasa por dos puntos $(x_1, y_1)$ y $(x_2, y_2)$: $$\\frac{y - y_1}{y_2 - y_1} = \\frac{x - x_1}{x_2 - x_1}$$ Intersección entre dos rectas: resolver el sistema formado por sus ecuaciones. Si son paralelas no hay solución; si son iguales, infinitas soluciones."
-  },
-  {
-    "id": "con_01",
-    "topic": "conicas",
-    "content": "Las cónicas son curvas obtenidas al intersecar un plano con un cono. Tipos: circunferencia, elipse, parábola e hipérbola. Ecuación general: $Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0$. El tipo depende del discriminante $B^2 - 4AC$: negativo → elipse/circunferencia, cero → parábola, positivo → hipérbola."
-  },
-  {
-    "id": "con_02",
-    "topic": "conicas",
-    "content": "Circunferencia con centro $(h, k)$ y radio $r$: $(x-h)^2 + (y-k)^2 = r^2$. Forma general: $x^2 + y^2 + Dx + Ey + F = 0$; se convierte a canónica completando cuadrados. Centro: $(-D/2, -E/2)$, radio: $r = \\sqrt{(D/2)^2 + (E/2)^2 - F}$."
-  },
-  {
-    "id": "con_03",
-    "topic": "conicas",
-    "content": "Elipse con centro en el origen: $\\frac{x^2}{a^2} + \\frac{y^2}{b^2} = 1$ con $a > b > 0$. Semiejes: $a$ (mayor, horizontal) y $b$ (menor, vertical). Focos en $(\\pm c, 0)$ con $c^2 = a^2 - b^2$. Excentricidad: $e = c/a$ con $0 < e < 1$. Para eje mayor vertical, se intercambian $a$ y $b$."
-  },
-  {
-    "id": "con_04",
-    "topic": "conicas",
-    "content": "Parábola con vértice en el origen: $y^2 = 4px$ (eje horizontal) o $x^2 = 4py$ (eje vertical). El foco está en $(p, 0)$ o $(0, p)$ y la directriz es $x = -p$ o $y = -p$. Con vértice en $(h,k)$: $(y-k)^2 = 4p(x-h)$ o $(x-h)^2 = 4p(y-k)$."
-  },
-  {
-    "id": "con_05",
-    "topic": "conicas",
-    "content": "Hipérbola con centro en el origen: $\\frac{x^2}{a^2} - \\frac{y^2}{b^2} = 1$ (eje real horizontal). Focos en $(\\pm c, 0)$ con $c^2 = a^2 + b^2$. Asíntotas: $y = \\pm \\frac{b}{a}x$. Para eje real vertical: $\\frac{y^2}{a^2} - \\frac{x^2}{b^2} = 1$ con focos en $(0, \\pm c)$."
-  },
-  {
-    "id": "vec_01",
-    "topic": "vectores",
-    "content": "Un vector en $\\mathbb{R}^n$ es un elemento $(v_1, v_2, \\ldots, v_n)$. En $\\mathbb{R}^2$: $\\vec{v} = (v_x, v_y)$; en $\\mathbb{R}^3$: $\\vec{v} = (v_x, v_y, v_z)$. Módulo (norma): $|\\vec{v}| = \\sqrt{v_x^2 + v_y^2 + v_z^2}$. Vector unitario: $\\hat{v} = \\vec{v}/|\\vec{v}|$. Vector nulo: $\\vec{0} = (0, 0, 0)$."
-  },
-  {
-    "id": "vec_02",
-    "topic": "vectores",
-    "content": "Operaciones con vectores: suma $\\vec{u} + \\vec{v} = (u_x+v_x, u_y+v_y, u_z+v_z)$; producto escalar $k\\vec{v} = (kv_x, kv_y, kv_z)$. Producto escalar (dot product): $\\vec{u} \\cdot \\vec{v} = u_xv_x + u_yv_y + u_zv_z = |\\vec{u}||\\vec{v}|\\cos\\theta$. Vectores perpendiculares si $\\vec{u} \\cdot \\vec{v} = 0$."
-  },
-  {
-    "id": "vec_03",
-    "topic": "vectores",
-    "content": "Producto vectorial (solo en $\\mathbb{R}^3$): $\\vec{u} \\times \\vec{v} = \\begin{vmatrix} \\vec{i} & \\vec{j} & \\vec{k} \\\\ u_x & u_y & u_z \\\\ v_x & v_y & v_z \\end{vmatrix}$. El resultado es un vector perpendicular a ambos. $|\\vec{u} \\times \\vec{v}| = |\\vec{u}||\\vec{v}|\\sin\\theta$ = área del paralelogramo formado por $\\vec{u}$ y $\\vec{v}$."
-  },
-  {
-    "id": "vec_04",
-    "topic": "vectores",
-    "content": "Combinación lineal: $\\vec{w} = \\alpha\\vec{u} + \\beta\\vec{v}$. Vectores linealmente independientes: ninguno es combinación lineal de los otros, equivalente a que el sistema $\\alpha\\vec{u} + \\beta\\vec{v} = \\vec{0}$ solo tiene solución trivial $\\alpha = \\beta = 0$. En $\\mathbb{R}^2$: dos vectores no paralelos son LI."
-  },
-  {
-    "id": "vec_05",
-    "topic": "vectores",
-    "content": "Proyección de $\\vec{u}$ sobre $\\vec{v}$: $\\text{proy}_{\\vec{v}}\\vec{u} = \\frac{\\vec{u}\\cdot\\vec{v}}{|\\vec{v}|^2}\\vec{v}$. Componente escalar: $\\text{comp}_{\\vec{v}}\\vec{u} = \\frac{\\vec{u}\\cdot\\vec{v}}{|\\vec{v}|}$. Ángulo entre vectores: $\\cos\\theta = \\frac{\\vec{u}\\cdot\\vec{v}}{|\\vec{u}||\\vec{v}|}$ con $\\theta \\in [0°, 180°]$."
-  },
-  {
-    "id": "mat_01",
-    "topic": "matrices",
-    "content": "Una matriz de orden $m \\times n$ es un arreglo rectangular de $m$ filas y $n$ columnas: $A = (a_{ij})$. Tipos: cuadrada ($m=n$), nula ($a_{ij}=0$ para todo $i,j$), identidad $I_n$ ($a_{ii}=1$, resto $0$), triangular (superior/inferior), diagonal, simétrica ($A = A^T$)."
-  },
-  {
-    "id": "mat_02",
-    "topic": "matrices",
-    "content": "Operaciones: suma $A+B$ (mismo orden, $c_{ij}=a_{ij}+b_{ij}$), producto escalar $kA$, transpuesta $A^T$ (filas↔columnas). Producto matricial $AB$: requiere que el número de columnas de $A$ sea igual al número de filas de $B$. $(AB)_{ij} = \\sum_k a_{ik}b_{kj}$. El producto matricial NO es conmutativo en general."
-  },
-  {
-    "id": "mat_03",
-    "topic": "matrices",
-    "content": "Matriz inversa: $A^{-1}$ existe si y solo si $\\det(A) \\neq 0$ (matriz invertible o no singular). Propiedad: $A \\cdot A^{-1} = A^{-1} \\cdot A = I$. Para $2 \\times 2$: si $A = \\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}$, entonces $A^{-1} = \\frac{1}{ad-bc}\\begin{pmatrix}d&-b\\\\-c&a\\end{pmatrix}$."
-  },
-  {
-    "id": "mat_04",
-    "topic": "matrices",
-    "content": "Rango de una matriz: número máximo de filas (o columnas) linealmente independientes. Se calcula mediante eliminación de Gauss llevando la matriz a forma escalonada. El rango determina la solución de sistemas lineales: para $Ax = b$, si $\\text{rg}(A) = \\text{rg}(A|b) = n$ (incógnitas), solución única."
-  },
-  {
-    "id": "mat_05",
-    "topic": "matrices",
-    "content": "Eliminación de Gauss-Jordan: operaciones elementales sobre filas (multiplicar fila por escalar, sumar múltiplo de una fila a otra, intercambiar filas). Se aplica a la matriz ampliada $[A|b]$ para resolver sistemas. La forma escalonada reducida tiene $1$s en los pivotes y $0$s en toda la columna de cada pivote."
-  },
-  {
-    "id": "det_01",
-    "topic": "determinantes",
-    "content": "El determinante es una función escalar definida para matrices cuadradas. Para $1\\times1$: $\\det(a) = a$. Para $2\\times2$: $\\det\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix} = ad - bc$. Para $3\\times3$ (regla de Sarrus): $\\det(A) = a_{11}(a_{22}a_{33}-a_{23}a_{32}) - a_{12}(a_{21}a_{33}-a_{23}a_{31}) + a_{13}(a_{21}a_{32}-a_{22}a_{31})$."
-  },
-  {
-    "id": "det_02",
-    "topic": "determinantes",
-    "content": "Propiedades del determinante: $\\det(AB) = \\det(A)\\det(B)$; $\\det(A^T) = \\det(A)$; $\\det(kA) = k^n\\det(A)$ para $A$ de orden $n$; $\\det(A^{-1}) = 1/\\det(A)$. Si se intercambian dos filas, el determinante cambia de signo. Si una fila es múltiplo de otra, $\\det = 0$."
-  },
-  {
-    "id": "det_03",
-    "topic": "determinantes",
-    "content": "Desarrollo por cofactores (expansión de Laplace) sobre la fila $i$: $\\det(A) = \\sum_{j=1}^n a_{ij} C_{ij}$ donde $C_{ij} = (-1)^{i+j} M_{ij}$ es el cofactor y $M_{ij}$ el menor (determinante de la submatriz eliminando fila $i$ y columna $j$). Conviene expandir por la fila/columna con más ceros."
-  },
-  {
-    "id": "det_04",
-    "topic": "determinantes",
-    "content": "Regla de Cramer para $Ax = b$ con $\\det(A) \\neq 0$: $x_i = \\frac{\\det(A_i)}{\\det(A)}$ donde $A_i$ es la matriz $A$ con la columna $i$ reemplazada por $b$. Útil para sistemas pequeños ($2\\times2$, $3\\times3$). Para sistemas grandes, Gauss es más eficiente."
-  },
-  {
-    "id": "sis_01",
-    "topic": "sistemas_ecuaciones",
-    "content": "Un sistema de ecuaciones lineales $Ax = b$ puede tener: solución única (compatible determinado), infinitas soluciones (compatible indeterminado), o ninguna solución (incompatible). El Teorema de Rouché-Frobenius establece: el sistema es compatible $\\Leftrightarrow$ $\\text{rg}(A) = \\text{rg}(A|b)$."
-  },
-  {
-    "id": "sis_02",
-    "topic": "sistemas_ecuaciones",
-    "content": "Método de Gauss: se aplican operaciones elementales sobre filas a la matriz ampliada $[A|b]$ para obtener la forma escalonada, luego se resuelve por sustitución regresiva. Método de Gauss-Jordan: se lleva a la forma escalonada reducida para leer directamente las soluciones."
-  },
-  {
-    "id": "sis_03",
-    "topic": "sistemas_ecuaciones",
-    "content": "Método de sustitución: se despeja una incógnita de una ecuación y se sustituye en las demás. Método de eliminación (reducción): se suman/restan múltiplos de ecuaciones para eliminar una incógnita. Ambos son equivalentes al método de Gauss para sistemas $2\\times2$ y $3\\times3$."
-  },
-  {
-    "id": "sis_04",
-    "topic": "sistemas_ecuaciones",
-    "content": "Sistemas homogéneos ($b = \\vec{0}$): siempre tienen la solución trivial $x = \\vec{0}$. Tienen soluciones no triviales $\\Leftrightarrow$ $\\det(A) = 0$ $\\Leftrightarrow$ $\\text{rg}(A) < n$. Las soluciones forman un subespacio vectorial (espacio nulo o núcleo de $A$)."
-  },
-  {
-    "id": "sis_05",
-    "topic": "sistemas_ecuaciones",
-    "content": "Solución con infinitas soluciones: las variables correspondientes a columnas sin pivote son variables libres (parámetros). Se expresan las variables pivote en función de las libres. Ejemplo: si $\\text{rg}(A) = 2$ y hay $3$ incógnitas, hay $3-2=1$ variable libre y la solución es una recta en $\\mathbb{R}^3$."
-  },
-  {
-    "id": "fun_01",
-    "topic": "funciones",
-    "content": "Una función $f: A \\to B$ asigna a cada elemento $x \\in A$ (dominio) exactamente un elemento $f(x) \\in B$ (codominio). La imagen o rango es $\\text{Im}(f) = \\{f(x) : x \\in A\\} \\subseteq B$. Tipos: inyectiva ($f(x_1)=f(x_2) \\Rightarrow x_1=x_2$), suryectiva ($\\text{Im}=B$), biyectiva (ambas)."
-  },
-  {
-    "id": "fun_02",
-    "topic": "funciones",
-    "content": "Dominio natural: conjunto de valores reales para los que $f(x)$ está definida. Restricciones comunes: denominador $\\neq 0$, argumento de raíz par $\\geq 0$, argumento de logaritmo $> 0$. Ejemplo: $f(x) = \\frac{\\sqrt{x-1}}{x-3}$ tiene dominio $[1,3) \\cup (3, +\\infty)$."
-  },
-  {
-    "id": "fun_03",
-    "topic": "funciones",
-    "content": "Composición de funciones: $(f \\circ g)(x) = f(g(x))$. Dominio de $f \\circ g$: valores de $x$ en el dominio de $g$ tales que $g(x)$ esté en el dominio de $f$. Función inversa: si $f$ es biyectiva, $f^{-1}$ cumple $f^{-1}(f(x)) = x$. Se obtiene despejando $x$ en $y = f(x)$."
-  },
-  {
-    "id": "fun_04",
-    "topic": "funciones",
-    "content": "Paridad: $f$ es par si $f(-x) = f(x)$ (simétrica respecto al eje $y$); es impar si $f(-x) = -f(x)$ (simétrica respecto al origen). Monotonía: $f$ es creciente en $I$ si $x_1 < x_2 \\Rightarrow f(x_1) < f(x_2)$; decreciente si $x_1 < x_2 \\Rightarrow f(x_1) > f(x_2)$."
-  },
-  {
-    "id": "fc_01",
-    "topic": "funcion_cuadratica",
-    "content": "La función cuadrática tiene la forma $f(x) = ax^2 + bx + c$ con $a \\neq 0$. Su gráfica es una parábola. Si $a > 0$, abre hacia arriba (tiene mínimo); si $a < 0$, abre hacia abajo (tiene máximo). Vértice: $V = \\left(-\\frac{b}{2a},\\ f\\!\\left(-\\frac{b}{2a}\\right)\\right)$."
-  },
-  {
-    "id": "fc_02",
-    "topic": "funcion_cuadratica",
-    "content": "Forma canónica o vertex form: $f(x) = a(x-h)^2 + k$ donde $(h, k)$ es el vértice. Se obtiene completando el cuadrado: $ax^2 + bx + c = a\\left(x + \\frac{b}{2a}\\right)^2 + c - \\frac{b^2}{4a}$. Útil para identificar vértice, eje de simetría ($x = h$) y el valor extremo $k$."
-  },
-  {
-    "id": "fc_03",
-    "topic": "funcion_cuadratica",
-    "content": "Intersecciones con los ejes: con el eje $y$ en $(0, c)$; con el eje $x$ resolviendo $ax^2 + bx + c = 0$ (raíces). Si $\\Delta > 0$: dos raíces reales (la parábola corta al eje $x$ en dos puntos); $\\Delta = 0$: una raíz doble (tangente al eje $x$); $\\Delta < 0$: no corta al eje $x$."
-  },
-  {
-    "id": "fc_04",
-    "topic": "funcion_cuadratica",
-    "content": "Rango de la función cuadrática: si $a > 0$, $\\text{Im}(f) = [k, +\\infty)$; si $a < 0$, $\\text{Im}(f) = (-\\infty, k]$, donde $k = c - \\frac{b^2}{4a}$ es el valor en el vértice. La función no es inyectiva (salvo que se restrinja el dominio al eje de simetría)."
-  },
-  {
-    "id": "fp_01",
-    "topic": "funcion_polinomica",
-    "content": "Un polinomio de grado $n$: $p(x) = a_n x^n + a_{n-1}x^{n-1} + \\cdots + a_1 x + a_0$ con $a_n \\neq 0$. Dominio: $\\mathbb{R}$. Grado impar: la función va de $-\\infty$ a $+\\infty$ (o viceversa). Grado par: ambos extremos van al mismo infinito, determinado por el signo de $a_n$."
-  },
-  {
-    "id": "fp_02",
-    "topic": "funcion_polinomica",
-    "content": "Teorema del factor: $(x - r)$ es factor de $p(x)$ si y solo si $p(r) = 0$ (i.e., $r$ es raíz). División de polinomios: $p(x) = (x-r) \\cdot q(x) + p(r)$ (algoritmo de Ruffini). Si $r$ es raíz, $p(x) = (x-r)\\cdot q(x)$ con $\\deg(q) = n-1$."
-  },
-  {
-    "id": "fp_03",
-    "topic": "funcion_polinomica",
-    "content": "Regla de Ruffini para dividir $p(x)$ por $(x - r)$: se escriben los coeficientes de $p(x)$, se baja el primero, se multiplica por $r$, se suma al siguiente coeficiente, y así sucesivamente. El último valor es el resto $p(r)$. Útil para factorizar buscando raíces enteras (divisores del término independiente)."
-  },
-  {
-    "id": "fp_04",
-    "topic": "funcion_polinomica",
-    "content": "Multiplicidad de una raíz: $r$ tiene multiplicidad $k$ si $(x-r)^k$ divide a $p(x)$ pero $(x-r)^{k+1}$ no. Si $k$ es impar, la gráfica cruza el eje $x$ en $r$; si $k$ es par, es tangente al eje $x$. La suma de multiplicidades de todas las raíces (en $\\mathbb{C}$) es igual al grado."
-  },
-  {
-    "id": "fel_01",
-    "topic": "funcion_exponencial_logaritmica",
-    "content": "Función exponencial: $f(x) = a^x$ con $a > 0$, $a \\neq 1$. Dominio: $\\mathbb{R}$; imagen: $(0, +\\infty)$. Si $a > 1$: creciente; si $0 < a < 1$: decreciente. Siempre pasa por $(0,1)$. La función $e^x$ (base natural $e \\approx 2.718$) es la más usada en cálculo."
-  },
-  {
-    "id": "fel_02",
-    "topic": "funcion_exponencial_logaritmica",
-    "content": "Función logarítmica: $f(x) = \\log_a(x)$ es la inversa de $a^x$. Dominio: $(0, +\\infty)$; imagen: $\\mathbb{R}$. Propiedades: $\\log_a(xy) = \\log_a x + \\log_a y$; $\\log_a(x/y) = \\log_a x - \\log_a y$; $\\log_a(x^n) = n\\log_a x$. Cambio de base: $\\log_a x = \\frac{\\ln x}{\\ln a}$."
-  },
-  {
-    "id": "fel_03",
-    "topic": "funcion_exponencial_logaritmica",
-    "content": "Ecuaciones exponenciales: $a^{f(x)} = a^{g(x)} \\Rightarrow f(x) = g(x)$. Si las bases no son iguales, aplicar logaritmo. Ejemplo: $2^x = 5 \\Rightarrow x = \\log_2 5 = \\frac{\\ln 5}{\\ln 2}$. Ecuaciones logarítmicas: $\\log_a f(x) = k \\Rightarrow f(x) = a^k$ (verificar dominio: $f(x) > 0$)."
-  },
-  {
-    "id": "fel_04",
-    "topic": "funcion_exponencial_logaritmica",
-    "content": "Inecuaciones exponenciales: $a^{f(x)} > a^{g(x)}$. Si $a > 1$: $f(x) > g(x)$; si $0 < a < 1$: $f(x) < g(x)$ (se invierte). Inecuaciones logarítmicas: $\\log_a f(x) > \\log_a g(x)$. Si $a > 1$: $f(x) > g(x)$ (con ambos positivos); si $0 < a < 1$: $f(x) < g(x)$."
-  },
-  {
-    "id": "ft_01",
-    "topic": "funcion_trigonometrica",
-    "content": "Funciones trigonométricas básicas: $\\sin x$, $\\cos x$, $\\tan x = \\sin x / \\cos x$. Período: $\\sin$ y $\\cos$ tienen período $2\\pi$; $\\tan$ tiene período $\\pi$. Dominio de $\\tan x$: $\\mathbb{R} \\setminus \\{\\pi/2 + k\\pi,\\ k \\in \\mathbb{Z}\\}$. Identidad fundamental: $\\sin^2 x + \\cos^2 x = 1$."
-  },
-  {
-    "id": "ft_02",
-    "topic": "funcion_trigonometrica",
-    "content": "Valores notables: $$\\begin{array}{c|cccc} x & 0 & \\pi/6 & \\pi/4 & \\pi/3 & \\pi/2 \\\\ \\hline \\sin x & 0 & 1/2 & \\sqrt{2}/2 & \\sqrt{3}/2 & 1 \\\\ \\cos x & 1 & \\sqrt{3}/2 & \\sqrt{2}/2 & 1/2 & 0 \\end{array}$$ Los ángulos en los cuatro cuadrantes se obtienen por simetría. Signo: $\\sin > 0$ en Q1 y Q2; $\\cos > 0$ en Q1 y Q4."
-  },
-  {
-    "id": "ft_03",
-    "topic": "funcion_trigonometrica",
-    "content": "Identidades útiles: $\\sin(a \\pm b) = \\sin a \\cos b \\pm \\cos a \\sin b$; $\\cos(a \\pm b) = \\cos a \\cos b \\mp \\sin a \\sin b$. Duplicación: $\\sin 2a = 2\\sin a \\cos a$; $\\cos 2a = \\cos^2 a - \\sin^2 a = 1 - 2\\sin^2 a = 2\\cos^2 a - 1$."
-  },
-  {
-    "id": "ft_04",
-    "topic": "funcion_trigonometrica",
-    "content": "Funciones inversas: $\\arcsin: [-1,1] \\to [-\\pi/2, \\pi/2]$; $\\arccos: [-1,1] \\to [0, \\pi]$; $\\arctan: \\mathbb{R} \\to (-\\pi/2, \\pi/2)$. Graficación de $f(x) = A\\sin(Bx + C) + D$: amplitud $|A|$, período $2\\pi/|B|$, desfase horizontal $-C/B$, desplazamiento vertical $D$."
-  },
-  {
-    "id": "et_01",
-    "topic": "ecuaciones_trigonometricas",
-    "content": "Ecuación trigonométrica básica: $\\sin x = k$ con $|k| \\leq 1$. Solución general: $x = \\arcsin(k) + 2k\\pi$ o $x = \\pi - \\arcsin(k) + 2k\\pi$, $k \\in \\mathbb{Z}$. Para $\\cos x = k$: $x = \\pm\\arccos(k) + 2k\\pi$. Para $\\tan x = k$: $x = \\arctan(k) + k\\pi$."
-  },
-  {
-    "id": "et_02",
-    "topic": "ecuaciones_trigonometricas",
-    "content": "Método general de resolución: 1) Identificar la función trigonométrica. 2) Usar identidades para reducir a una función simple si es necesario. 3) Hallar la solución en el intervalo principal (ej. $[0, 2\\pi)$). 4) Generalizar con el período. Verificar que las soluciones satisfagan restricciones de dominio."
-  },
-  {
-    "id": "et_03",
-    "topic": "ecuaciones_trigonometricas",
-    "content": "Ecuaciones que requieren factorización: ejemplo $2\\sin^2 x - \\sin x - 1 = 0$. Sustituyendo $u = \\sin x$: $2u^2 - u - 1 = 0 \\Rightarrow (2u+1)(u-1) = 0$, entonces $\\sin x = -1/2$ o $\\sin x = 1$. Se resuelve cada caso por separado usando los valores notables."
-  },
-  {
-    "id": "et_04",
-    "topic": "ecuaciones_trigonometricas",
-    "content": "Ecuaciones con identidades: para $\\sin^2 x + \\cos x = 1$, reemplazar $\\sin^2 x = 1 - \\cos^2 x$: $1 - \\cos^2 x + \\cos x = 1 \\Rightarrow \\cos x(1 - \\cos x) = 0$, entonces $\\cos x = 0$ o $\\cos x = 1$. Soluciones en $[0, 2\\pi)$: $x = \\pi/2,\\ 3\\pi/2,\\ 0$."
-  },
-  {
-    "id": "et_05",
-    "topic": "ecuaciones_trigonometricas",
-    "content": "Ecuaciones con argumento compuesto: $\\sin(2x) = \\sqrt{3}/2$. Se resuelve $2x = \\pi/3 + 2k\\pi$ o $2x = 2\\pi/3 + 2k\\pi$, luego $x = \\pi/6 + k\\pi$ o $x = \\pi/3 + k\\pi$. En $[0, 2\\pi)$: $x \\in \\{\\pi/6,\\ \\pi/3,\\ 7\\pi/6,\\ 4\\pi/3\\}$."
+    "id": "clase_01_clase_1_conjuntos_numericos_00_001",
+    "clase": "Clase 1 - Conjuntos Numericos",
+    "tema": "CLASE 1 – CONJUNTOS NUMÉRICOS",
+    "contenido": "Los conjuntos numéricos se utilizan para agrupar números que tienen características similares. Es uno de los conceptos básicos de la matemática por lo que es importante conocer cuáles son los conjuntos numéricos y qué características tiene cada uno Los conjuntos numéricos básicos son los siguientes: Naturales — ℕ Enteros — ℤ Racionales — ℚ Reales — ℝ Complejos — ℂ Cada conjunto más general va englobando al conjunto anterior es decir que por ejemplo todos los números naturales son enteros, pero no todos los números enteros son naturales. Podemos visualizar esta idea gráficamente:",
+    "keywords": [
+      "conjuntos",
+      "numéricos",
+      "números",
+      "naturales",
+      "enteros",
+      "características",
+      "básicos",
+      "conjunto"
+    ]
+  },
+  {
+    "id": "clase_01_conjunto_de_numeros_naturale_01_001",
+    "clase": "Clase 1 - Conjuntos Numericos",
+    "tema": "Conjunto de Números Naturales (ℕ)",
+    "contenido": "Este conjunto es el primero que uso el ser humano en la antigüedad, es aquel que sirve para contar: Está compuesto por todos los números enteros (sin parte decimal) y positivos, se denota como ℕ y se representan así: Si se incluye el neutro de la suma (el cero), se denota y se representan así: Siempre que se sumen y se multipliquen dos números naturales se obtendrá otro número natural, mientras que muchas veces, no sucede lo mismo si se restan o se dividen, por ejemplo: o",
+    "keywords": [
+      "números",
+      "denota",
+      "representan",
+      "conjunto",
+      "primero",
+      "humano",
+      "antigüedad",
+      "aquel"
+    ]
+  },
+  {
+    "id": "clase_01_conjunto_de_numeros_enteros__02_001",
+    "clase": "Clase 1 - Conjuntos Numericos",
+    "tema": "Conjunto de Números Enteros (ℤ)",
+    "contenido": "Este conjunto se conforma con los números naturales, el cero y los números enteros negativos, se denota como ℤ y se representan así: Con los números negativos podemos representar operaciones de sustracción, magnitudes faltantes, valores que se encuentran por debajo del cero de referencia y demás (temperaturas, salientes de dinero, coordenadas, etc). Su representación sobre la recta numérica es la siguiente: Cada número natural tiene un opuesto, es el opuesto de 5, etc. De esta manera, podemos redefinir la resta de dos números naturales como la suma de dos números enteros, por ejemplo: Sumar es lo mismo que restar su opuesto. Para comprender las operaciones con números negativos necesitamos entender el concepto de modulo. Modulo o valor absoluto: Es la distancia que existe entre el número y el cero. Propiedades: Operaciones con números enteros: Para resolver sumas y restas, se deben tener en cuenta estos dos casos: Si los números enteros tienen el mismo signo, se suman sus valores absolutos y el resultado lleva el mismo signo. Ejemplo: en una ciudad, a las 7 de la mañana se registraron 3 grados bajo cero. Una hora después, la temperatura bajo un grado ¿Cuál fue la temperatura registrada a las 8 de la mañana? Si los números enteros tienen distintos signos, se restan sus valores absolutos y el resultado lleva el signo del número que tiene mayor valor absoluto. Ejemplo: si un apostador pierde $240 en una noche y gana $170 en la siguiente ¿Cuál es el saldo del apostador? Para multiplicar o dividir números enteros debemos tener en cuenta la regla de los signos: Podemos observar que ahora la suma, la resta y la multiplicación de números enteros dan como resultado otro número entero, no asi la división. Por ejemplo:",
+    "keywords": [
+      "números",
+      "enteros",
+      "cero",
+      "número",
+      "ejemplo",
+      "negativos",
+      "podemos",
+      "operaciones"
+    ]
+  },
+  {
+    "id": "clase_01_conjunto_de_numeros_racional_03_001",
+    "clase": "Clase 1 - Conjuntos Numericos",
+    "tema": "Conjunto de Números Racionales (ℚ)",
+    "contenido": "Este conjunto surge de dividir un número entero (llamado numerador) por otro número entero (llamado denominador) con la condición de que el segundo no sea cero. Se denota como y se representan así: Noten que si b=1 obtenemos todos los números enteros (). Estos números se utilizan para representar magnitudes no enteras de naturaleza continua (velocidad, peso, corriente eléctrica, etc). Representemos en la recta numérica algunos números racionales: Ejemplos de números racionales: Cociente de 13 y 9, que son números enteros. (4 y 1 son enteros). Para convertir expresiones decimales no periódicos en fracciones debemos poner en el numerador el número completo sin la coma y en el denominador un “1“seguido de un “0” por cada cifra decimal: Para convertir expresiones decimales periódicos en fracciones debemos poner en el numerador el número completo sin la coma ni el símbolo de periódico menos la parte no periódica; En el denominador pondremos un “9” por cada cifra decimal periódica seguido de un “0” por cada cifra decimal no periódica: Se puede concluir que entre dos números racionales 𝑎 𝑦 𝑏, con 𝑎 < 𝑏, existe otro racional de la forma que verifica: Esta propiedad se expresa diciendo que el conjunto Q es un conjunto denso, en contraposición a los naturales, N, y los enteros, Z, que son conjuntos discretos. La suma, la resta, la multiplicación y la división de números enteros dan como resultado un número racional, pero aún quedan operaciones entre enteros que no dan como resultado racionales, por ejemplo con algunas potencias, raíces, logaritmos, etc. Estos números serán irracionales y los veremos en el próximo conjunto.",
+    "keywords": [
+      "números",
+      "enteros",
+      "número",
+      "conjunto",
+      "racionales",
+      "numerador",
+      "denominador",
+      "cifra"
+    ]
+  },
+  {
+    "id": "clase_01_conjunto_de_numeros_reales_ℝ_04_001",
+    "clase": "Clase 1 - Conjuntos Numericos",
+    "tema": "Conjunto de Números Reales (ℝ)",
+    "contenido": "Si al conjunto de los números racionales le agregamos el conjunto de los números irracionales obtenemos el conjunto de los números reales. Los números irracionales surgen de realizar ciertas operaciones y no es posible expresarlos como el cociente entre dos números enteros, tienen infinitas cifras decimales no periódicas. Ejemplos de números irracionales son: todas aquellas raíces que no tengan resultado exacto, el número “pi” (3,141592…), el número “numero de Euler” (2,71828…), algunas potencias racionales, algunos logaritmos, operaciones trigonométricas, etc. Las operaciones de suma y multiplicación definidas en ℝ cumplen ciertas propiedades. Veamos algunas de ellas: Potenciación: Si es un número real y es un número natural, entonces decimos que se obtiene multiplicando veces el factor , es decir: Algunas propiedades de potencia: Radicales: Un radical es una expresión de la forma , en la que y; con la restricción de que cuando sea negativo, ha de ser impar. Un radical se puede expresar en forma de potencia Otras propiedades de la raíz: Racionalizar: consiste en quitar los radicales del denominador, es decir quitar las raíces del denominador, para esto usaremos propiedades de la raíz y la diferencia de cuadrados:",
+    "keywords": [
+      "números",
+      "número",
+      "propiedades",
+      "conjunto",
+      "irracionales",
+      "operaciones",
+      "algunas",
+      "racionales"
+    ]
+  },
+  {
+    "id": "clase_01_conjunto_de_numeros_complejo_05_001",
+    "clase": "Clase 1 - Conjuntos Numericos",
+    "tema": "Conjunto de Números Complejos (ℂ)",
+    "contenido": "Si al conjunto de los números reales agregamos los números imaginarios, obtenemos el conjunto de números complejos. El número imaginario i es el resultado de la raíz cuadrada de -1. Los números complejos se componen de una parte real y una parte imaginaria y son muy útiles para el estudio de la física, ingeniería electrónica y telecomunicaciones. Noten que si b=0 obtenemos todos los números reales (). Este es el único conjunto de los vistos en el que los números no pueden ser representados en una recta numérica, tendrán que representarse en un plano, pero eso lo veremos más adelante. Intervalos en la recta numérica: Sea que trabajamos en el conjunto de los reales o en cualquier otro conjunto incluido, podemos tener subconjuntos tanto finitos como infinitos. Estos subconjuntos tienen su expresión analítica y grafica (sobre una recta numérica). Veamos algunos ejemplos: El conjunto está formado por los números 2 / 3,5 / 5 Únicamente el numero 0 (Símbolo del vacío, no hay ningún elemento) kℕ indica que el conjunto son todos los números pares Indica que el conjunto está formado por todos los infinitos números racionales comprendidos entre el -2 y el 1 incluyendo los extremos. Este intervalo se denomina cerrado. Todos los números racionales comprendidos entre el 0 y el 4 sin incluir los extremos (por ejemplo: 3,99 está incluido mientras que 4 no lo está). Este intervalo se denomina abierto (se grafica con un circulo sin rellenar). Todos los números entre -1 y 5, sin incluir el -1 e incluyendo el 5. Este intervalo es abierto a izquierda y cerrado a derecha. Todos los números mayores o iguales a Todos los números menores a Noten que el infinito corresponde con el paréntesis, ya que el infinito no es un valor determinado. En el siguiente link pueden probar con otros intervalos: https://www.geogebra.org/m/bw85KpRz",
+    "keywords": [
+      "números",
+      "conjunto",
+      "está",
+      "reales",
+      "recta",
+      "numérica",
+      "intervalo",
+      "obtenemos"
+    ]
+  },
+  {
+    "id": "clase_01_operaciones_entre_intervalos_06_001",
+    "clase": "Clase 1 - Conjuntos Numericos",
+    "tema": "Operaciones entre intervalos",
+    "contenido": "Asi como existen operaciones entre números reales (suma, división, potencia, etc), existen operaciones entre intervalos. Para visualizar mejor estas operaciones vamos a utilizar adicionalmente conjuntos de dos dimensiones (por ejemplo, circunferencias). Dados dos o más conjuntos cualquiera de elementos finitos o infinitos, hay dos posibilidades, o bien tienen elementos en común o no los tienen.",
+    "keywords": [
+      "operaciones",
+      "existen",
+      "conjuntos",
+      "elementos",
+      "números",
+      "reales",
+      "suma",
+      "división"
+    ]
+  },
+  {
+    "id": "clase_01_ejemplos_de_conjuntos_que_no_07_001",
+    "clase": "Clase 1 - Conjuntos Numericos",
+    "tema": "Ejemplos de conjuntos que no comparten elementos:",
+    "contenido": "EJ1) EJ2) Ningún numero en común. EJ3) Podríamos tener el conjunto de los números pares y el de los impares:",
+    "keywords": [
+      "ningún",
+      "numero",
+      "común",
+      "podríamos",
+      "tener",
+      "conjunto",
+      "números",
+      "pares"
+    ]
+  },
+  {
+    "id": "clase_01_ℕ_ℕ_08_001",
+    "clase": "Clase 1 - Conjuntos Numericos",
+    "tema": "ℕ                 ℕ",
+    "contenido": "EJ4) EJ5) Noten que en “A” está incluido el 5 y en “B” no.",
+    "keywords": [
+      "noten",
+      "está",
+      "incluido"
+    ]
+  },
+  {
+    "id": "clase_01_conjuntos_que_comparten_elem_09_001",
+    "clase": "Clase 1 - Conjuntos Numericos",
+    "tema": "Conjuntos que comparten elementos:",
+    "contenido": "EJ1) Ambos conjuntos comparten el número 4. EJ2) En la segunda grafica y , comparten EJ3) Podríamos tener los múltiplos de 3 y los múltiplos de 4: ℕ ℕ EJ4) Comparten todos los números entre . EJ5) Comparten únicamente un elemento: el 5.",
+    "keywords": [
+      "comparten",
+      "múltiplos",
+      "ambos",
+      "conjuntos",
+      "número",
+      "segunda",
+      "grafica",
+      "podríamos"
+    ]
+  },
+  {
+    "id": "clase_01_ej6_un_conjunto_puede_estar__10_001",
+    "clase": "Clase 1 - Conjuntos Numericos",
+    "tema": "EJ6) Un conjunto puede estar totalmente incluido en el otro.",
+    "contenido": "En la segunda grafica y , comparten EJ7) Otro ejemplo de un conjunto adentro de otro.",
+    "keywords": [
+      "otro",
+      "segunda",
+      "grafica",
+      "comparten",
+      "ejemplo",
+      "conjunto",
+      "adentro"
+    ]
+  },
+  {
+    "id": "clase_01_veamoslo_analitica_y_grafica_11_001",
+    "clase": "Clase 1 - Conjuntos Numericos",
+    "tema": "Veámoslo analítica y gráficamente en algunos ejemplos:",
+    "contenido": "EJ1) EJ2) EJ3) EJ4) Podríamos tener el conjunto de los números pares y el de los impares: EJ5)",
+    "keywords": [
+      "podríamos",
+      "tener",
+      "conjunto",
+      "números",
+      "pares",
+      "impares"
+    ]
+  },
+  {
+    "id": "clase_01_interseccion_de_conjuntos_12_001",
+    "clase": "Clase 1 - Conjuntos Numericos",
+    "tema": "Intersección de conjuntos:",
+    "contenido": "Dados dos conjuntos cualesquiera, su intersección es un conjunto formado por todos los elementos que pertenecen a ambos conjuntos. La intersección es conmutativa: EJ1) EJ2) EJ3) EJ4) Podríamos tener el conjunto de los números pares y el de los impares: EJ5)",
+    "keywords": [
+      "conjuntos",
+      "intersección",
+      "conjunto",
+      "dados",
+      "cualesquiera",
+      "formado",
+      "elementos",
+      "pertenecen"
+    ]
+  },
+  {
+    "id": "clase_01_ej7_13_001",
+    "clase": "Clase 1 - Conjuntos Numericos",
+    "tema": "EJ7)",
+    "contenido": "En el siguiente link pueden simular uniones e intersecciones de intervalos: https://www.geogebra.org/m/bXgWfAAD",
+    "keywords": [
+      "siguiente",
+      "link",
+      "simular",
+      "uniones",
+      "intersecciones",
+      "intervalos",
+      "https",
+      "geogebra"
+    ]
+  },
+  {
+    "id": "clase_01_diferencia_de_conjuntos_14_001",
+    "clase": "Clase 1 - Conjuntos Numericos",
+    "tema": "Diferencia de conjuntos:",
+    "contenido": "Dados dos conjuntos cualesquiera, su diferencia es un conjunto formado por todos los elementos que pertenecen a al primer conjunto pero no al segundo. A diferencia de la unión e intersección, la diferencia no es conmutativa. EJ1) EJ2) EJ3) EJ4) Podríamos tener el conjunto de los números pares y el de los impares: Siempre que dos conjuntos sean disjuntos, su diferencia resulta el primer conjunto. EJ5)",
+    "keywords": [
+      "diferencia",
+      "conjunto",
+      "conjuntos",
+      "primer",
+      "dados",
+      "cualesquiera",
+      "formado",
+      "elementos"
+    ]
+  },
+  {
+    "id": "clase_01_ej7_15_001",
+    "clase": "Clase 1 - Conjuntos Numericos",
+    "tema": "EJ7)",
+    "contenido": "Siempre que a un conjunto se le reste un conjunto que lo contiene el resultado es el vacío, ya que no hay ningún elemento del conjunto A que no esté en el B.",
+    "keywords": [
+      "conjunto",
+      "siempre",
+      "reste",
+      "contiene",
+      "resultado",
+      "vacío",
+      "ningún",
+      "elemento"
+    ]
+  },
+  {
+    "id": "clase_01_diferencia_simetrica_de_conj_16_001",
+    "clase": "Clase 1 - Conjuntos Numericos",
+    "tema": "Diferencia simétrica de conjuntos:",
+    "contenido": "Dados dos conjuntos cualesquiera, su diferencia simétrica es un conjunto formado por todos los elementos que pertenecen a un conjunto pero no a ambos, la diferencia simétrica es conmutativa. EJ1) EJ2) EJ3) EJ4) Podríamos tener el conjunto de los números pares y el de los impares: EJ5)",
+    "keywords": [
+      "conjunto",
+      "diferencia",
+      "simétrica",
+      "dados",
+      "conjuntos",
+      "cualesquiera",
+      "formado",
+      "elementos"
+    ]
+  },
+  {
+    "id": "clase_10_introduccion_00_001",
+    "clase": "Clase 10 - Introducción A Las Funciones",
+    "tema": "Introducción:",
+    "contenido": "Una función es una relación o correspondencia entre dos (o más) magnitudes. La noción de correspondencia desempeña un papel fundamental en el concepto de Relación–Función. En la vida cotidiana nos encontramos con correspondencias o Relaciones. Por ejemplo: • En un quiosco, a cada artículo le corresponde un precio. • A un determinado consumo en kilowatts le corresponde un precio en pesos argentinos. • A cada número le corresponde una potencia cúbica. • A un tiempo transcurrido le corresponde cierta distancia. En estos ejemplos se relacionan dos variables, por ejemplo, el precio con el artículo, entonces el precio es la variable dependiente y el nombre del artículo es la variable independiente. Relación: es la correspondencia de un primer conjunto, llamado dominio, con un segundo conjunto, llamado codominio, de manera que: a cada elemento del dominio le corresponde uno o más elementos del codominio. Función: es un tipo especial de relación a la que se añade la restricción de que: a cada valor del dominio le debe corresponder uno y sólo un valor del codominio. Todas las funciones son relaciones, pero no todas las relaciones son funciones.",
+    "keywords": [
+      "corresponde",
+      "relación",
+      "precio",
+      "función",
+      "correspondencia",
+      "relaciones",
+      "artículo",
+      "dominio"
+    ]
+  },
+  {
+    "id": "clase_10_definicion_01_001",
+    "clase": "Clase 10 - Introducción A Las Funciones",
+    "tema": "Definición:",
+    "contenido": "Una función 𝒇 de 𝑨 en 𝑩 (), es una relación que le hace corresponder a cada elemento uno y sólo un elemento , llamado imagen de 𝒙 por 𝒇, que se escribe: (Para distintas funciones se pueden utilizan distintas letras) Tanto las relaciones como las funciones pueden ser representadas de varias formas: utilizando Diagramas de Venn, fórmulas, y en un sistema de ejes cartesianos: Diagramas de Venn: Fórmulas: Sistema de ejes cartesianos: Las funciones que estamos mostrando en los ejemplos consisten en una variable que depende de otra (), este tipo de funciones se denominan escalares. En el caso de que tengamos más variables en juego podremos encontrarnos con distintas situaciones: Funciones vectoriales: el conjunto de partida esta compuesto por una sola variable y el de llegada por 2 o más variables. EJ1) EJ2) Campos escalares: el conjunto de partida está compuesto por 2 o más variables y el de llegada por una sola variable. EJ1) EJ2) Campos vectoriales: el conjunto de partida y el de llegada estan compuestos por 2 o más variables. EJ1) EJ2) Ampliaremos el estudio de estas situaciones en Cálculo II Recién definimos que una función es una relación que asigna un solo valor en la imagen (conjunto de llegada) a cada valor en el dominio (conjunto de partida). De esto desprendemos las dos condiciones que definen si una relación es una función. Condiciones: Unicidad: significa que para todas las “x” hay un solo resultado, o dicho de otro modo a cada valor de “x” le corresponde un solo punto en la curva Existencia: significa que todas las “x” deben tener un punto en la curva, si hay alguna “x” que no lo tiene entonces no es función",
+    "keywords": [
+      "funciones",
+      "conjunto",
+      "función",
+      "variables",
+      "partida",
+      "llegada",
+      "relación",
+      "distintas"
+    ]
+  },
+  {
+    "id": "clase_10_es_funcion_no_es_funcion_02_001",
+    "clase": "Clase 10 - Introducción A Las Funciones",
+    "tema": "Es función:                                                                No es función",
+    "contenido": "No cumple existencia / no cumple unicidad",
+    "keywords": [
+      "cumple",
+      "existencia",
+      "unicidad"
+    ]
+  },
+  {
+    "id": "clase_10_es_funcion_no_es_funcion_03_001",
+    "clase": "Clase 10 - Introducción A Las Funciones",
+    "tema": "Es función:                                                                No es función",
+    "contenido": "No cumplen la unicidad",
+    "keywords": [
+      "cumplen",
+      "unicidad"
+    ]
+  },
+  {
+    "id": "clase_10_es_funcion_no_es_funcion_04_001",
+    "clase": "Clase 10 - Introducción A Las Funciones",
+    "tema": "Es función:                                                                   No es función",
+    "contenido": "(Existencia) (Existencia) (Unicidad) (Unicidad) (Unicidad)",
+    "keywords": [
+      "unicidad",
+      "existencia"
+    ]
+  },
+  {
+    "id": "clase_10_dominio_e_imagen_de_una_func_05_001",
+    "clase": "Clase 10 - Introducción A Las Funciones",
+    "tema": "Dominio e imagen de una función:",
+    "contenido": "Ya definimos anteriormente dominio y codominio, definamos ahora imagen. Si es una función, el conjunto será el domino, el el codominio, mientras que el conjunto imagen consta únicamente de los valores que realmente toma la función. La imagen podrá coincidir con el condominio, asi como ser un conjunto menor. Por ejemplo, la función tiene por codominio el conjunto , Pero si la graficamos veremos que los valores que toma la variable vertical no son todos los reales: Noten que la función existe para todos los reales sobre el eje horizontal, pero nunca toma valores menores a 1 sobre el eje vertical, el conjunto imagen está formado únicamente por los números reales mayores a 1: Im�={�∈�:�≥0}",
+    "keywords": [
+      "conjunto",
+      "imagen",
+      "función",
+      "codominio",
+      "valores",
+      "toma",
+      "reales",
+      "únicamente"
+    ]
+  },
+  {
+    "id": "clase_10_funciones_crecientes_y_decre_06_001",
+    "clase": "Clase 10 - Introducción A Las Funciones",
+    "tema": "Funciones crecientes y decrecientes:",
+    "contenido": "Una función es creciente en su dominio si a medida que aumentan los valores de abscisa aumentan respectivamente los valores de sus imágenes. Formalmente: para todo par de valores de abscisa , si entonces . Veamos algunos ejemplos: Una función es decreciente en su dominio si a medida que aumentan los valores de abscisa disminuyen respectivamente los valores de sus imágenes. Formalmente: para todo par de valores de abscisa , si entonces . Ejemplos: Las funciones lineales de pendiente 𝑚 > 0 son estrictamente crecientes, las de pendiente 𝑚 < 0 son estrictamente decreciente y las 𝑚 = 0 son constantes. Muchas funciones no serán estrictamente crecientes o decrecientes, podrían tener intervalos en los que crece y otros en los que decrece, como es el caso de las parábolas por ejemplo. Definiremos entonces los intervalos de crecimiento y de decrecimiento . Los puntos de cambio resultaran máximos o mínimos relativos Máximo relativo: Mínimo relativo: Noten que se consideran máximos y mínimos relativos y no absolutos ya que la función tendrá valores mayores y menores a los alcanzados en y A continuación les dejo un link con una construcción del GeoGebra que nos ayuda a comprender esos intervalos: https://www.geogebra.org/m/HYjqmckY",
+    "keywords": [
+      "valores",
+      "abscisa",
+      "función",
+      "aumentan",
+      "entonces",
+      "estrictamente",
+      "intervalos",
+      "dominio"
+    ]
+  },
+  {
+    "id": "clase_10_funciones_pares_e_impares_07_001",
+    "clase": "Clase 10 - Introducción A Las Funciones",
+    "tema": "Funciones pares e impares.",
+    "contenido": "Una función es par si todo par de valores opuestos de abscisas tienen la misma imagen a través de la función. Formalmente: para todo par de valores de abscisa 𝑥, se verifica que Una función es impar si todo par de valores opuestos de abscisas tienen imágenes opuestas a través de la función. Formalmente: para todo par de valores de abscisa 𝑥, se verifica que Una función puede ser par, impar o ninguna de las dos. Veamos como probar si una función es par o impar: EJ1) PAR",
+    "keywords": [
+      "función",
+      "valores",
+      "impar",
+      "opuestos",
+      "abscisas",
+      "través",
+      "formalmente",
+      "abscisa"
+    ]
+  },
+  {
+    "id": "clase_10_no_es_impar_08_001",
+    "clase": "Clase 10 - Introducción A Las Funciones",
+    "tema": "NO ES IMPAR",
+    "contenido": "EJ2) NO ES PAR",
+    "keywords": []
+  },
+  {
+    "id": "clase_10_funciones_inyectivas_sobreye_09_001",
+    "clase": "Clase 10 - Introducción A Las Funciones",
+    "tema": "Funciones inyectivas, sobreyectivas y biyectivas",
+    "contenido": "Una función es inyectiva si para dos valores cualesquiera de su dominio se cumple que si entonces . Esto significa que no existirán dos elementos del conjunto de salida que se relacionen con un único elemento del conjunto de llegada. Prueba de la recta horizontal: se realiza para comprobar si una función es o no inyectiva. Consiste en dibujar una recta horizontal paralela al eje de abscisas y ver en cuantos puntos corta dicha recta a la gráfica. Una función es sobreyectiva si para todo valor del codominio existe un valor del dominio tal que se verifica que . Esto significa que el conjunto de llegada (la imagen de la función) debe coincidir con el codominio. Una función es biyectiva si es inyectiva y sobreyectiva a la vez",
+    "keywords": [
+      "función",
+      "inyectiva",
+      "conjunto",
+      "recta",
+      "dominio",
+      "esto",
+      "significa",
+      "llegada"
+    ]
+  },
+  {
+    "id": "clase_10_conjunto_de_ceros_conjunto_d_10_001",
+    "clase": "Clase 10 - Introducción A Las Funciones",
+    "tema": "Conjunto de ceros, conjunto de positividad y conjunto de negatividad:",
+    "contenido": "El conjunto de ceros () o raíces de una función f(x) son los valores de x en los cuales la función se anula, es decir, donde El conjunto de positividad () de una función f(x) son los intervalos de x en los cuales la función es positiva, es decir, donde . El conjunto de negatividad ( ) de una función f(x) son los intervalos de x en los cuales la función es negativa, es decir, donde Las raíces reales de una función, si es que existen, nos permitirán determinar los intervalos en los cuales la función es positiva y los intervalos en los cuales es negativa. Noten que únicamente el conjunto imagen se evalúa sobre el eje vertical (y=f(x)), mientras que el dominio, conjunto de: positividad, negatividad y ceros, intervalos de: crecimiento y decrecimiento se evalúan sobre el eje horizontal (x) Apliquemos todo lo visto hasta el momento: EJ) Im�={�∈�:�≥0} Máximo relativo: Mínimos absolutos: La función no es impar, si es par: La función no es inyectaba ya que existen distintos elementos del conjunto de salida a los que les corresponde un mismo elemento del conjunto de llegada, por ejemplo las raíces: La función no es sobreyectiva ya que el conjunto de llegada () no coincide con la imagen Al no ser inyectiva ni sobreyectiva no es biyectiva. Con lo visto hasta este punto podremos realizar estudios de funciones bastante completos a partir de gráficas con relativa facilidad, la dificultad la tendremos si partimos de la expresión algebraica, para esto habrá que seguir estudiando el comportamiento de distintos tipos de funciones: lineales, cuadráticas, polinómicas, logarítmicas, exponenciales, homografías, trigonométricas, modulares, radicales, etc. Este estudio de funciones se continuara desarrollando en futuras clases y en Calculo infinitesimal I y II, por lo que es fundamental comprender las bases vistas en esta clase.",
+    "keywords": [
+      "función",
+      "conjunto",
+      "cuales",
+      "intervalos",
+      "raíces",
+      "decir",
+      "funciones",
+      "ceros"
+    ]
+  },
+  {
+    "id": "clase_10_inversa_de_una_funcion_11_001",
+    "clase": "Clase 10 - Introducción A Las Funciones",
+    "tema": "Inversa de una función:",
+    "contenido": "Se llama función inversa o reciproca de a otra función que cumple: Si La inversa de una función existirá si esta es biyectiva. No es lo mismo que Para construir o calcular la función inversa de una función cualquiera, se deben seguir los siguientes pasos: Se escribe la función con e . Se despeja la variable en función de la variable . Se intercambian las variables. EJ) Comparemos:",
+    "keywords": [
+      "función",
+      "inversa",
+      "variable",
+      "llama",
+      "reciproca",
+      "otra",
+      "cumple",
+      "existirá"
+    ]
+  },
+  {
+    "id": "clase_11_introduccion_00_001",
+    "clase": "Clase 11 - Funciones Lineales Y Cuadraticas",
+    "tema": "Introducción:",
+    "contenido": "En clases anteriores vimos las rectas y las parábolas, pero haciendo foco en la geometría, vamos a retomar estos temas para tratarlos de forma funcional.",
+    "keywords": [
+      "clases",
+      "anteriores",
+      "vimos",
+      "rectas",
+      "parábolas",
+      "haciendo",
+      "foco",
+      "geometría"
+    ]
+  },
+  {
+    "id": "clase_11_funcion_lineal_01_001",
+    "clase": "Clase 11 - Funciones Lineales Y Cuadraticas",
+    "tema": "Función Lineal:",
+    "contenido": "La función lineal es aquella cuya gráfica es una recta. Su forma general o ecuación típica puede expresarse de varias maneras, la más utilizada es la forma explícita. Forma explícita: y son dos números reales. se denomina pendiente, e indica la inclinación de la recta, si es igual a cero la recta será constante y paralela al eje horizontal, si es positiva la recta será creciente y si es negativa decreciente. es la ordenada al origen, e indica el punto en el que la gráfica de la función corta al eje de ordenadas.",
+    "keywords": [
+      "recta",
+      "función",
+      "gráfica",
+      "explícita",
+      "indica",
+      "será",
+      "lineal",
+      "aquella"
+    ]
+  },
+  {
+    "id": "clase_11_caracteristicas_generales_de_02_001",
+    "clase": "Clase 11 - Funciones Lineales Y Cuadraticas",
+    "tema": "Características generales de las funciones lineales:",
+    "contenido": "El dominio de toda función lineal es La imagen de toda función lineal es a excepción de las rectas constantes. Una función lineal es tambien una función polinómica de grado 1. Las únicas rectas que no son funciones son aquellas paralelas al eje vertical, ya que no cumplen con la unicidad. Una función lineal es estrictamente creciente, estrictamente decreciente o constante. Todas las rectas no constantes son biyectivas y admiten inversa.",
+    "keywords": [
+      "función",
+      "lineal",
+      "rectas",
+      "constantes",
+      "estrictamente",
+      "dominio",
+      "imagen",
+      "excepción"
+    ]
+  },
+  {
+    "id": "clase_11_grafico_de_una_funcion_linea_03_001",
+    "clase": "Clase 11 - Funciones Lineales Y Cuadraticas",
+    "tema": "Gráfico de una función lineal:",
+    "contenido": "Para graficar una recta podemos usar dos pares de datos: podemos usar la ordenada al origen y la pendiente, o tambien dos puntos cualesquiera (normalmente utilizamos la intersección con los ejes de coordenadas). En la clase 5 se desarrolla como graficar una recta.",
+    "keywords": [
+      "graficar",
+      "recta",
+      "podemos",
+      "usar",
+      "pares",
+      "datos",
+      "ordenada",
+      "origen"
+    ]
+  },
+  {
+    "id": "clase_11_analisis_de_la_funcion_linea_04_001",
+    "clase": "Clase 11 - Funciones Lineales Y Cuadraticas",
+    "tema": "Análisis de la Función Lineal",
+    "contenido": "EJ) Función biyectiva (inyectiva y sobreyectiva). Ni par ni impar.",
+    "keywords": [
+      "función",
+      "biyectiva",
+      "inyectiva",
+      "sobreyectiva",
+      "impar"
+    ]
+  },
+  {
+    "id": "clase_11_funcion_cuadratica_05_001",
+    "clase": "Clase 11 - Funciones Lineales Y Cuadraticas",
+    "tema": "Función Cuadrática:",
+    "contenido": "Se denomina función cuadrática a la función polinómica de grado 2. La gráfica de la función cuadrática es una parábola. La función se denomina “parábola matriz”. Todas las demás gráficas de las funciones cuadráticas pueden obtenerse a partir de corrimientos de esta parábola matriz.",
+    "keywords": [
+      "función",
+      "parábola",
+      "denomina",
+      "cuadrática",
+      "matriz",
+      "polinómica",
+      "grado",
+      "gráfica"
+    ]
+  },
+  {
+    "id": "clase_11_desplazamientos_de_la_parabo_06_001",
+    "clase": "Clase 11 - Funciones Lineales Y Cuadraticas",
+    "tema": "Desplazamientos de la parábola:",
+    "contenido": "Las funciones de la forma se desplazan k unidades sobre el eje y. Si k es positiva, se desplaza hacia arriba. Si es negativa, se desplaza hacia abajo. Las funciones de la forma se desplazan sobre el eje y, pero en este caso el corrimiento es opuesto al signo: Se desplaza k unidades hacia la izquierda. Se desplaza k unidades hacia la derecha.",
+    "keywords": [
+      "desplaza",
+      "hacia",
+      "unidades",
+      "funciones",
+      "desplazan",
+      "positiva",
+      "arriba",
+      "negativa"
+    ]
+  },
+  {
+    "id": "clase_11_concavidad_convexidad_07_001",
+    "clase": "Clase 11 - Funciones Lineales Y Cuadraticas",
+    "tema": "Concavidad / convexidad:",
+    "contenido": "El coeficiente cuadrático nos indica la concavidad y la apertura de la curva. Si a es positivo, la curva será cóncava. Si a es negativo, la parábola es convexa.",
+    "keywords": [
+      "curva",
+      "coeficiente",
+      "cuadrático",
+      "indica",
+      "concavidad",
+      "apertura",
+      "positivo",
+      "será"
+    ]
+  },
+  {
+    "id": "clase_11_apertura_de_la_curva_08_001",
+    "clase": "Clase 11 - Funciones Lineales Y Cuadraticas",
+    "tema": "Apertura de la curva:",
+    "contenido": "Si a es menor que 1, la parábola está “afuera” de la parábola matriz, ya que su crecimiento es más lento. Si el módulo de a es mayor que 1, la gráfica dará “adentro” de la parábola matriz, porque crece más rápido que ésta. En el siguiente link encontraran una construcción de GeoGebra donde se puede modificar los coeficientes a, b y c observar los cambios: https://www.geogebra.org/m/UUpQCSwc",
+    "keywords": [
+      "parábola",
+      "matriz",
+      "geogebra",
+      "menor",
+      "está",
+      "afuera",
+      "crecimiento",
+      "lento"
+    ]
+  },
+  {
+    "id": "clase_11_forma_canonica_09_001",
+    "clase": "Clase 11 - Funciones Lineales Y Cuadraticas",
+    "tema": "Forma canónica:",
+    "contenido": "De la combinación de estos corrimientos, podemos dibujar una parábola con bastante precisión a partir de su forma explícita, en esta figura el coeficiente principal y las coordenadas del vértice de la parábola. Veamos un ejemplo: EJ1) El vértice de está parábola estará en , ya que está desplazada 4 unidades a la derecha sobre el eje x, y 2 unidades a la izquierda sobre el eje y. Para calcular el : Podemos tambien calcular la ordenada al origen: A continuación graficamos usando los puntos obtenidos y realizamos el estudio de la función: EJ2)",
+    "keywords": [
+      "parábola",
+      "podemos",
+      "vértice",
+      "está",
+      "unidades",
+      "calcular",
+      "combinación",
+      "corrimientos"
+    ]
+  },
+  {
+    "id": "clase_11_forma_explicitapolinomica_10_001",
+    "clase": "Clase 11 - Funciones Lineales Y Cuadraticas",
+    "tema": "Forma explícita/polinómica:",
+    "contenido": "Vértice: existen dos formulas Raíces: : Como en este caso no se puede despejar x, se utiliza la “fórmula de Baskara / resolvente: La expresión que se encuentra debajo de la raíz se denomina “discriminante”, y determina el número de raíces de la función: Ordenada al origen: La ordenada al origen es el punto en el que la gráfica corta al eje y. Se calcula averiguando f(0). Para la función dada en forma polinómica, la ordenada al origen es el valor de c. Veamos un ejemplo: EJ) Graficar y analizar la siguiente función: Calculamos : Calculamos V: Con estos datos realizamos el gráfico: Forma factorizada: Esta forma nos da las raíces. Vértice: Ordenada al origen: EJ) Las raíces son El vértice: La ordenada al origen es: Graficamos y analizamos:",
+    "keywords": [
+      "ordenada",
+      "origen",
+      "raíces",
+      "vértice",
+      "función",
+      "calculamos",
+      "existen",
+      "formulas"
+    ]
+  },
+  {
+    "id": "clase_11_ecuacion_de_una_parabola_a_p_11_001",
+    "clase": "Clase 11 - Funciones Lineales Y Cuadraticas",
+    "tema": "Ecuación de una parábola a partir de 3 puntos:",
+    "contenido": "Si tenemos 3 puntos por los que pasa una parábola, podemos remplazar en la formula polinómica para formar 3 ecuaciones con 3 incógnitas, se nos generara un sistema que podremos resolver con los métodos aprendidos en la clase 9. EJ) , , Armamos el sistema: Matriz ampliada Realizamos las siguientes transformaciones: Fila 1: La Fila 1 la mantengo igual. Fila 2: La Fila 2 le resto la fila 1. Fila 3: La Fila 3 le resto 4 veces la fila 1. Ahora a La Fila 3 le resto la fila 2. Tengo las ecuaciones de manera escalonada y podemos despejar: Por lo que la parábola:",
+    "keywords": [
+      "fila",
+      "resto",
+      "parábola",
+      "podemos",
+      "ecuaciones",
+      "sistema",
+      "tenemos",
+      "puntos"
+    ]
+  },
+  {
+    "id": "clase_12_introduccion_00_001",
+    "clase": "Clase 12 - Funciones Polinomicas",
+    "tema": "Introducción:",
+    "contenido": "Recordemos, un polinomio es la suma de varios monomios o términos, cada uno de ellos compuesto por un coeficiente numérico y una o más variables. Ya tratamos con detalle algunos polinomios de grado 0, 1 y 2 (lineales y cuadráticas), veremos a continuación algunos polinomios de mayor grado (recordemos que el grado es el mayor numero al que aparece elevado la incógnita). Ejemplos: Función lineal constante, es un monomio de grado 0 Función lineal, es un binomio de grado 1 Función cuadrática, es un trinomio de grado 2 Función cuadrática, es un binomio de grado 2 Función polinómica, es un monomio de grado 3 Función polinómica de grado 7 Función polinómica, es un binomio de grado 15",
+    "keywords": [
+      "grado",
+      "función",
+      "binomio",
+      "polinómica",
+      "recordemos",
+      "algunos",
+      "polinomios",
+      "mayor"
+    ]
+  },
+  {
+    "id": "clase_12_caracteristicas_generales_de_01_001",
+    "clase": "Clase 12 - Funciones Polinomicas",
+    "tema": "Características generales de las funciones polinómicas:",
+    "contenido": "Toda función polinómica es continua, esto significa que su gráfica puede dibujarse sin levantar el lápiz del papel. El dominio siempre esta definido para todos los reales La imagen puede ser asi como intervalos del tipo o Cortan al eje X como máximo un número de veces igual al grado del polinomio. No tienen asíntotas (ni horizontales ni verticales ni oblicuas).",
+    "keywords": [
+      "función",
+      "polinómica",
+      "continua",
+      "esto",
+      "significa",
+      "gráfica",
+      "dibujarse",
+      "levantar"
+    ]
+  },
+  {
+    "id": "clase_12_forma_generalexplicita_de_un_02_001",
+    "clase": "Clase 12 - Funciones Polinomicas",
+    "tema": "Forma general/explicita de una función polinómica :",
+    "contenido": "Orden y completitud: Un polinomio está ordenado si los monomios que lo forman están escritos de mayor a menor grado. Un polinomio incompleto es aquel polinomio que no tiene todos los monomios de todos los grados, sino que le falta algún término, el completo será aquel que no le falta ninguno. Veamos algunos ejemplos: Esta ordenado y es completo Esta ordenado y es incompleto No esta ordenado y es completo No esta ordenado y es incompleto Para ciertas operaciones es necesario ordenar y completar un polinomio incompleto (agregar los monomios que faltan con coeficiente 0), ordenemos y completemos los ejemplos anteriores: El problema que tendremos a la hora de analizar funciones polinómicas con la forma general, es análogo a los problemas que teníamos con las ecuaciones polinómicas, por lo que intentaremos factorizar estas funciones por distintos medios. Más adelante, en la próxima materia afín a la matemática, (calculo infinitesimal I) utilizaremos derivadas para buscar máximos/mínimos relativos puntos de cambio de concavidad que me permitan aproximar la gráfica de una función polinómica.",
+    "keywords": [
+      "ordenado",
+      "polinomio",
+      "incompleto",
+      "monomios",
+      "completo",
+      "aquel",
+      "falta",
+      "ejemplos"
+    ]
+  },
+  {
+    "id": "clase_12_forma_factorizada_de_una_fun_03_001",
+    "clase": "Clase 12 - Funciones Polinomicas",
+    "tema": "Forma factorizada de una función polinómica :",
+    "contenido": "Multiplicidad de raíces y grado de un polinomio: La multiplicidad de una raíz es el número de veces que la raíz se repite, está indicada por la potencia relacionada a cada factor. Para saber el grado de un polinomio factorizado tenemos que sumar los grados de cada expresión, veamos unos ejemplos: Grado: Grado:",
+    "keywords": [
+      "grado",
+      "multiplicidad",
+      "polinomio",
+      "raíz",
+      "raíces",
+      "número",
+      "veces",
+      "repite"
+    ]
+  },
+  {
+    "id": "clase_12_operaciones_con_polinomios_04_001",
+    "clase": "Clase 12 - Funciones Polinomicas",
+    "tema": "Operaciones con polinomios:",
+    "contenido": "A continuación recordaremos las operaciones entre polinomios vistas en la clase 2 y agreguemos algunas nuevas. Suma y resta de polinomios: dado dos polinomios, sumaremos/restaremos el coeficiente numérico de términos semejantes (por ejemplo, con un mismo grado). EJ) Multiplicación de polinomios: debemos multiplicar cada monomio del primer polinomio por todos los elementos segundo polinomio EJ)",
+    "keywords": [
+      "polinomios",
+      "polinomio",
+      "continuación",
+      "recordaremos",
+      "operaciones",
+      "vistas",
+      "clase",
+      "agreguemos"
+    ]
+  },
+  {
+    "id": "clase_12_binomio_al_cuadrado_05_001",
+    "clase": "Clase 12 - Funciones Polinomicas",
+    "tema": "Binomio al cuadrado:",
+    "contenido": "EJ)",
+    "keywords": []
+  },
+  {
+    "id": "clase_12_binomio_al_cubo_06_001",
+    "clase": "Clase 12 - Funciones Polinomicas",
+    "tema": "Binomio al cubo:",
+    "contenido": "EJ)",
+    "keywords": []
+  },
+  {
+    "id": "clase_12_binomio_a_la_n_07_001",
+    "clase": "Clase 12 - Funciones Polinomicas",
+    "tema": "Binomio a la “n”:",
+    "contenido": "Los coeficientes del binomio a la “n” se pueden obtener del triángulo de Tartaglia/Pascal. La construcción de este triángulo es muy sencilla ya que, exceptuando los números 1 que siempre están en los extremos, cada número es igual a la suma de los dos números que tiene justo encima. División de polinomios: La operación es muy similar a la división tradicional de números, donde hay un divisor, un dividendo, un cociente y un resto. Dividir un polinomio se ve más complejo por la inclusión de términos algebraicos que tienen letras y números. Por ello, para explicar la división de polinomios desarrollaremos un ejercicio práctico. Vamos a dividir el polinomio P(x) por el Q(x) Primero, ordenamos tanto el dividendo como el divisor de mayor a menor según sus grados, y completamos el grado que falte. Ahora, el polinomio, que es el dividendo, lo colocamos a la izquierda, y el divisor lo ponemos enmarcado a la derecha: Dividimos el primer monomio del dividendo () entre el primer monomio del divisor : Este resultado lo ponemos debajo del polinomio divisor y lo multiplicamos por cada término de este, el resultado lo vamos restando en el polinomio dividendo: Aquí debemos tener en cuenta la regla de los signos, y el resultado que pongamos abajo en el dividendo debe llevar signo contrario al obtenido. Bajamos el monomio siguiente y repetimos el proceso: Bajamos el monomio siguiente () y ahora dividimos Bajamos el último monomio (1) y ahora dividimos Ahora no queda nada más por bajar en el dividendo y si el grado del resto es menor que el grado del divisor hemos terminado la división. Cociente o resultado: Resto: Sabiendo que",
+    "keywords": [
+      "dividendo",
+      "divisor",
+      "polinomio",
+      "monomio",
+      "números",
+      "división",
+      "ahora",
+      "resultado"
+    ]
+  },
+  {
+    "id": "clase_12_teorema_del_resto_08_001",
+    "clase": "Clase 12 - Funciones Polinomicas",
+    "tema": "Teorema del Resto:",
+    "contenido": "Este teorema nos indica que le resto de es igual a , más generalmente: Es igual a EJ) De este teorema podemos deducir el siguiente.",
+    "keywords": [
+      "teorema",
+      "igual",
+      "indica",
+      "resto",
+      "generalmente",
+      "podemos",
+      "deducir",
+      "siguiente"
+    ]
+  },
+  {
+    "id": "clase_12_teorema_del_factor_09_001",
+    "clase": "Clase 12 - Funciones Polinomicas",
+    "tema": "Teorema del Factor:",
+    "contenido": "Para cualquier polinomio , es un factor si y solo si . Esto significa que puede ser dividido de forma exacta por . . El polinomio cociente tendrá un grado menos que EJ) . Para obtener el polinomio cociente podemos dividir como aprendimos anteriormente, el resultado será con resto 0 (como era de esperar).",
+    "keywords": [
+      "polinomio",
+      "cociente",
+      "cualquier",
+      "factor",
+      "solo",
+      "esto",
+      "significa",
+      "dividido"
+    ]
+  },
+  {
+    "id": "clase_12_teorema_de_gauss_teorema_de__10_001",
+    "clase": "Clase 12 - Funciones Polinomicas",
+    "tema": "Teorema de Gauss / Teorema de la raíz racional:",
+    "contenido": "El teorema de Gauss nos dice que las posibles raíces de un polinomio se obtienen mediante del cociente entre los divisores del término independiente y los divisores del coeficiente principal (coeficiente del término de mayor grado). Sus posibles raíces serían todos los cocientes de cada divisor de y cada divisor del coeficiente : EJ) Podríamos tener muchos valores que evaluar (en este caso son 10), este problema se puede agilizar con el modo tabla (table en ingles) que viene en muchas calculadoras científicas: En este modo podemos escribir la función tal cual la tenemos, para luego evaluarla en una cierta cantidad de valores. Deberemos especificar el valor inicial, final, y los saltos, en este caso necesitamos empezar en -6 terminar en 6 y dar saltos de ½ (0,5) para cubrir todas las posibles raíces. Encontramos, en este caso, todas las raíces (podría ocurrir que alguna raíz es irracional por lo que no la encontraremos con este teorema): Factorizamos: Esta forma factorizada será especialmente útil para poder aproximar la gráfica de una función polinómica.",
+    "keywords": [
+      "raíces",
+      "posibles",
+      "coeficiente",
+      "teorema",
+      "divisores",
+      "término",
+      "divisor",
+      "valores"
+    ]
+  },
+  {
+    "id": "clase_12_estudio_y_trazado_11_001",
+    "clase": "Clase 12 - Funciones Polinomicas",
+    "tema": "Estudio y trazado:",
+    "contenido": "Como se mencionó anteriormente, para poder graficar una función polinómica de grado 3 o superior (completa), deberemos intentar factorizarla. Una vez factorizadas, analizaremos los intervalos que quedan entre las raíces (como hicimos en la clase 3 para resolver inecuaciones polinómicas). Tomemos el ejemplo anterior que factorizamos mediante el Teorema de Gauss. EJ1) El polinomio tiene las siguientes raíces: Analizamos los intervalos entre las raíces para poder determinar el signo y representar gráficamente de forma aproximada. Para esto evaluamos la función en un valor que pertenezca a cada intervalo (no usamos las fronteras): Como sabemos dónde estan las raíces y como son los signos en cada intervalo, podemos aproximar la forma de la función, ignorando la escala del eje vertical “y” (en una próxima materia aprenderemos a encontrar los mínimos y máximos relativos para poder mejorar nuestra precisión). EJ2) Analicemos el polinomio factorizado en la clase 3 Resolvemos cada factor y encontramos las siguientes raíces: Creamos la tabla y evaluamos: En este ejemplo podemos ver que en la raíz tenemos una raíz doble, ya que “rebota” (tenemos el mismo signo a cada lado).",
+    "keywords": [
+      "raíces",
+      "poder",
+      "función",
+      "intervalos",
+      "clase",
+      "ejemplo",
+      "polinomio",
+      "siguientes"
+    ]
+  },
+  {
+    "id": "clase_13_clase_13_logaritmos_y_expone_00_001",
+    "clase": "Clase 13 - Logaritmos Y Exponenciales",
+    "tema": "CLASE 13 – LOGARITMOS Y EXPONENCIALES",
+    "contenido": "Definición: De la misma manera que la operación opuesta de la suma es la resta y la de la multiplicación la división, el cálculo de logaritmos es la operación inversa a la exponencial de la base del logaritmo. En matemáticas, el logaritmo de un número, en una base de logaritmo determinada, es el exponente al cual hay que elevar la base para obtener dicho número. Por ejemplo: el logaritmo de 32 en base 2 es 5, porque 32 es igual a 2 a la potencia 5 De la definición de logaritmo podemos deducir: No existe el logaritmo de un número con base negativa. No existe el logaritmo de un número negativo. No existe el logaritmo de cero. El logaritmo de 1 es cero. El logaritmo en base x de x es uno. Notación: (Cuando no aparece la base en el “log” se trata de base 10) (Cuando aparece “ln” se trata de un logaritmo de base “e”) Veamos algunos ejemplos: EJ1) EJ3) EJ2) EJ4) Propiedades de los logaritmos: Ejemplos: Aplicando las propiedades de los logaritmos, desarrollemos las siguientes expresiones: EJ1) EJ2) EJ3) EJ4) Aplicando las propiedades de los logaritmos, tambien podemos reducir a la mínima expresión, veamos algunos ejemplos: EJ1) EJ2) EJ3)",
+    "keywords": [
+      "logaritmo",
+      "base",
+      "logaritmos",
+      "número",
+      "existe",
+      "ejemplos",
+      "propiedades",
+      "definición"
+    ]
+  },
+  {
+    "id": "clase_13_ecuaciones_logaritmicas_y_ex_01_001",
+    "clase": "Clase 13 - Logaritmos Y Exponenciales",
+    "tema": "Ecuaciones logarítmicas y exponenciales:",
+    "contenido": "Las funciones exponencial y logarítmica son las que tienen más presencia en los fenómenos observables, por lo que existen diversidad de situaciones cuyo estudio implica el planteamiento de ecuaciones exponenciales o logarítmicas. Ejemplo de ello es la escala Richter. En ella se define la magnitud de un terremoto en función de la amplitud de sus ondas superficiales. Si quisiésemos saber la amplitud (intensidad) de la onda sísmica tendríamos que resolver una ecuación logarítmica. También tendríamos que resolver ecuaciones si queremos hallar el número de horas necesarias para que una bacteria alcance un número concreto. Análogamente si queremos hallar la antigüedad de un hueso hallado en un yacimiento arqueológico tenemos que resolver una ecuación exponencial. Se llaman ecuaciones exponenciales a las ecuaciones en las que en algún miembro aparece la incógnita en una expresión exponencial. Por ejemplo: Para resolver analíticamente estas ecuaciones hay que conseguir que ambos miembros estén expresados como potencias de la misma base e igualar posteriormente los exponentes. Para ello hay que tener muy presentes las propiedades de las potencias. EJ1) EJ2) Para resolver numéricamente las ecuaciones logarítmicas se trata de conseguir una ecuación del tipo . Para ello se deben tener muy claras las propiedades de los logaritmos que vimos anteriormente. La ecuación inicial se resuelve de la siguiente manera: Expresamos al 1 como logaritmo en base 10 Con lo que ya está la ecuación reducida a la forma adecuada y la solución será la misma que la de la ecuación: En algunas ecuaciones logarítmicas podemos obtener soluciones numéricas que no son válidas, lo que nos obliga a comprobar las soluciones obtenidas en la ecuación inicial para decidir sobre su validez (como nos pasaba al resolver ciertas ecuaciones radicales). EJ) Las soluciones posibles son 𝑦 , pero esta última debe ser descartada porque los logaritmos sólo están definidos para los números positivos.",
+    "keywords": [
+      "ecuaciones",
+      "ecuación",
+      "resolver",
+      "exponencial",
+      "logarítmicas",
+      "ello",
+      "soluciones",
+      "logarítmica"
+    ]
+  },
+  {
+    "id": "clase_13_funciones_logaritmicas_02_001",
+    "clase": "Clase 13 - Logaritmos Y Exponenciales",
+    "tema": "Funciones logarítmicas:",
+    "contenido": "Una función logarítmica es aquella que se expresa como:",
+    "keywords": [
+      "función",
+      "logarítmica",
+      "aquella",
+      "expresa"
+    ]
+  },
+  {
+    "id": "clase_13_propiedades_03_001",
+    "clase": "Clase 13 - Logaritmos Y Exponenciales",
+    "tema": "Propiedades:",
+    "contenido": "El dominio de una función logarítmica es el conjunto de los reales positivos. Su imagen son todos los reales. Todas las gráficas pasan por el punto Todas las gráficas de pasan por el punto , La gráfica de es asintótica respecto el eje vertical y. Si la función es estrictamente creciente. Si la función es estrictamente decreciente. Veamos algunos ejemplos: Como con otras funciones, podremos tener corrimientos sobre el eje horizontal “x” y sobre el eje vertical “y”. Consideremos una función logarítmica de la forma: Tambien podriamos tener una funcion de la forma: Este valor tendra un efcto de “estirar” , “comprirmir” o invertir la función: Para graficar una funcion de este tipo es importante ubicar la raiz, la asintota vertical (siempre existiran ambas) y el signo de “d” para saber si la grafica esta invertida. Para calcular la raiz resolveremos la ecuacion: La asintota sera el valor para el que se anule el interior del logaritmo: Analizaremos el signo de “d” En algunos casos existira ordenada al origen, EJ) Graficar y analizar la funcion:",
+    "keywords": [
+      "función",
+      "vertical",
+      "funcion",
+      "logarítmica",
+      "reales",
+      "gráficas",
+      "pasan",
+      "punto"
+    ]
+  },
+  {
+    "id": "clase_13_funciones_exponenciales_04_001",
+    "clase": "Clase 13 - Logaritmos Y Exponenciales",
+    "tema": "Funciones exponenciales:",
+    "contenido": "Una función exponencial es aquella que se expresa como:",
+    "keywords": [
+      "función",
+      "exponencial",
+      "aquella",
+      "expresa"
+    ]
+  },
+  {
+    "id": "clase_13_propiedades_05_001",
+    "clase": "Clase 13 - Logaritmos Y Exponenciales",
+    "tema": "Propiedades:",
+    "contenido": "El dominio es todos los reales. Su imagen son todos los reales positivos. Todas las gráficas pasan por el punto Todas las gráficas de pasan por el punto , La gráfica de es asintótica respecto el eje horizontal “x”. Si la función es estrictamente creciente. Si la función es estrictamente decreciente. Veamos algunos ejemplos: De igual forma a las funciones logaritmicas, podremos tener corrimientos sobre el eje horizontal “x” y sobre el eje vertical “y”. Tambien podriamos tener una funcion de la forma: Este valor tendra un efcto de “estirar” , “comprirmir” o invertir la funcion. Para graficar una funcion de este tipo es importante ubicar la ordenada al origen, la asintota horizontal (siempre existiran ambas) y el signo de “d” para saber si la grafica esta invertida. Para calcular la ordenada resolveremos la ecuacion: La asintota sera el valor de “c” Analizaremos el signo de “d” Si existe la raiz la podemos usar EJ) Graficar y analizar la funcion:",
+    "keywords": [
+      "funcion",
+      "horizontal",
+      "reales",
+      "gráficas",
+      "pasan",
+      "punto",
+      "función",
+      "estrictamente"
+    ]
+  },
+  {
+    "id": "clase_14_funciones_especiales_00_001",
+    "clase": "Clase 14 - Funciones Especiales Y Trigonometricas",
+    "tema": "Funciones especiales:",
+    "contenido": "Una función especial es una función matemática particular, que por su importancia en el campo del análisis matemático, análisis funcional, la física y otras aplicaciones, posee nombres y designaciones más o menos establecidos.",
+    "keywords": [
+      "función",
+      "análisis",
+      "especial",
+      "matemática",
+      "particular",
+      "importancia",
+      "campo",
+      "matemático"
+    ]
+  },
+  {
+    "id": "clase_14_funcion_parte_entera_01_001",
+    "clase": "Clase 14 - Funciones Especiales Y Trigonometricas",
+    "tema": "Función parte entera:",
+    "contenido": "La función piso redondea todo número decimal hacia abajo, por ejemplo: La función techo redondea todo número decimal hacia arriba, por ejemplo: Como con otras funciones, podemos tener distintos corrimientos y estiramientos, en el siguiente link pueden modificar los coeficientes que acompañen a una de estas funciones (en este caso una función piso): https://www.geogebra.org/m/u8jBkDQH",
+    "keywords": [
+      "función",
+      "piso",
+      "redondea",
+      "número",
+      "decimal",
+      "hacia",
+      "ejemplo",
+      "funciones"
+    ]
+  },
+  {
+    "id": "clase_14_funcion_mantisa_parte_decima_02_001",
+    "clase": "Clase 14 - Funciones Especiales Y Trigonometricas",
+    "tema": "Función mantisa / parte decimal:",
+    "contenido": "La función mantisa hace corresponder a cada número el mismo número menos su parte entera, por ejemplo:",
+    "keywords": [
+      "número",
+      "función",
+      "mantisa",
+      "hace",
+      "corresponder",
+      "menos",
+      "parte",
+      "entera"
+    ]
+  },
+  {
+    "id": "clase_14_funcion_signo_03_001",
+    "clase": "Clase 14 - Funciones Especiales Y Trigonometricas",
+    "tema": "Función signo:",
+    "contenido": "Es una función que se define a tramos, hace corresponder el valor 1 para todo numero positivo, el para todo negativo y el 0 para el 0. Recién mencionamos que la función se define a tramos ¿Qué significa esto?",
+    "keywords": [
+      "función",
+      "define",
+      "tramos",
+      "hace",
+      "corresponder",
+      "valor",
+      "numero",
+      "positivo"
+    ]
+  },
+  {
+    "id": "clase_14_funciones_por_tramos_04_001",
+    "clase": "Clase 14 - Funciones Especiales Y Trigonometricas",
+    "tema": "Funciones por tramos:",
+    "contenido": "Son funciones que están definidas por diferentes funciones reales en distintas partes de su dominio. Para trazar su gráfica bastará con construir cada una en un mismo plano, pero solamente la parte correspondiente al intervalo indicado. Para definir una función a tramos utilizaremos llaves para definir cada tramo, veamos algunos ejemplos: EJ1) EJ2) EJ3) Noten que en el ejemplo 1, 2 y 3 la función está definida en todos los reales, pero solamente en el tercero la función resulta continua, es decir, no tiene “saltos”, podríamos recorrer toda la función con un lápiz sin levantarlo en ningún momento. Los primeros dos ejemplos resultaran funciones discontinuas, tienen discontinuidades esenciales, inevitables. EJ4) EL ejemplo 4 no está definido para todos los reales (no está definido para , por lo que será una función discontinua con una discontinuidad evitable en . ¿Por qué evitable? Porque podríamos convertir la función en una función continúa agregando un punto (cosa que no podíamos hacer en los otros ejemplos discontinuos). Agregando este punto la función ya es continua. EJ5) La función modulo es una función en tramos, anteriormente resolvíamos las ecuaciones e inecuaciones con modulo, si recuerdan, las resolvíamos justamente en tramos. EJ6) SI dentro del módulo tenemos una función más compleja, el tramo que corresponda a los valores definidos en los números positivos (conjunto de positividad) se corresponderá con la función dentro del módulo; mientras que los tramos negativos (conjunto de negatividad) se corresponderá con la función que está dentro del módulo multiplicada por .",
+    "keywords": [
+      "función",
+      "tramos",
+      "está",
+      "funciones",
+      "reales",
+      "ejemplos",
+      "dentro",
+      "módulo"
+    ]
+  },
+  {
+    "id": "clase_14_funciones_trigonometricas_05_001",
+    "clase": "Clase 14 - Funciones Especiales Y Trigonometricas",
+    "tema": "Funciones trigonométricas:",
+    "contenido": "Las funciones trigonométricas son las funciones determinadas con el objetivo de extender la definición de las razones trigonométricas a todos los números reales y complejos. Estas usualmente incluyen términos que describen la medición de ángulos y triángulos, tal como seno, coseno, tangente, cotangente, secante y cosecante. En la clase 4, para comprender los números complejos, aprendimos algunas relaciones trigonométricas, a continuación vamos a retomar y extender estos contenidos. Circunferencia trigonométrica / unitaria: Es una circunferencia de radio 1. Normalmente con su centro en el origen (0, 0) de un sistema de coordenadas, de un plano euclídeo o complejo. Se utiliza con el fin de poder estudiar fácilmente las razones trigonométricas y funciones trigonométricas, mediante la representación de triángulos rectángulos auxiliares. La cosecante, la secante y la cotangente, son las razones trigonométricas recíprocas del seno, coseno y tangente: Veamos a continuación los valores de los ángulos más comunes (en grados y en radianes) y las coordenadas correspondientes sobre la circunferencia trigonométrica. Identidades trigonométricas: A las relaciones trigonométricas básicas antes mencionadas podemos agregarle otras identidades trigonométricas, hay muchas, pero veremos las más usadas: Estas funciones tendrán carácter cíclico, es decir, a partir de una determinada cantidad se repetirá el comportamiento de la función, llamaremos periodo () al tamaño que tiene cada ciclo. Las distintas funciones trigonométricas tendrán distintas características, algunas serán continuas, otras discontinuas, algunas pares, otras impares. Tambien tendrán distintas amplitudes (), esto es, la mitad de la distancia entre los valores máximo y mínimo de la función. A continuación detallaremos las funciones trigonométricas elementales: Función seno: Es continua Función impar En el siguiente link se puede comprender mejor como se conforma esta función: https://www.geogebra.org/m/anz5ktxm Función coseno: Es continua Función par Función tangente: Es discontinua Función impar Función secante: Es discontinua Función par Función cosecante: Es discontinua Función impar Función cotangente: Es discontinua Función impar Como con otras funciones, podremos tener distintos coeficientes que desplacen la función para distintas direcciones (lo que modificara dominios, imágenes, conjunto de ceros, paridad, etc.), tambien habrá coeficientes que compriman o estiren la función (que modifiquen el periodo). Modifica la amplitud, es decir, estira o comprime la función. En el caso de ser un valor negativo la invierte. Modifica el periodo, Desplaza la función a derecha o izquierda (valores positivos hacia la izquierda, negativos hacia la derecha).",
+    "keywords": [
+      "función",
+      "trigonométricas",
+      "funciones",
+      "otras",
+      "distintas",
+      "impar",
+      "discontinua",
+      "razones"
+    ]
+  },
+  {
+    "id": "clase_14_funciones_trigonometricas_05_002",
+    "clase": "Clase 14 - Funciones Especiales Y Trigonometricas",
+    "tema": "Funciones trigonométricas:",
+    "contenido": "Desplaza la función hacia arriba o abajo (valores positivos hacia arriba, negativos hacia abajo). En el siguiente link podrán modificar los coeficientes y para comprender mejor los distintos corrimientos y cambios de periodo: https://www.geogebra.org/m/gjZXHTqU Ecuaciones trigonométricas: Una ecuación trigonométrica es una ecuación en la que aparece una o más razones trigonométricas. La dificultad de una ecuación trigonométrica radica en que al ser funciones cíclicas, existirán infinitas soluciones para la mayoría de estas ecuaciones, asi como muchas que no tendrán solución, veamos algunos ejemplos sencillos. EJ1) Recordemos la gráfica de la función coseno: Analíticamente utilizamos la inversa del coseno con la calculadora: Notemos que la gráfica toma el valor en el valor , pero como la función es cíclica repetirá ese valor cada periodo de por lo que la solución resultara: EJ2) si calculamos la inversa del coseno obtenemos una sola de las soluciones que hay en cada ciclo: Para buscar las dos soluciones de cada siclo recordamos la circunferencia unitaria: Recordemos que el coseno estaba asociado al valor de mientras que el seno al valor de , por lo que buscamos para que valores la coordenada es igual a . Los ángulos resultaran: EJ3) En caso de que encontremos combinadas varias expresiones trigonométricas distintas, usaremos identidades trigonométricas para expresar la ecuación en función de una única expresión. Usamos Usamos la resolvente Remplazamos z: La primera ecuación tiene dos soluciones mientras la segunda no tiene ninguna.",
+    "keywords": [
+      "ecuación",
+      "valor",
+      "función",
+      "trigonométricas",
+      "soluciones",
+      "coseno",
+      "hacia",
+      "arriba"
+    ]
+  },
+  {
+    "id": "clase_02_clase_2_ecuaciones_00_001",
+    "clase": "Clase 2 - Ecuaciones",
+    "tema": "CLASE 2 – ECUACIONES",
+    "contenido": "Una ecuación es una igualdad matemática entre dos expresiones, denominadas miembros y separadas por el signo igual en las que aparecen elementos conocidos y datos desconocidos o incógnitas (representados por letras), relacionados mediante operaciones matemáticas. Veamos algunos ejemplos: La expresión escrita a la izquierda del signo igual en una ecuación recibe el nombre de primer miembro, mientras que la expresión que está a la derecha del signo igual se llama segundo miembro Algunas ecuaciones son muy sencillas (como la primera), pero otras pueden ser muy complejas. Gradualmente, a lo largo de esta materia (y en futuras materias) se desarrollaran ecuaciones cada vez más complejas, por lo que es fundamental comprender las bases que veremos a continuación.",
+    "keywords": [
+      "signo",
+      "igual",
+      "ecuación",
+      "expresión",
+      "miembro",
+      "ecuaciones",
+      "complejas",
+      "igualdad"
+    ]
+  },
+  {
+    "id": "clase_02_conjunto_solucion_01_001",
+    "clase": "Clase 2 - Ecuaciones",
+    "tema": "Conjunto solución:",
+    "contenido": "Es el conjunto de valores que satisfacen una ecuación, una inecuación, un sistema de ecuaciones, o uno de inecuaciones, es decir, los números que hacen de una ecuación una expresión verdadera, veamos algunos ejemplos: (Sistema de ecuaciones) Cuando dos o más ecuaciones tienen el mismo conjunto de soluciones se dice que son ecuaciones equivalentes. Propiedades de la igualdad: Para todos los números reales",
+    "keywords": [
+      "ecuaciones",
+      "conjunto",
+      "ecuación",
+      "sistema",
+      "números",
+      "valores",
+      "satisfacen",
+      "inecuación"
+    ]
+  },
+  {
+    "id": "clase_02_propiedad_reflexiva_02_001",
+    "clase": "Clase 2 - Ecuaciones",
+    "tema": "Propiedad reflexiva",
+    "contenido": "Si , . Propiedad simétrica Si , . Propiedad transitiva",
+    "keywords": [
+      "propiedad",
+      "simétrica",
+      "transitiva"
+    ]
+  },
+  {
+    "id": "clase_02_ley_de_monotonia_para_la_mul_03_001",
+    "clase": "Clase 2 - Ecuaciones",
+    "tema": "Ley de monotonía para la multiplicación",
+    "contenido": "Si y Ley cancelativa Reducción de términos semejantes: Cuando una ecuación algebraica se compone de diferentes partes, las partes que se suman o se restan son llamados términos de la expresión. La parte numérica de un término se denomina coeficiente numérico, la letra es la variable, que puede estar afectada por algún operador, como por ejemplo, la potencia. El término tiene coeficiente y variable El grado de un término es el exponente de la variable (únicamente en el caso de que el exponente sea entero positivo, caso contrario el termino no tiene grado). El término tiene grado 2 mientras que tiene grado 1 ( En primera instancia podemos reagrupar (sumando o restando según corresponda) los términos que tengan la misma variable elevada a la misma potencia, mantendremos la variable con su respectiva potencia y sumaremos/restaremos el coeficiente. (Noten que es equivalente a ) Esto significa que no podemos sumar por ejemplo (Más adelante aprenderemos a factorizar expresiones de este tipo). Teniendo esto en cuenta podemos reagrupar el ejemplo de la siguiente forma:",
+    "keywords": [
+      "variable",
+      "término",
+      "grado",
+      "términos",
+      "coeficiente",
+      "ejemplo",
+      "potencia",
+      "podemos"
+    ]
+  },
+  {
+    "id": "clase_02_ecuaciones_lineales_o_de_pri_04_001",
+    "clase": "Clase 2 - Ecuaciones",
+    "tema": "Ecuaciones lineales o de primer grado:",
+    "contenido": "Una ecuación lineal es aquella que puede escribirse en la forma: Por ejemplo: Para resolverla debemos lograr que a uno de los lados de la igualdad tengamos a la variable totalmente despejada (con coeficiente “1”). Para eso primero vamos a separar el término del , esto lo logramos restando miembro a miembro (a cada lado de la igualdad) : Finalmente dividiremos miembro a miembro por (que es equivalente a multiplicar por Que pueda escribirse de esta forma no quiere decir que siempre nos la encontremos en este formato, pero siempre podremos operar hasta que tenga esta forma (usando las leyes de monotonía y propiedades varias). Veamos algunos ejemplos: EJ1) EJ2) EJ3) EJ4) esto es una contradicción, matemáticamente representa que la ecuación no tiene solución, o bien, la solución es el vacío: EJ5) esto es una identidad, es decir, independientemente del valor de “x” siempre es cierto que , por lo que la solución serán todos los infinitos números del conjunto en el que estamos trabajando, por ejemplo en los reales: EJ6) Si la ecuación contiene fracciones, las eliminaremos multiplicando ambos lados de la ecuación por el mínimo común denominador (¿recuerdan cómo calcularlo?, si no es el caso consultar material adicional). Aplicamos la propiedad distributiva: EJ7) Aunque parezca otro tipo de ecuación más compleja, esta sigue siendo una lineal, pero tiene operaciones anidadas con el uso de paréntesis y corchetes (incluso podrían aparecer llaves). Para resolver una ecuación lineal de este estilo tendremos que operar cuidadosamente con lo aprendido sobre cálculos combinados. En un primer paso separamos en términos con los “” y “ “por fuera de toda llave, corchete y paréntesis, luego separamos nuevamente dentro de cada uno: Luego resolveremos “de adentro hacia afuera” (paréntesis, luego corchete, luego llaves) usando propiedades. Comencemos aplicando la distributiva:",
+    "keywords": [
+      "ecuación",
+      "miembro",
+      "luego",
+      "lineal",
+      "esto",
+      "siempre",
+      "solución",
+      "paréntesis"
+    ]
+  },
+  {
+    "id": "clase_02_verificacion_05_001",
+    "clase": "Clase 2 - Ecuaciones",
+    "tema": "Verificación:",
+    "contenido": "A medida que vamos resolviendo ecuaciones más complejas, podemos dudar si nuestro conjunto solución es correcto, por suerte, las ecuaciones se pueden verificar, esto significa que una vez encontrado el valor (o más adelante, los valores) de la variable que satisface la ecuación podemos remplazarlo en la ecuación original y llegar a una identidad (un expresión siempre verdadera). Si al remplazar llegamos a una contradicción es que ese valor no es solución de la ecuación. Ahora imaginemos que al despejar cometimos un error que nos lleva a la solución: Otro ejemplo de verificación: Para practicar pueden verificar las soluciones de las ecuaciones vistas en páginas anteriores. Antes de continuar con ecuaciones de segundo grado, vamos a repasar algunas propiedades y conceptos. Monomio: un término, por ejemplo: Binomio: dos términos: Trinomio: tres términos: Para generalizar, tambien llamamos polinomios a las expresiones con dos o más términos. Suma y resta de polinomios: dado dos polinomios, sumaremos/restaremos el coeficiente numérico de términos semejantes (por ejemplo, con un mismo grado). EJ1) EJ2) EJ3) Multiplicación de polinomios: debemos multiplicar cada monomio del primer polinomio por todos los elementos segundo polinomio EJ1) EJ2) (dif. de cuadrados) EJ3) EJ4)",
+    "keywords": [
+      "ecuaciones",
+      "términos",
+      "polinomios",
+      "solución",
+      "ecuación",
+      "ejemplo",
+      "vamos",
+      "podemos"
+    ]
+  },
+  {
+    "id": "clase_02_binomio_al_cuadrado_06_001",
+    "clase": "Clase 2 - Ecuaciones",
+    "tema": "Binomio al cuadrado:",
+    "contenido": "EJ)",
+    "keywords": []
+  },
+  {
+    "id": "clase_02_binomio_al_cubo_07_001",
+    "clase": "Clase 2 - Ecuaciones",
+    "tema": "Binomio al cubo:",
+    "contenido": "EJ)",
+    "keywords": []
+  },
+  {
+    "id": "clase_02_ecuaciones_cuadraticas_o_de__08_001",
+    "clase": "Clase 2 - Ecuaciones",
+    "tema": "Ecuaciones cuadráticas o de segundo grado:",
+    "contenido": "Una ecuación cuadrática es aquella que puede escribirse en la forma: Si sería una ec. lineal Cada uno de los términos de la ecuación recibe un nombre en relación con el exponente al que está elevada la variable, y estos son: Tambien se puede escribir una ecuación cuadrática en forma factorizada, es decir, en un producto de binomios lineales igualado a cero: En este caso es más sencillo de resolver ya que si el producto es 0 podemos igualar cada una a 0. EJ) o bien o tambien Verificación:",
+    "keywords": [
+      "ecuación",
+      "cuadrática",
+      "tambien",
+      "producto",
+      "aquella",
+      "escribirse",
+      "sería",
+      "lineal"
+    ]
+  },
+  {
+    "id": "clase_02_discriminante_09_001",
+    "clase": "Clase 2 - Ecuaciones",
+    "tema": "Discriminante",
+    "contenido": "Este tipo de ecuación admite tres posibles conjuntos solución que dependen del valor que tome el discriminante : Dos números reales y diferentes Un único número real Sin solución en los reales (si en los complejos)",
+    "keywords": [
+      "solución",
+      "reales",
+      "ecuación",
+      "admite",
+      "posibles",
+      "conjuntos",
+      "dependen",
+      "valor"
+    ]
+  },
+  {
+    "id": "clase_02_conjunto_solucion_10_001",
+    "clase": "Clase 2 - Ecuaciones",
+    "tema": "Conjunto solución",
+    "contenido": "Cuanto existen soluciones, podemos buscarlas con la formula resolvente / formula de Bhaskara: Para la resolución de este tipo de ecuaciones veremos primero algunos casos sencillos que nos evitan tener que utilizar la fórmula resolvente. Los términos lineal e independiente son 0: Queda La única solución posible es EJ) El término lineal es 0: queda EJ) El término independiente es 0: queda EJ) En el caso que la ecuación de segundo grado sea completa, se puede determinar las soluciones utilizando la fórmula de Bhaskara:",
+    "keywords": [
+      "queda",
+      "soluciones",
+      "formula",
+      "resolvente",
+      "bhaskara",
+      "fórmula",
+      "lineal",
+      "independiente"
+    ]
+  },
+  {
+    "id": "clase_02_ecuaciones_cubicas_incomplet_11_001",
+    "clase": "Clase 2 - Ecuaciones",
+    "tema": "Ecuaciones cúbicas (incompletas) o de tercer grado:",
+    "contenido": "Una ecuación cúbica es aquella que puede escribirse en la forma: Este tipo de ecuaciones pueden tener 3 soluciones reales, 2, 1 o ninguna, y si estan completas son un poco más difíciles de resolver. Por ahora, veremos algunos casos incompletos: El término independiente “d” es 0: queda De lo que se deduce, que una solución es y las otras potenciales dos resultaran de la cuadrática que quedo entre paréntesis. EJ) El término independiente “d” y el coeficiente “c” son 0: Queda De lo que se deduce, que una solución es (solución doble) y la otra solución (que en este caso siempre existirá) resultara de la lineal que quedo entre paréntesis. EJ) El término independiente “d” el coeficiente “c” y “b” son 0: Queda De lo que se deduce, que la única solución es (solución triple). EJ)",
+    "keywords": [
+      "solución",
+      "término",
+      "independiente",
+      "queda",
+      "deduce",
+      "quedo",
+      "paréntesis",
+      "coeficiente"
+    ]
+  },
+  {
+    "id": "clase_02_ecuaciones_polinomicas_facto_12_001",
+    "clase": "Clase 2 - Ecuaciones",
+    "tema": "Ecuaciones polinómicas factorizadas:",
+    "contenido": "Una ecuación polinómica de grado 3, o superior, puede ser muy complicada de resolver, de hecho, existen fórmulas resolventes para resolver ecuaciones de grado 3 y 4 pero son muy largas (sin exagerar, les dejo una imagen de la fórmula de grado 3). Un poco más sencillo será si el polinomio esta factorizado o lo podemos factorizar, en este caso, debemos igualar a 0 cada paréntesis (repasar casos de factoreo). Veamos algunos ejemplos: EJ1) EJ2) EJ3) EJ4)",
+    "keywords": [
+      "grado",
+      "resolver",
+      "ecuación",
+      "polinómica",
+      "superior",
+      "complicada",
+      "hecho",
+      "existen"
+    ]
+  },
+  {
+    "id": "clase_02_ecuaciones_bicuadraticas_13_001",
+    "clase": "Clase 2 - Ecuaciones",
+    "tema": "Ecuaciones bicuadraticas:",
+    "contenido": "Una ecuación bicuadratica es aquella que puede escribirse en la forma: Para resolver una ecuación bicuadrática realizaremos un cambio de variable, esto es remplazar una expresión algebraica por una nueva variable para simplificar cálculos. En este caso Teniendo en cuenta que: . La ecuación expresada en función de “” quedara: Obtenemos asi una ecuación cuadrática que ya sabemos resolver. Una vez encontradas las soluciones de sustituiremos sus soluciones en Conseguimos así las soluciones de la ecuación en .",
+    "keywords": [
+      "ecuación",
+      "soluciones",
+      "resolver",
+      "variable",
+      "bicuadratica",
+      "aquella",
+      "escribirse",
+      "bicuadrática"
+    ]
+  },
+  {
+    "id": "clase_02_ecuaciones_irracionales_cuad_14_001",
+    "clase": "Clase 2 - Ecuaciones",
+    "tema": "Ecuaciones Irracionales cuadráticas:",
+    "contenido": "Son ecuación en la que aparecen raíces que contienen a la incógnita, es decir, la incógnita se encuentra bajo signos radicales. Para resolverlas, primero debemos buscar separar la expresión radical en un miembro de la ecuación, en segunda instancia elevaremos miembro a miembro a la potencia necesaria para suprimir la raíz y finalmente seguiremos despejando con lo aprendido anteriormente en esta unidad. Tambien es importante verificar siempre los resultados de estas ecuaciones, ya que aunque resolvamos pasos matemáticos correctos, igualmente podemos llegar a contradicciones. Veamos algunos ejemplos: EJ1) Verificación: EJ2) Verificación: EJ3) Verificación: (4 no es solución)",
+    "keywords": [
+      "miembro",
+      "verificación",
+      "ecuación",
+      "incógnita",
+      "aparecen",
+      "raíces",
+      "contienen",
+      "decir"
+    ]
+  },
+  {
+    "id": "clase_02_ecuaciones_con_modulo_valor__15_001",
+    "clase": "Clase 2 - Ecuaciones",
+    "tema": "Ecuaciones con modulo / valor absoluto:",
+    "contenido": "Son ecuación en la que aparecen modulos que contienen a la incógnita. Para resolverlas, debemos buscar separar el modulo en el primer miembro de la ecuación, una vez despejado, resolveremos dos ecuaciones sin el modulo: la primera será idéntica, y la segunda negado el segundo miembro, es decir, multiplicándolo por . Estas ecuaciones tambien deben ser verificadas obligatoriamente. Veamos algunos ejemplos: EJ2) Verificación: EJ2) Verificación: (no es solución) (no es solución) EJ3) Verificación: EJ4) Este ejercicio parece muy complejo pero podemos resolverlo con un cambio de variable: , remplazamos: Ahora remplazamos la sustitución: Verificación:",
+    "keywords": [
+      "verificación",
+      "ecuación",
+      "modulo",
+      "miembro",
+      "ecuaciones",
+      "solución",
+      "remplazamos",
+      "aparecen"
+    ]
+  },
+  {
+    "id": "clase_02_ecuaciones_con_mas_incognita_16_001",
+    "clase": "Clase 2 - Ecuaciones",
+    "tema": "Ecuaciones con más incógnitas:",
+    "contenido": "Son ecuación en la que aparecen al menos dos incógnitas, para graficar el conjunto solución ya no podremos usar una recta numérica (una dimensión), si hay dos incógnitas lo graficaremos en un plano (dos dimensiones) y si son tres incógnitas lo graficaremos en el espacio (tres dimensiones). Tambien podríamos tener varias incógnitas en varias ecuaciones, obtendremos asi un sistema de ecuaciones. Veremos estos temas más adelante, mientras tanto veamos algunos ejemplos: EJ1) EJ2) EJ3)",
+    "keywords": [
+      "incógnitas",
+      "graficaremos",
+      "dimensiones",
+      "varias",
+      "ecuaciones",
+      "ecuación",
+      "aparecen",
+      "menos"
+    ]
+  },
+  {
+    "id": "clase_03_propiedades_de_las_desiguald_00_001",
+    "clase": "Clase 3 - Inecuaciones",
+    "tema": "Propiedades de las desigualdades:",
+    "contenido": "Anti reflexiva: un número no puede ser menor a sí mismo. Anti simétrica: si por ejemplo: Transitiva: si por ejemplo:",
+    "keywords": [
+      "anti",
+      "ejemplo",
+      "reflexiva",
+      "número",
+      "menor",
+      "simétrica",
+      "transitiva"
+    ]
+  },
+  {
+    "id": "clase_03_inecuaciones_01_001",
+    "clase": "Clase 3 - Inecuaciones",
+    "tema": "Inecuaciones:",
+    "contenido": "Una inecuación es una desigualdad en la que aparecen números y letras ligados mediante las operaciones algebraicas. Una inecuación que es válida para todas las variables se llama inecuación incondicional y las que son válidas solo para algunos valores de las variables se conocen como inecuaciones condicionales. Veamos algunos ejemplos de inecuaciones junto a su conjunto solución (verifiquen si comprenden todos los conjuntos solución): EJ1) Siempre un módulo es mayor o igual a 0, EJ2) en este caso ya no es incondicional, EJ3) en este caso solamente el 0 verifica la inecuación, EJ4) en este no hay solución posible, EJ5) siempre será posible de calcular, EJ6) una raíz par no puede dar un resultado negativo, EJ7) tampoco hay solución posible, EJ8) en las raíces impares existen soluciones negativas, EJ9) pueden existir soluciones separadas EJ10) hay que tener atención a las restricciones, Si una inecuación es más compleja deberemos despejar la incógnita como en una ecuación, pero cuidado, hay algunas operaciones que al aplicarlas miembro a miembro pueden cambiar el sentido de la desigualdad: Partamos de una desigualdad evidente. Noten que si sumamos o restamos por cualquier número miembro a miembro se conserva el sentido de la desigualdad: Si multiplicamos o dividimos miembro a miembro por un número positivo tambien se conservara el sentido de la desigualdad: Hasta aca todo normal, pero que pasa si multiplicamos o dividimos por un número negativo: En estos casos llegamos a una contradicción que resolveremos cambiando el sentido de la desigualdad. Examinemos ahora la potencia y raíz en inecuaciones, en este caso, partiremos de distintas desigualdades ya que dependerá del signo de los valores y de la paridad de la potencia: Si hay algún valor negativo en los miembros y aplicamos una potencia par, deberemos cambiar el sentido de la desigualdad. No podemos aplicar raíces pares a valores negativos.",
+    "keywords": [
+      "desigualdad",
+      "miembro",
+      "inecuación",
+      "sentido",
+      "solución",
+      "valores",
+      "inecuaciones",
+      "posible"
+    ]
+  },
+  {
+    "id": "clase_03_inecuaciones_de_primer_grado_02_001",
+    "clase": "Clase 3 - Inecuaciones",
+    "tema": "Inecuaciones de primer grado:",
+    "contenido": "Son aquellas que pueden reducirse a la forma: o Para resolverlas seguiremos la dinámica de resolución de ecuaciones, teniendo en cuenta las propiedades que vimos hasta aca sobre las desigualdades. EJ1) Aplicamos distributiva. Acomodamos los términos. Al dividir por (-3) debemos cambiar el sentido Por lo que el conjunto solución resultara: y podemos graficarlo en la recta numérica: Para las inecuaciones tambien es válida la verificación, de hecho, como pasaba en ciertas ecuaciones, habrá casos de inecuaciones en las que debamos verificar obligatoriamente. Verificación: como la variable debe ser mayor a es conveniente elegir un valor valido lo más cercano que se nos ocurra, por ejemplo EJ2) Multiplicamos por el común denominador (10) Acomodamos los términos. Por lo que el conjunto solución resultara: y podemos graficarlo en la recta numérica: Verificación: como la variable debe ser menor a es conveniente elegir un valor valido lo más cercano que se nos ocurra, por ejemplo",
+    "keywords": [
+      "verificación",
+      "ecuaciones",
+      "acomodamos",
+      "términos",
+      "conjunto",
+      "solución",
+      "resultara",
+      "podemos"
+    ]
+  },
+  {
+    "id": "clase_03_inecuaciones_de_segundo_grad_03_001",
+    "clase": "Clase 3 - Inecuaciones",
+    "tema": "Inecuaciones de segundo grado:",
+    "contenido": "Son aquellas que pueden reducirse a la forma: o Para resolver una inecuación cuadrática debemos primero resolver la ecuación de segundo grado asociada y escribir polinomio como producto de factores en el caso de que se pueda. En segundo lugar, se estudia el signo de los factores y se encuentran los intervalos solución (en los tres casos puede no haber solución o soluciones). Analicemos cada caso posible:",
+    "keywords": [
+      "resolver",
+      "segundo",
+      "factores",
+      "solución",
+      "aquellas",
+      "reducirse",
+      "inecuación",
+      "cuadrática"
+    ]
+  },
+  {
+    "id": "clase_03_la_ecuacion_cuadratica_tiene_04_001",
+    "clase": "Clase 3 - Inecuaciones",
+    "tema": "La ecuación cuadrática tiene dos soluciones:",
+    "contenido": "En estos casos tendremos que estudiar los posibles signos que pueden tomar los intervalos según el valor de “a” y la desigualdad que se trate. Para entenderlo mejor usemos un código de colores, en rojo las expresiones que tomen valores negativos y en verde aquellas positivas: Si : Ya que o tambien: Ya que Si : Ya que o tambien: Ya que Si : Ya que o tambien: Ya que Si : Ya que o tambien: Ya que Una vez que reconocemos el caso debemos encontrar las soluciones que satisfacen ambas posibilidades en simultáneo. Haremos un análisis análogo para las desigualdades incluyentes: EJ) En primer lugar acomodamos la inecuación Ahora aplicamos la resolvente para resolver Factorizamos la inecuación: Como Entonces hay dos posibilidades: (“o”) Resolvemos ambas: Como es un (“y”) la solución es la (“intersección”) de los conjuntos. Podemos ayudarnos con el soporte gráfico: Es decir: Ahora falta resolver la otra posibilidad: Buscamos la intersección: Es decir: Ahora que resolvimos las dos posibilidades, debemos buscar la unión (“o”): Si bien es importante entender este método de resolución para futuras inecuaciones, existe otro método un poco más rápido. Una vez que tenemos factorizada la expresión y encontramos los valores que verifican la ecuación: Crearemos una tabla donde pondremos estos valores más algunos valores elegidos que pertenezcan al resto de los intervalos formados: Elegimos valores para el ejemplo: Como la inecuación tiene que ser menor o igual a cero, el conjuntos solución serán aquellos intervalos que al evaluarlos resultan negativos más los extremos. La ecuación cuadrática tiene una única solución: Estudiamos las posibilidades, considerando que siempre será mayor de 0, es decir: Si : Ya que No hay soluciones posibles. Ya que Esto siempre se cumplirá a excepción del valor que la iguala a cero: Si : Ya que Esto siempre se cumplirá a excepción del valor que la iguala a cero: Ya que No hay soluciones posibles. En este caso, si se plantean las desigualdades incluyentes (), existirá adicionalmente una solución adicional: EJ) Acomodamos la inecuación. Aplicamos la resolvente Sea el valor que sea siempre será positivo o cero, por lo que la solución resulta: Para clarificar veamos otras posibilidades: Si la inecuación fuera No habrá solución: Si fuera Siempre será positivo menos para : Si fuera Siempre se cumplirá:",
+    "keywords": [
+      "solución",
+      "siempre",
+      "valores",
+      "posibilidades",
+      "inecuación",
+      "valor",
+      "tambien",
+      "cero"
+    ]
+  },
+  {
+    "id": "clase_03_la_ecuacion_cuadratica_no_ti_05_001",
+    "clase": "Clase 3 - Inecuaciones",
+    "tema": "La ecuación cuadrática no tiene soluciones en los reales:",
+    "contenido": "No se puede factorizar No se puede factorizar Que no exista un valor de “” que verifique la ecuación significa que todos los posibles valores de la variable “” generaran números o más grandes que cero o menores, por lo que la inecuación podrá ser cierta para todos los reales o para ninguno. EJ) Acomodamos la inecuación. Al aplicar la resolvente nos encontramos con que no existe ninguna solución que verifique Esto significa que o bien siempre toma valores negativos o siempre positivos, bastara con remplazar un valor cualquiera para verificar el signo, por ejemplo , por lo cual Nunca se verificara: Otras posibilidades para analizar: Tampoco se verificara: o Se verificara siempre :",
+    "keywords": [
+      "siempre",
+      "verificara",
+      "factorizar",
+      "valor",
+      "verifique",
+      "significa",
+      "valores",
+      "inecuación"
+    ]
+  },
+  {
+    "id": "clase_03_inecuaciones_de_grado_superi_06_001",
+    "clase": "Clase 3 - Inecuaciones",
+    "tema": "Inecuaciones de grado superior",
+    "contenido": "Las trataremos análogamente a lo visto con las ecuaciones, es decir, podremos resolverlas si estan incompletas o si logramos factorizarlas. Una vez factorizadas, analizaremos las combinaciones de signos que verifiquen la desigualdad (como hicimos para las inecuaciones cuadráticas con dos soluciones). EJ1) Analicemos todas las posibilidades para que el resultado del producto de factores sea negativo. Como con las inecuaciones cuadráticas, podemos aplicar el segundo método: Si damos vuelta la desigualdad El conjunto solución serán los intervalos que resultan positivos: EJ2) Resolvemos cada factor y encontramos las siguientes soluciones a la ecuación Creamos la tabla y evaluamos: La solución serán los valores iguales a 0 y los intervalos negativos:",
+    "keywords": [
+      "desigualdad",
+      "inecuaciones",
+      "cuadráticas",
+      "soluciones",
+      "solución",
+      "serán",
+      "intervalos",
+      "trataremos"
+    ]
+  },
+  {
+    "id": "clase_03_inecuaciones_con_modulo_07_001",
+    "clase": "Clase 3 - Inecuaciones",
+    "tema": "Inecuaciones con modulo:",
+    "contenido": "La expresión significa que es decir: Análogamente, EJ) La expresión significa que Análogamente, EJ) Si adentro del módulo tuviéramos una expresión más extensa, para despejar el modulo se abren dos ramas de las que se buscara la intersección o la unión según el sentido de la desigualdad. EJ1) A partir de este paso se busca la intersección de las dos inecuaciones: EJ2) A partir de este paso se busca la unión de las dos inecuaciones:",
+    "keywords": [
+      "expresión",
+      "significa",
+      "análogamente",
+      "intersección",
+      "unión",
+      "partir",
+      "paso",
+      "busca"
+    ]
+  },
+  {
+    "id": "clase_03_inecuaciones_con_radicales_08_001",
+    "clase": "Clase 3 - Inecuaciones",
+    "tema": "Inecuaciones con radicales:",
+    "contenido": "La resolución de una inecuación con radicales depende de la paridad del radical. Si la incógnita está dentro de un radical impar, podremos despejar utilizando potencia miembro a miembro sin problema. Si el radical es par, al aplicar potencia miembro a miembro generaremos un modulo La expresión Esto significa que Es decir: Análogamente, La expresión Esto significa que Es decir: Análogamente, EJ1) Usamos el cambio de variable Resulta: Resolvemos la cuadrática EJ2)",
+    "keywords": [
+      "miembro",
+      "radical",
+      "potencia",
+      "expresión",
+      "esto",
+      "significa",
+      "decir",
+      "análogamente"
+    ]
+  },
+  {
+    "id": "clase_03_inecuaciones_con_mas_incogni_09_001",
+    "clase": "Clase 3 - Inecuaciones",
+    "tema": "Inecuaciones con más incógnitas:",
+    "contenido": "Son inecuación en la que aparecen al menos dos incógnitas, para graficar el conjunto solución ya no podremos usar una recta numérica (una dimensión), si hay dos incógnitas lo graficaremos en un plano (dos dimensiones) y si son tres incógnitas lo graficaremos en el espacio (tres dimensiones). Tambien podríamos tener varias incógnitas en varias inecuaciones, obtendremos asi un sistema de inecuaciones. Veremos estos temas más adelante, mientras tanto veamos algunos ejemplos:",
+    "keywords": [
+      "incógnitas",
+      "graficaremos",
+      "dimensiones",
+      "varias",
+      "inecuaciones",
+      "inecuación",
+      "aparecen",
+      "menos"
+    ]
+  },
+  {
+    "id": "clase_04_clase_4_numeros_complejos_00_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "CLASE 4 – NÚMEROS COMPLEJOS",
+    "contenido": "Introducción: En ocasiones los resultados de muchas ecuaciones no pertenecen al conjunto de los números reales, como por ejemplo en algunas cuadráticas: No existen soluciones en los reales. No existen soluciones en los reales. Los grandes matemáticos de la antigüedad consideraban que el conjunto de los números reales estaba de cierta manera incompleto, ya que no existían soluciones para las raíces pares de números negativos. Ya en el siglo XVII, René Descartes llamo números imaginarios a aquellos reales negativos que se encontraban dentro de un radical par. Para completar estos “huecos” se define unidad imaginaria “” a la raíz de De esta forma podemos definir todas las raíces de números negativos: Ahora podremos encontrar soluciones complejas a ecuaciones que no tenían solución en los reales:",
+    "keywords": [
+      "reales",
+      "números",
+      "soluciones",
+      "negativos",
+      "ecuaciones",
+      "conjunto",
+      "existen",
+      "raíces"
+    ]
+  },
+  {
+    "id": "clase_04_potencia_de_la_unidad_imagin_01_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Potencia de la unidad imaginaria:",
+    "contenido": "Nótese que las respuestas se repiten: Potencia divisible por 4 con resto 0 Potencia divisible por 4 con resto 1 Potencia divisible por 4 con resto 2 Potencia divisible por 4 con resto 3 Para saber el resultado de una potencia grande debemos dividir ese valor por 4 y ver el resto de la división con cuál de estos 4 grupos condice. Por ejemplo: 55:4= 13 y resto 3 Los números complejos se representan básicamente en tres formas: binómica, polar o trigonométrica y la exponencial o de Euler. Dependiendo la situación problemática a la que nos enfrentemos, será conveniente elegir una forma u otra.",
+    "keywords": [
+      "resto",
+      "potencia",
+      "divisible",
+      "nótese",
+      "respuestas",
+      "repiten",
+      "saber",
+      "resultado"
+    ]
+  },
+  {
+    "id": "clase_04_forma_binomica_02_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Forma binómica:",
+    "contenido": "Un número complejo en su forma binómica tiene la siguiente forma: El primer término es la parte real la segunda la imaginaria. Algunos ejemplos: ; ; ;",
+    "keywords": [
+      "número",
+      "complejo",
+      "binómica",
+      "siguiente",
+      "primer",
+      "término",
+      "parte",
+      "real"
+    ]
+  },
+  {
+    "id": "clase_04_conjugado_de_un_numero_compl_03_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Conjugado de un número complejo :",
+    "contenido": "Dado un número complejo el conjugado será Por ejemplo: ; ; ;",
+    "keywords": [
+      "número",
+      "complejo",
+      "conjugado",
+      "será",
+      "ejemplo"
+    ]
+  },
+  {
+    "id": "clase_04_opuesto_de_un_numero_complej_04_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Opuesto de un número complejo :",
+    "contenido": "Dado un número complejo el opuesto será Por ejemplo: ; ; ;",
+    "keywords": [
+      "número",
+      "complejo",
+      "opuesto",
+      "será",
+      "ejemplo"
+    ]
+  },
+  {
+    "id": "clase_04_representacion_de_un_numero__05_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Representación de un número complejo:",
+    "contenido": "El plano complejo, o de Argand, es una forma de visualizar y ordenar el conjunto de los números complejos. Puede entenderse como un plano cartesiano modificado, en el que la parte real está representada en el eje de abscisas y la parte imaginaria en el eje de ordenadas. El eje de abscisas también recibe el nombre de eje real y el eje de ordenadas el nombre de eje imaginario. Veamos gráficamente un número complejo junto a su conjugado y su opuesto.",
+    "keywords": [
+      "plano",
+      "complejo",
+      "parte",
+      "real",
+      "abscisas",
+      "ordenadas",
+      "nombre",
+      "argand"
+    ]
+  },
+  {
+    "id": "clase_04_suma_de_numeros_complejos_06_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Suma de números complejos:",
+    "contenido": "Dado dos números complejos: y Sumamos las partes reales y las partes imaginarias: EJ): y",
+    "keywords": [
+      "partes",
+      "números",
+      "complejos",
+      "sumamos",
+      "reales",
+      "imaginarias"
+    ]
+  },
+  {
+    "id": "clase_04_resta_de_numeros_complejos_07_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Resta de números complejos:",
+    "contenido": "Dado dos números complejos: y restamos las partes reales y las partes imaginarias: EJ): y",
+    "keywords": [
+      "partes",
+      "números",
+      "complejos",
+      "restamos",
+      "reales",
+      "imaginarias"
+    ]
+  },
+  {
+    "id": "clase_04_multiplicacion_de_numeros_co_08_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Multiplicación de números complejos:",
+    "contenido": "Dado dos números complejos: y EJ): y",
+    "keywords": [
+      "números",
+      "complejos"
+    ]
+  },
+  {
+    "id": "clase_04_inverso_multiplicativo_09_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Inverso multiplicativo:",
+    "contenido": "Dado un número complejo: el inverso multiplicativo es aquel tal que: EJ):",
+    "keywords": [
+      "número",
+      "complejo",
+      "inverso",
+      "multiplicativo",
+      "aquel"
+    ]
+  },
+  {
+    "id": "clase_04_division_de_numeros_complejo_10_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "División de números complejos:",
+    "contenido": "Dado dos números complejos: y EJ): y",
+    "keywords": [
+      "números",
+      "complejos"
+    ]
+  },
+  {
+    "id": "clase_04_potencia_de_numeros_complejo_11_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Potencia de números complejos:",
+    "contenido": "Resolvemos la potencia de un número complejo como en producto por sí mismo: Por ejemplo: El problema de esta operación, es que si tuviéramos una potencia grande, el ejercicio sería demasiado largo, por ejemplo: Podemos usar las fórmulas de binomio al cuadrado, al cubo, etc., pero debemos estar atentos con las potencias de la unidad imaginaria. En estos casos usaremos el número complejo en su forma polar o exponencial.",
+    "keywords": [
+      "potencia",
+      "número",
+      "complejo",
+      "ejemplo",
+      "resolvemos",
+      "producto",
+      "problema",
+      "operación"
+    ]
+  },
+  {
+    "id": "clase_04_raiz_de_numeros_complejos_12_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Raíz de números complejos:",
+    "contenido": "No es conveniente resolver raíces de números complejos en su forma binómica, ya que necesitamos resolver sistemas de ecuaciones, tema que veremos más adelante. Por lo que de momento necesitaremos pasar el numero complejo de su forma polar o exponencial.",
+    "keywords": [
+      "resolver",
+      "conveniente",
+      "raíces",
+      "números",
+      "complejos",
+      "binómica",
+      "necesitamos",
+      "sistemas"
+    ]
+  },
+  {
+    "id": "clase_04_forma_polar_o_trigonometrica_13_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Forma polar o trigonométrica:",
+    "contenido": "En la forma binómica, definimos al número complejo según sus coordenadas a y b del plano, geométricamente se trata de un punto . La forma polar, consiste en definir al número complejo por su distancia al origen de coordenadas y el ángulo que forma: . Para obtener la forma polar a partir de la binómica, debemos recordar algunos conceptos de la trigonometría (estudio sobre los lados y ángulos de un triángulo). Relaciones trigonométricas elementales y teorema de Pitágoras: Dado cualquier triangulo rectángulo, siempre se cumplirá el teorema de Pitágoras y las siguientes relaciones trigonométricas: Problema del arcotangente : La función arco tangente nos permite encontrar el ángulo de un triángulo rectángulo a partir de sus catetos. Cuando trabajamos en coordenadas cartesianas, surje un inconveniente, y es que los lenguajes de calculadoras y ordenadores no distinguen el cuadrante del ángulo, veamos a continuación: Si calculamos el ángulo que conforma obtenemos lo siguiente: Si calculamos : Claramente ambos números complejos forman ángulos distintos, sin embargo, la calculadora no diferencia entre y . Si calculamos Obtenemos un ángulo negativo que tampoco nos sirve. El siguiente esquema indica cómo resolver el problema cuadrante a cuadrante. Pasaje forma binómica a polar: Despejamos y de estas fórmulas para remplazar en la forma binómica: r. EJ1) Calculamos y Si y el número complejo se encuentra en el II cuadrante Pasaje forma polar a binómica: Utilizamos los valores de y en las formulas usadas anteriormente r. EJ) .",
+    "keywords": [
+      "binómica",
+      "ángulo",
+      "polar",
+      "cuadrante",
+      "calculamos",
+      "número",
+      "complejo",
+      "coordenadas"
+    ]
+  },
+  {
+    "id": "clase_04_suma_y_resta_de_numeros_comp_14_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Suma y resta de números complejos:",
+    "contenido": "No es conveniente resolver sumas y restas de números complejos en su forma polar, ya que necesitamos utilizar múltiples identidades trigonométricas. Por lo que de momento necesitaremos pasar el número complejo de su forma binómica.",
+    "keywords": [
+      "conveniente",
+      "resolver",
+      "sumas",
+      "restas",
+      "números",
+      "complejos",
+      "polar",
+      "necesitamos"
+    ]
+  },
+  {
+    "id": "clase_04_multiplicacion_de_numeros_co_15_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Multiplicación de números complejos:",
+    "contenido": "Dado dos números complejos: y EJ): , , ,",
+    "keywords": [
+      "números",
+      "complejos"
+    ]
+  },
+  {
+    "id": "clase_04_inverso_multiplicativo_16_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Inverso multiplicativo:",
+    "contenido": "Dado un número complejo: el inverso multiplicativo es aquel tal que: EJ):",
+    "keywords": [
+      "número",
+      "complejo",
+      "inverso",
+      "multiplicativo",
+      "aquel"
+    ]
+  },
+  {
+    "id": "clase_04_division_de_numeros_complejo_17_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "División de números complejos:",
+    "contenido": "Dado dos números complejos: y EJ): ,",
+    "keywords": [
+      "números",
+      "complejos"
+    ]
+  },
+  {
+    "id": "clase_04_potencia_de_un_numero_comple_18_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Potencia de un número complejo:",
+    "contenido": "Dado un número complejo: : (Formula de De Moivre) EJ):",
+    "keywords": [
+      "número",
+      "complejo",
+      "formula",
+      "moivre"
+    ]
+  },
+  {
+    "id": "clase_04_raiz_de_un_numero_complejo_19_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Raíz de un número complejo:",
+    "contenido": "Dado un número complejo: la raíz “” de un numero complejo tiene “” soluciones dadas por la siguiente formula: Por ejemplo:",
+    "keywords": [
+      "complejo",
+      "número",
+      "raíz",
+      "numero",
+      "soluciones",
+      "dadas",
+      "siguiente",
+      "formula"
+    ]
+  },
+  {
+    "id": "clase_04_forma_exponencial_o_de_euler_20_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Forma exponencial o de Euler:",
+    "contenido": "En el siglo XVIII Leonardo Euler desarrollo una curiosa fórmula matemática que relacionaba la unidad imaginaria con los dos números irracionales mas reconocidos: y : A la vez estableció la siguiente igualdad: Con esta igualdad podemos generar la forma exponencial de un número complejo: Para esta forma tendremos que recordar la equivalencia de grados centígrados con radianes, dejo un esquema a derecha.",
+    "keywords": [
+      "igualdad",
+      "siglo",
+      "xviii",
+      "leonardo",
+      "euler",
+      "desarrollo",
+      "curiosa",
+      "fórmula"
+    ]
+  },
+  {
+    "id": "clase_04_suma_y_resta_de_numeros_comp_21_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Suma y resta de números complejos:",
+    "contenido": "Análogamente con la forma polar, no es conveniente resolver sumas y restas de números complejos en su forma exponencial. Por lo que necesitaremos pasar el número complejo de su forma binómica.",
+    "keywords": [
+      "análogamente",
+      "polar",
+      "conveniente",
+      "resolver",
+      "sumas",
+      "restas",
+      "números",
+      "complejos"
+    ]
+  },
+  {
+    "id": "clase_04_multiplicacion_de_numeros_co_22_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Multiplicación de números complejos:",
+    "contenido": "Dado dos números complejos: y EJ): y",
+    "keywords": [
+      "números",
+      "complejos"
+    ]
+  },
+  {
+    "id": "clase_04_inverso_multiplicativo_23_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Inverso multiplicativo:",
+    "contenido": "Dado un número complejo: el inverso multiplicativo es aquel tal que: EJ):",
+    "keywords": [
+      "número",
+      "complejo",
+      "inverso",
+      "multiplicativo",
+      "aquel"
+    ]
+  },
+  {
+    "id": "clase_04_division_de_numeros_complejo_24_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "División de números complejos:",
+    "contenido": "Dado dos números complejos: y EJ): y",
+    "keywords": [
+      "números",
+      "complejos"
+    ]
+  },
+  {
+    "id": "clase_04_potencia_de_un_numero_comple_25_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Potencia de un número complejo:",
+    "contenido": "Dado un número complejo: : EJ):",
+    "keywords": [
+      "número",
+      "complejo"
+    ]
+  },
+  {
+    "id": "clase_04_raiz_de_un_numero_complejo_26_001",
+    "clase": "Clase 4 - Complejos",
+    "tema": "Raíz de un número complejo:",
+    "contenido": "Dado un número complejo: la raíz “” de un numero complejo tiene “” soluciones dadas por la siguiente formula: Por ejemplo:",
+    "keywords": [
+      "complejo",
+      "número",
+      "raíz",
+      "numero",
+      "soluciones",
+      "dadas",
+      "siguiente",
+      "formula"
+    ]
+  },
+  {
+    "id": "clase_05_plano_cartesiano_00_001",
+    "clase": "Clase 5 - Rectas",
+    "tema": "Plano cartesiano:",
+    "contenido": "Se conoce como plano cartesiano, coordenadas cartesianas o sistema cartesiano, a dos rectas numéricas perpendiculares, una horizontal y otra vertical, que se cortan en un punto llamado origen de coordenadas La finalidad del plano cartesiano es describir la posición o ubicación de un punto en el plano, la cual está representada por el sistema de coordenadas. Usualmente el eje horizontal estará acompañado con la variable “x” y lo llamaremos eje de abscisas y el eje vertical estará acompañado de la variable “y” y lo llamaremos eje de ordenadas.",
+    "keywords": [
+      "plano",
+      "cartesiano",
+      "coordenadas",
+      "sistema",
+      "horizontal",
+      "vertical",
+      "punto",
+      "estará"
+    ]
+  },
+  {
+    "id": "clase_05_cuadrantes_del_plano_cartesi_01_001",
+    "clase": "Clase 5 - Rectas",
+    "tema": "Cuadrantes del plano cartesiano",
+    "contenido": "El plano cartesiano también sirve para analizar matemáticamente figuras geométricas como la recta, la parábola, la hipérbole, la circunferencia, la elipse, etc.",
+    "keywords": [
+      "plano",
+      "cartesiano",
+      "sirve",
+      "analizar",
+      "matemáticamente",
+      "figuras",
+      "geométricas",
+      "recta"
+    ]
+  },
+  {
+    "id": "clase_05_distancia_entre_dos_puntos_02_001",
+    "clase": "Clase 5 - Rectas",
+    "tema": "Distancia entre dos puntos:",
+    "contenido": "Recordemos el teorema de Pitágoras: en un triángulo rectángulo, la suma del cuadrado de los lados que forman el ángulo recto (catetos) es igual al cuadrado del lado restante (hipotenusa). Ahora, visualicen dos puntos cualesquiera del plano cartesiano y notaran que entre ellos se puede formar un triángulo rectángulo donde los catetos son las coordenadas de los ejes horizontal y vertical y la hipotenusa es su distancia:",
+    "keywords": [
+      "triángulo",
+      "rectángulo",
+      "cuadrado",
+      "catetos",
+      "hipotenusa",
+      "recordemos",
+      "teorema",
+      "pitágoras"
+    ]
+  },
+  {
+    "id": "clase_05_pertenencia_de_un_punto_a_un_03_001",
+    "clase": "Clase 5 - Rectas",
+    "tema": "Pertenencia de un punto a una figura:",
+    "contenido": "Si tuviéramos una figura cualquiera, por ejemplo, una recta de ecuación: y nos preguntáramos si los puntos y pertenecen a dicha recta, lo que debemos hacer es remplazar los puntos en la ecuación y ver si se verifica la igualdad: No verifica, el punto no pertenece a la figura. Verifica, el punto pertenece a la figura. A continuación vamos a profundizar esta ecuación.",
+    "keywords": [
+      "figura",
+      "ecuación",
+      "verifica",
+      "recta",
+      "puntos",
+      "punto",
+      "pertenece",
+      "tuviéramos"
+    ]
+  },
+  {
+    "id": "clase_05_ecuacion_de_la_recta_04_001",
+    "clase": "Clase 5 - Rectas",
+    "tema": "Ecuación de la recta:",
+    "contenido": "Una recta es una sucesión infinita de puntos, situados en una misma dirección, analíticamente, estos infinitos puntos serán todos aquellos que verifiquen una ecuación de dos variables, la horizontal (usualmente x) y la vertical (usualmente y) Esta ecuación puede tener notación de ecuación o de función: Notación de ecuación (ecuación de la recta): y = mx + b",
+    "keywords": [
+      "ecuación",
+      "recta",
+      "puntos",
+      "usualmente",
+      "notación",
+      "sucesión",
+      "infinita",
+      "situados"
+    ]
+  },
+  {
+    "id": "clase_05_notacion_de_funcion_f_x_mx_b_05_001",
+    "clase": "Clase 5 - Rectas",
+    "tema": "Notación de función:                                   f (x) = mx + b",
+    "contenido": "A esta forma de expresar la función lineal se la llama: forma explícita. Para llegar de una expresión cualquiera a la forma explícita hay que despejar la variable dependiente (la vertical “y”) en un miembro de la igualdad, y llegar la forma mx+b (la variable horizontal, “x” será la independiente) en el otro.",
+    "keywords": [
+      "explícita",
+      "llegar",
+      "variable",
+      "expresar",
+      "función",
+      "lineal",
+      "llama",
+      "expresión"
+    ]
+  },
+  {
+    "id": "clase_05_la_pendiente_m_06_001",
+    "clase": "Clase 5 - Rectas",
+    "tema": "La pendiente (m):",
+    "contenido": "La pendiente de una recta en un sistema cartesiano, suele estar representada por la letra {\\displaystyle m} “m”, y está definida como la diferencia en el eje Y dividido por la diferencia en el eje X para dos puntos distintos en una recta. En la siguiente ecuación se describe: Está pendiente determinara la inclinación de la recta, cuanto menor sea el valor de la pendiente, menor ángulo tendrá la recta con respecto al eje x; por ejemplo, una recta inclinada (que se eleve) un ángulo de 11° con respecto al eje x tendrá una pendiente positiva de ¼ mientras que otra de 78° tendrá pendiente igual a 5.{\\displaystyle m=+1}A continuacion, examinen las siguientes rectas, noten como sus pendientes dependen de las variaciones de los ejes “x” e “y”: Como verán, el signo de la pendiente determina si la recta es creciente (𝒎 > 𝟎) o decreciente (𝒎 < 𝟎). ¿Y si 𝒎 = 𝟎? En este caso, la recta no dependería de valores de “x” por lo que para cualquier valor del eje horizontal siempre se tendrá un mismo valor del eje vertical, por ejemplo, o siendo el resultado rectas paralelas al eje horizontal, llamaremos a estas rectas constantes.",
+    "keywords": [
+      "recta",
+      "pendiente",
+      "tendrá",
+      "valor",
+      "rectas",
+      "displaystyle",
+      "está",
+      "diferencia"
+    ]
+  },
+  {
+    "id": "clase_05_ordenada_al_origen_b_07_001",
+    "clase": "Clase 5 - Rectas",
+    "tema": "Ordenada al origen (b):",
+    "contenido": "Se denomina ordenada al origen al punto de intersección de la recta con el eje “𝒚”. Es decir, cuando , o bien . Este punto será el Por ejemplo, la recta es una función lineal donde",
+    "keywords": [
+      "punto",
+      "recta",
+      "denomina",
+      "ordenada",
+      "origen",
+      "intersección",
+      "decir",
+      "bien"
+    ]
+  },
+  {
+    "id": "clase_05_raiz_de_la_recta_08_001",
+    "clase": "Clase 5 - Rectas",
+    "tema": "Raíz de la recta:",
+    "contenido": "Se denomina raíz al punto de intersección de la recta con el eje “x”. Es decir, cuando , o bien Este punto será el Por ejemplo, la recta es una función lineal donde",
+    "keywords": [
+      "punto",
+      "recta",
+      "denomina",
+      "raíz",
+      "intersección",
+      "decir",
+      "bien",
+      "será"
+    ]
+  },
+  {
+    "id": "clase_05_representacion_de_una_recta__09_001",
+    "clase": "Clase 5 - Rectas",
+    "tema": "Representación de una recta: Existen dos formas:",
+    "contenido": "Usando la pendiente y la ordenada al origen: Escriba la recta en la forma y = mx+b, y después dibuje la recta con intersección en y igual a b y pendiente igual a m, usando la variación en y (vertical) y en x (horizontal) partiendo desde b. Para usar este método la pendiente debe ser un número racional y el signo de la misma cambiará el sentido vertical en que debe “moverse”, por ejemplo: Dos puntos (usualmente la raíz y la ordenada al origen) Calcule las intersecciones en x e y, y después trace la recta que pasa por aquellos dos puntos. Para calcular la intersección en x (raíz) de una recta, establezca y = 0 en su ecuación y despeje a x. Para calcular la intersección en y, establezca x = 0, y despeje la variable dependiente y. Este método sirve solo cuando la recta no pasa por el origen. En este caso, tendrá que trazar un punto adicional o usar el primero método. Por ejemplo:",
+    "keywords": [
+      "recta",
+      "pendiente",
+      "origen",
+      "intersección",
+      "método",
+      "usando",
+      "ordenada",
+      "después"
+    ]
+  },
+  {
+    "id": "clase_05_rectas_paralelas_10_001",
+    "clase": "Clase 5 - Rectas",
+    "tema": "Rectas paralelas:",
+    "contenido": "Se denominan rectas paralelas a aquellas que mantienen una equidistancia entre sí, y que, aunque prolonguemos su trayectoria hasta el infinito, nunca, en ningún punto habrá una intersección. Podemos decir que necesariamente para que se dé la relación de paralelismo las rectas deben de estar en un mismo plano y tener la misma pendiente. Por ejemplo, las rectas / son paralelas porque tienen la misma pendiente.",
+    "keywords": [
+      "rectas",
+      "paralelas",
+      "pendiente",
+      "denominan",
+      "aquellas",
+      "mantienen",
+      "equidistancia",
+      "aunque"
+    ]
+  },
+  {
+    "id": "clase_05_rectas_perpendiculares_11_001",
+    "clase": "Clase 5 - Rectas",
+    "tema": "Rectas perpendiculares:",
+    "contenido": "Dos rectas son perpendiculares cuando al cortarse forman cuatro ángulos iguales de 90º. Si dos rectas son perpendiculares sus pendientes son opuestas e inversas. También podría decirse que dos rectas coplanares son perpendiculares cuando, al cortarse, dividen al plano en cuatro regiones iguales, cada una de los cuales es un ángulo recto. Al punto de intersección de dos rectas perpendiculares se le llama pie de cada una de ellas en la otra. Por ejemplo, las rectas / son perpendiculares porque sus pendientes son opuestas e inversas. Esta ecuación de la forma: es llamada formula explicita/ordinaria, pero podemos expresar la ecuaciones una recta de otras formas mediante los pasos algebraicos correspondientes:",
+    "keywords": [
+      "rectas",
+      "perpendiculares",
+      "cortarse",
+      "cuatro",
+      "iguales",
+      "pendientes",
+      "opuestas",
+      "inversas"
+    ]
+  },
+  {
+    "id": "clase_05_ecuacion_general_de_la_recta_12_001",
+    "clase": "Clase 5 - Rectas",
+    "tema": "Ecuación general de la recta",
+    "contenido": "Donde A, B y C son constantes.",
+    "keywords": [
+      "constantes"
+    ]
+  },
+  {
+    "id": "clase_06_que_es_una_superficie_conica_00_001",
+    "clase": "Clase 6 - Conicas",
+    "tema": "¿Qué es una superficie cónica?:",
+    "contenido": "Se trata de una superficie (en tres dimensiones) generada por una recta g que gira alrededor de otra recta e, con la cual se corta en un punto V. La recta g se llama generatriz, y la recta e, eje de la superficie cónica. El punto V es el vértice. El resultado serán dos conos infinitos, opuestos y unidos por el vértice “V”: Analíticamente una cónica tiene la siguiente formula: Cuando el eje “e” coincide el eje “z” (azul) Cuando el eje “e” coincide el eje “y” (verde) Cuando el eje “e” coincide el eje “x” (rojo) Si el vértice “V” no fuera el origen de coordenadas y fuera cualquier otro punto del espacio obtendríamos la fórmula: Por ejemplo si el vértice fuera (1;2;3):",
+    "keywords": [
+      "recta",
+      "vértice",
+      "punto",
+      "coincide",
+      "fuera",
+      "superficie",
+      "cónica",
+      "trata"
+    ]
+  },
+  {
+    "id": "clase_06_seccion_conica_01_001",
+    "clase": "Clase 6 - Conicas",
+    "tema": "Sección cónica:",
+    "contenido": "Denominamos sección cónica o simplemente Cónica a la curva obtenida al cortar esa superficie cónica con un plano. Las diferentes posiciones de dicho plano nos determinan distintas curvas: circunferencias, elipses, hipérbolas y parábolas. La importancia fundamental de las cónicas radica en su constante aparición en situaciones reales: La primera ley de Kepler sobre el movimiento de los planetas dice que éstos siguen órbitas elípticas, en uno de cuyos focos se encuentra el Sol. Es muy posible que Newton no hubiese podido descubrir su famosa ley de la gravitación universal de no haber conocido ampliamente la geometría de las elipses. La órbita que sigue un objeto dentro de un campo gravitacional constante es una parábola. Así, la línea que describe cualquier móvil que es lanzado con una cierta velocidad inicial, que no sea vertical, es una parábola. Esto no es realmente exacto, ya que la gravedad no es constante: depende de la distancia del punto al centro de la Tierra. En realidad la curva que describe el móvil (si se ignora el rozamiento del aire) es una elipse que tiene uno de sus focos en el centro de la Tierra. En una guitarra sus lados forman las dos ramas de una hipérbola. Sistemas satelitales y sistemas de radio usan funciones hiperbólicas. Lentes, monitores, orbitas de cometas tienen forma hiperbólica.",
+    "keywords": [
+      "cónica",
+      "constante",
+      "curva",
+      "plano",
+      "elipses",
+      "focos",
+      "parábola",
+      "describe"
+    ]
+  },
+  {
+    "id": "clase_06_circunferencia_02_001",
+    "clase": "Clase 6 - Conicas",
+    "tema": "Circunferencia:",
+    "contenido": "Se denomina circunferencia al lugar geométrico de los puntos del plano que equidistan de un punto fijo llamado centro. El radio de la circunferencia es la distancia de un punto cualquiera de dicha circunferencia al centro. La circunferencia se genera cuando cortamos la superficie cónica con un plano perpendicular al eje de dicho cono.",
+    "keywords": [
+      "circunferencia",
+      "plano",
+      "punto",
+      "centro",
+      "denomina",
+      "lugar",
+      "geométrico",
+      "puntos"
+    ]
+  },
+  {
+    "id": "clase_06_ecuacion_analitica_de_la_cir_03_001",
+    "clase": "Clase 6 - Conicas",
+    "tema": "Ecuación analítica de la circunferencia:",
+    "contenido": "Si hacemos coincidir el centro con el origen de coordenadas, las coordenadas de cualquier punto de la circunferencia (x, y) determina un triángulo rectángulo, y por supuesto que responde al teorema de Pitágoras: . Si el centro estuviera ubicado en otro punto del plano tendíamos:",
+    "keywords": [
+      "centro",
+      "coordenadas",
+      "punto",
+      "hacemos",
+      "coincidir",
+      "origen",
+      "cualquier",
+      "circunferencia"
+    ]
+  },
+  {
+    "id": "clase_06_forma_canonica_de_la_circunf_04_001",
+    "clase": "Clase 6 - Conicas",
+    "tema": "Forma canónica de la circunferencia",
+    "contenido": "Si desarrollamos los binomios tendríamos la forma general de la circunferencia: Remplazamos: – 2h = C ; – 2k = D ; E =",
+    "keywords": [
+      "desarrollamos",
+      "binomios",
+      "tendríamos",
+      "general",
+      "circunferencia",
+      "remplazamos"
+    ]
+  },
+  {
+    "id": "clase_06_forma_general_de_la_circunfe_05_001",
+    "clase": "Clase 6 - Conicas",
+    "tema": "Forma general de la circunferencia",
+    "contenido": "EJ): Si tenemos la ecuación y queremos sacar la forma canónica (necesaria para graficar la circunferencia) Entonces tenemos que remplazar A , B y C en las anteriores igualdades: Noten que como el radio es una distancia descartamos el resultado negativo (-4). Remplazamos h, k y r en la ecuación canónica: Teniendo el centro y el radio ya podemos graficarlo:",
+    "keywords": [
+      "tenemos",
+      "ecuación",
+      "canónica",
+      "radio",
+      "queremos",
+      "sacar",
+      "necesaria",
+      "graficar"
+    ]
+  },
+  {
+    "id": "clase_06_elipse_06_001",
+    "clase": "Clase 6 - Conicas",
+    "tema": "Elipse:",
+    "contenido": "Es el lugar geométrico de los puntos del plano cuya adición de distancias a dos puntos fijos es constante. Estos dos puntos fijos se llaman focos de la elipse. Las elipses son obtenidas cuando el plano que interseca al cono tiene un ángulo de inclinación que se encuentra en la superficie exterior del cono. Esta definición también incluye el caso en el que el plano es perpendicular al eje del cono, por lo que los círculos son un caso especial de elipses. Partes de una elipse: Focos y , centro “O” vértices ,, y radio horizontal “a” y radio vertical “b”. Llamamos eje mayor al diámetro mayor sobre el que se encuentran los focos (2a) y eje menor al diámetro menor (2b). Llamamos “c” a distancia del centro “O” a los focos (la distancia entre los focos entonces será 2c)",
+    "keywords": [
+      "focos",
+      "puntos",
+      "plano",
+      "cono",
+      "fijos",
+      "elipse",
+      "elipses",
+      "centro"
+    ]
+  },
+  {
+    "id": "clase_06_ecuacion_analitica_de_la_eli_07_001",
+    "clase": "Clase 6 - Conicas",
+    "tema": "Ecuación analítica de la elipse:",
+    "contenido": "Las coordenadas de cualquier punto de la elipse (x, y) determina dos triángulos rectángulos en relación con sus focos, sabiendo que la suma de las distancias de los focos a un punto será constante e igual a “2a” (el diámetro mayor) se puede demostrar y despejar la siguiente ecuación: Cuando el eje mayor es el horizontal Cuando el eje mayor es el vertical Al igual que en la circunferencia vamos a considerar ahora que el centro estuviera ubicado en otro punto del plano (h;k) tendíamos: Forma canónica de la elipse (eje mayor “x”) Igualmente podemos desarrollar los cuadrados en búsqueda de la formula general: Nuevamente vamos a hacer remplazos con los coeficientes:",
+    "keywords": [
+      "mayor",
+      "punto",
+      "elipse",
+      "focos",
+      "igual",
+      "vamos",
+      "coordenadas",
+      "cualquier"
+    ]
+  },
+  {
+    "id": "clase_06_forma_general_de_la_elipse_08_001",
+    "clase": "Clase 6 - Conicas",
+    "tema": "Forma general de la elipse",
+    "contenido": "Noten que es igual a la de la circunferencia solo que A puede ser diferente a B. EJ): Si tenemos la ecuación y queremos obtener la forma canónica, remplazaremos y buscaremos: Primero “a” y “b” que se despejaran directamente de “A” y “B” Segundo a “h” y “k” que los despejaremos de “C” y “D” con los resultados que obtuvimos de “a” y “b” Por último, aunque no obligatorio, podemos utilizar los valores de “a”, “b”, “h” y “k” para verificar el valor de “E”. Deberíamos obtener: Hipérbola: Es el lugar geométrico de los puntos del plano cuya diferencia de distancias entre dos puntos fijos es constante. Estos dos puntos fijos se llaman focos de la hipérbola. Las hipérbolas son obtenidas cuando el plano que interseca al cono tiene un ángulo de inclinación que se encuentra en la superficie interior del cono. Esta definición incluye el caso de que el plano sea paralelo al eje de la cónica, pero no asi, el caso en el que el plano es paralelo a la generatriz, ya que el ángulo debe ser estrictamente interior (si fuera paralelo tendremos parábolas). Partes de una hipérbola: Focos y , centro “O” vértices y , distancia del centro a los vértices “a”. En el caso del valor “b” es un poco más complejo de interpretar que en la elipse, este valor junto a la distancia a los vértices “a” conformaran un rectángulo tal que por sus vértices opuestos pasaran dos rectas imaginarias (en el dibujo en violeta) a las que las ramas de la hipérbola se irán acercando infinitamente (aunque nunca llegaran a intersecarse). Asintotas: Llamaremos a estas rectas asintotas de la hiperbola y las mismas pasaran por el centro de la hiperbola, en los dibujos es el origen de cordenadas pero si desplazamos la hiperbola a un centro (h,k) las rectas pasaran por este punto. Nuevamente, las coordenadas de cualquier punto de la hipérbola (x, y) determina dos triángulos rectángulos en relación con sus focos, sabiendo que la diferencia de las distancias de los focos a un punto será constante e igual a “2a” (la distancia entre los focos) se puede demostrar y despejar la siguiente ecuación: Cuando los focos estan sobre el eje horizontal Cuando los focos estan sobre el eje vertical Al igual que en las cónicas anteriores vamos a considerar ahora que el centro estuviera ubicado en otro punto del plano (h;k) tendíamos: Forma canónica de la hipérbola (eje mayor “x”) Igualmente podemos desarrollar los cuadrados en búsqueda de la formula general, será prácticamente igual que la elipse solo que cambiaran algunos signos: Nuevamente vamos a hacer remplazos con los coeficientes:",
+    "keywords": [
+      "focos",
+      "hipérbola",
+      "plano",
+      "centro",
+      "igual",
+      "vértices",
+      "punto",
+      "valor"
+    ]
+  },
+  {
+    "id": "clase_06_forma_general_de_la_hiperbol_09_001",
+    "clase": "Clase 6 - Conicas",
+    "tema": "Forma general de la hipérbola",
+    "contenido": "Noten que es igual a la de la elipse. ¿Cómo reconoceremos si es una elipse o una hipérbola? la diferencia estará en que el termino donde está la variable “y” elevada al cuadrado (B) será negativo, si la hipérbola tuviera sus focos sobre el eje vertical el término que sería negativo seria el que acompaña a la “x” al cuadrado (A). Si ambos (A y B) fueran positivos sería una elipse y si además fueran iguales una circunferencia. Ecuaciones de sus asíntotas: Usando lo que aprendimos sobre rectas vamos a conseguir la fórmula de las rectas asíntotas. Por un lado sabemos que ambas rectas pasan por el centro de coordenadas (h,k) y por el otro podemos calcular sus pendientes, ya que dependen de “a” y “b”. Mientras que la otra recta tendrá la misma pendiente pero opuesta Usamos el punto (h,k) perteneciente a las rectas para calcular la expresión de su ordenada: Es decir: EJ): Si tenemos la ecuación Podemos graficarla directamente: Las ecuaciones de las asíntotas quedarían: Parábola: Es el lugar geométrico de los puntos del plano que equidistan de un punto fijo llamado foco y de una recta fija llamada directriz. Las obtenemos con el único caso que no habíamos incluido, cuando el plano que corta a la superficie cónica es paralelo a la generatriz, es decir, cuando el ángulo era el mismo que establece el eje con la generatriz. A diferencia de las 3 cónicas vistas hasta ahora, nos podremos encontrar con parábolas (de directriz paralela al eje horizontal) que representas funciones matemáticas, más adelante aremos un análisis exhaustivo sobre las funciones cuadráticas que son aquellas que forman parábolas. Partes de una parábola: tendremos un vértice “V”, una recta generatriz “g”, la distancia entre el foco y el vértice será “c” y en consecuencia la menor distancia de la recta al foco será “2c”. Desarrollando la demostración pertinente, considerando que la distancia del punto a cualquier punto tendrá que ser igual a la distancia entre ese punto y el punto se notara que desaparece el término cuando la parábola tiene directriz paralela al eje horizontal y análogamente desaparecerá el término cuando sea paralela al vertical. Cuando la directriz “g” sea paralela al eje horizontal. Cuando la directriz “g” sea paralela al eje vertical. Al igual que en las cónicas anteriores vamos a considerar ahora que el vértice estuviera ubicado en otro punto del plano Forma canónica de la parábola (“g” // “x”) Desarrollando y remplazando obtenemos su forma general: Forma general de la parábola (“g” // “x”) EJ): Si tenemos la ecuación Calculamos “h”, “k” y “c”: El vértice resultara Generatriz: Foco:",
+    "keywords": [
+      "punto",
+      "parábola",
+      "directriz",
+      "paralela",
+      "rectas",
+      "recta",
+      "foco",
+      "generatriz"
+    ]
+  },
+  {
+    "id": "clase_07_definicion_00_001",
+    "clase": "Clase 7 - Vectores",
+    "tema": "Definición:",
+    "contenido": "Un vector se representa mediante un segmento de recta, orientado dentro del espacio. Tiene 3 elementos: modulo o norma, dirección y sentido. Modulo o Norma de un vector: En un espacio elucídelo los vectores son representables como segmentos orientados entre puntos de dicho espacio. Dado un vector de un espacio vectorial euclídeo, la norma de un vector se define como la distancia euclídea (en línea recta) entre dos puntos A y B que delimitan dicho vector. En : Siendo y y el vector: La norma del vector será: En : Siendo y y el vector: La norma será: EJ) Calcular la norma del vector que se forma entre los puntos: y Vectores equipolentes: antes de definir dirección y sentido, vamos a simplificar la notación de los vectores. Los vectores equipolentes son aquellos que tienen igual dirección, sentido y módulo. Esta triple igualdad nos permite operar con cualquiera de estas infinitas representaciones en el plano, para simplificar cálculos trabajaremos con la representación del vector que tiene inicio en el origen de coordenadas (en la imagen en azul). De esta forma el vector será aquel que inicie en el origen y termine en el punto . Siendo y , el vector equipolente que comienza en el origen de coordenadas será; Usando este vector el modulo seria: En nuestro ejemplo anterior: Dirección de un vector: La dirección del vector es el ángulo que forma la recta que lo contiene con el eje de las abscisas (eje horizontal). Este ángulo es el mismo para rectas paralelas. Por tanto, una forma de saber si dos vectores tienen la misma dirección es calcular el ángulo que forman con una recta horizontal.",
+    "keywords": [
+      "vector",
+      "norma",
+      "dirección",
+      "vectores",
+      "recta",
+      "espacio",
+      "será",
+      "modulo"
+    ]
+  },
+  {
+    "id": "clase_07_recordar_el_problema_del_arc_01_001",
+    "clase": "Clase 7 - Vectores",
+    "tema": "Recordar el problema del arco tangente trabajado en el MODULO I:",
+    "contenido": "Siguiendo con nuestro ejemplo: calculamos: Como el vector está en el 2do cuadrante: Sentido de un vector: Ambos vectores unen los mismos puntos, pero en sentidos contrarios. Miden lo mismo y tienen la misma dirección. Si tenemos un vector , entonces el vector opuesto sera , es decir: EJ) El opuesto de será O en nuestro ejemplo anterior el",
+    "keywords": [
+      "vector",
+      "nuestro",
+      "ejemplo",
+      "opuesto",
+      "siguiendo",
+      "calculamos",
+      "está",
+      "cuadrante"
+    ]
+  },
+  {
+    "id": "clase_07_vectores_unitariosversores_02_001",
+    "clase": "Clase 7 - Vectores",
+    "tema": "Vectores unitarios/versores :",
+    "contenido": "Un vector unitario o vector normalizado tiene una magnitud igual a uno, es decir, . Para hallar un vector unitario a partir de cualquier vector (normalizarlo), hay que dividir este por su módulo; obtendremos un vector de igual sentido y dirección pero de módulo 1. Ejemplo: Normalizar el siguiente vector calculamos su norma: El vector normalizado será entonces: Los versores asociados con las direcciones de los ejes coordenados cartesianos “x”, ”y” y “z” {\\displaystyle x,\\,y,\\,z\\,}se designan por “i”, “j” y “k”{\\displaystyle \\mathbf {i} ,\\,\\mathbf {j} ,\\,\\mathbf {k} \\,}, respectivamente. Los versores cartesianos permiten expresar analíticamente los vectores por medio de sus componentes cartesianas: , y EJ) La expresión analítica del vector {\\displaystyle {\\mathbf {v} =(1,-2,3)\\,}} es {\\displaystyle {\\mathbf {v} =\\mathbf {i} -2\\mathbf {j} +3\\mathbf {k} }}",
+    "keywords": [
+      "vector",
+      "mathbf",
+      "displaystyle",
+      "unitario",
+      "normalizado",
+      "igual",
+      "módulo",
+      "versores"
+    ]
+  },
+  {
+    "id": "clase_07_operaciones_vectoriales_03_001",
+    "clase": "Clase 7 - Vectores",
+    "tema": "Operaciones vectoriales:",
+    "contenido": "Suma: Podemos sumar vectores de dos maneras: matemáticamente o gráficamente. Para sumar vectores gráficamente dos vectores solemos utilizar la llamada regla del paralelogramo que consiste en trazar por el extremo de cada vector una paralela al otro. El vector resultante de la suma tiene su origen en el origen de los vectores y su extremo en el punto en el que se cruzan las dos paralelas que hemos trazado. Para sumar analíticamente debemos sumar respectivamente, las componentes “x” y las componentes “y”, es decir: En : Dados los vectores y En : Dados los vectores y Por ejemplo: Resta: Para restar dos vectores, se le suma al primero el opuesto del segundo, es decir: Las componentes del vector se obtienen restando sus componentes. En : Dados los vectores y En : Dados los vectores y Por ejemplo:",
+    "keywords": [
+      "vectores",
+      "sumar",
+      "componentes",
+      "dados",
+      "suma",
+      "vector",
+      "gráficamente",
+      "extremo"
+    ]
+  },
+  {
+    "id": "clase_07_producto_de_un_vector_por_un_04_001",
+    "clase": "Clase 7 - Vectores",
+    "tema": "Producto de un vector por un escalar: El producto de un vector por un escalar es otro vector cuyo módulo es el producto del escalar por el módulo del vector, cuya dirección es igual a la del vector, y cuyo sentido es contrario a este si el escalar es negativo.",
+    "contenido": "En : Dado el vector y el número real En : Dado el vector y el número real Por ejemplo: Producto escalar: También conocido como producto interno o producto punto, es una operación algebraica que toma dos secuencias de números de igual dimensión (usualmente en la forma de vectores) y retorna un único número. Algebraicamente, el producto punto es la suma de los productos de las correspondientes entradas en dos secuencias de números. Geométricamente, es el producto de dos magnitudes euclidianas de los dos vectores y el coseno del ángulo entre ellos. Siendo y tenemos que: En : En : Por ejemplo: Producto vectorial: o producto cruz, es una operación binaria entre dos vectores en un espacio tridimensional. El resultado es un vector perpendicular a los vectores que se multiplican, y por lo tanto normal al plano que los contiene. Donde es el vector unitario y ortogonal (perpendicular) a y a , su dirección está dada por la regla de la mano derecha y es el ángulo entre . En la próxima unidad utilizaremos matrices pare resolver esta operación. Vectores paralelos/perpendiculares: y Dos vectores son paralelos o llevan la misma dirección. Analíticamente un vector es paralelo a otro si cumple con que las componentes de uno de los vectores son proporcionales a las componentes del otro: En : // si: equivalente a: En : // si: equivalente a: EJ): Los vectores perpendiculares son dos vectores que forman un ángulo de 90 grados, por lo que su producto escalar es cero. En : En : EJ)::",
+    "keywords": [
+      "vectores",
+      "producto",
+      "vector",
+      "número",
+      "operación",
+      "ángulo",
+      "real",
+      "ejemplo"
+    ]
+  },
+  {
+    "id": "clase_08_introduccion_00_001",
+    "clase": "Clase 8 - Matrices",
+    "tema": "Introducción:",
+    "contenido": "La simple necesidad de ordenar algunas informaciones disponibles nos lleva muchas veces a la creación de matrices. Por ejemplo, si consideramos dos sucursales que venden tres modelos de un producto (llamémoslos 1, 2 y 3), al indicar la información sobre las ventas de cada modelo en cada una de las sucursales, podríamos organizar esta información en una tabla o cuadro como el siguiente: Al confeccionar esta tabla, hemos creado una matriz de dos filas y tres columnas que tienen los datos.",
+    "keywords": [
+      "sucursales",
+      "información",
+      "tabla",
+      "simple",
+      "necesidad",
+      "ordenar",
+      "algunas",
+      "informaciones"
+    ]
+  },
+  {
+    "id": "clase_08_definicion_01_001",
+    "clase": "Clase 8 - Matrices",
+    "tema": "Definición:",
+    "contenido": "Las matrices son un conjunto bidimensional de números o símbolos distribuidos de forma rectangular de manera que sus elementos se organizan en filas y columnas. Se utilizan tanto paréntesis como corchetes para encerrar estos números/símbolos. Una matriz se representa por medio de una letra mayúscula y sus elementos con la misma letra en minúscula , con un doble subíndice donde el primero indica la fila y el segundo la columna a la que pertenece Esta sería una matriz genérica de filas y columnas, veamos algunos ejemplos en concreto: EJ1) La tabla de la introducción: Veamos algunos elementos: ; ; EJ1) La tabla de la introducción: Veamos algunos elementos: ; ; ; Matrices particulares: Matriz fila: todos sus elementos estan en una única fila. Matriz columna: todos sus elementos estan en una única columna. Matriz nula: todos sus elementos son ceros “0” Matriz rectangular: distinto número de filas y de columnas Matriz cuadrada: mismo número de filas que de columnas Las matrices cuadradas forman dos diagonales de elementos, llamaremos diagonal principal a aquella que se conforma con los elementos de igual fila y columna: . La diagonal secundaria será la restante (en el ejemplo anterior aparece la diagonal principal resaltada de amarillo y la diagonal secundaria con letra color rojo). A partir de ahora veremos distintos tipos de matrices cuadradas: Matriz triangular superior: los elementos situados por debajo de la diagonal principal son ceros: Matriz triangular inferior: los elementos situados por encima de la diagonal principal son ceros: Matriz diagonal: todos los elementos que no están situados en la diagonal principal son nulos: Matriz escalar: matriz diagonal de elementos iguales: Matriz identidad: matriz diagonal de elementos iguales a 1: Matriz regular: matriz que tiene inversa: Matriz singular: matriz que no tiene inversa: Ya veremos más adelante como calcular la inversa de una matriz o determinar que una matriz no sea invertible, es decir, sea singular. Operaciones con matrices: Suma y resta: Dos matrices se pueden sumar sólo si tienen igual orden, es decir, si ambas son de igual (misma cantidad de filas y de columnas). En ese caso, el resultado es otra matriz del mismo orden, que se obtiene sumando los elementos correspondientes de las dos matrices involucradas. EJ) Producto de una matriz por un escalar: Toda matriz puede multiplicarse por un valor escalar, debemos multiplicar cada elemento de la matriz por este número:",
+    "keywords": [
+      "matriz",
+      "elementos",
+      "diagonal",
+      "matrices",
+      "filas",
+      "columnas",
+      "principal",
+      "fila"
+    ]
+  },
+  {
+    "id": "clase_08_definicion_01_002",
+    "clase": "Clase 8 - Matrices",
+    "tema": "Definición:",
+    "contenido": "EJ) Producto de matrices: Dos matrices A y B son multiplicables si el número de columnas de A coincide con el número de filas de B. El resultado será una matriz C con la cantidad de filas de A y la cantidad de columnas de B, por ejemplo, si tenemos una matriz de 2x3 y otra de 3x5, la matriz resultante será una matriz de 2x5. El producto de matrices no es conmutativo. EJ1) No es posible No es posible EJ2) Es posible Es posible EJ3) Es posible No es posible EJ4) Es posible No es posible El elemento de la matriz producto se obtiene multiplicando cada elemento de la fila i de la matriz A por cada elemento de la columna j de la matriz B y sumándolos. EJ) Transpuesta de una matriz: La transpuesta de una matriz consiste en considerar las filas como columnas y viceversa. Observa, por tanto, que su dimensión se invierte: EJ1) EJ2)",
+    "keywords": [
+      "matriz",
+      "posible",
+      "producto",
+      "matrices",
+      "columnas",
+      "filas",
+      "elemento",
+      "número"
+    ]
+  },
+  {
+    "id": "clase_08_determinante_de_una_matriz_02_001",
+    "clase": "Clase 8 - Matrices",
+    "tema": "Determinante de una matriz",
+    "contenido": "Para cada matriz cuadrada, hay un número asociado que llamamos su determinante, este valor servirá para saber si una matriz tiene inversa y calcularla. Si el determinante vale 0 la matriz será singular, es decir, no tiene inversa. Si el determinante es distinto de 0, la matriz tendrá inversa. Calcular un determinante será una tarea que ganara dificultad con matrices de mayor tamaño, examinemos cada caso a continuación. Matriz 1x1: En el caso de la matriz cuadrada más simple posible, es decir la matriz de 1x1 (una fila y una columna), el determinante de esa matriz es simplemente ese número que es su único elemento. EJ) Matriz 2x2: El valor del determinante será el número que se obtiene al multiplicar los elementos de la diagonal principal y restarle el producto de la diagonal secundaria: EJ) Matriz 3x3: Para resolver una matriz de este tamaño usaremos la regla de Sarrus, esta regla consiste en sumar el producto de las diagonales descendentes (diagonal principal y diagonales paralelas) y restar el producto de las diagonales ascendentes (secundaria y paralelas). Dada una matriz genérica de 3x3: Las diagonales descendentes resultaran: (a e i ) ; (b f g) ; (c d h) Las diagonales ascendentes: (c e g ) ; (b d i) ; (a f h) El determinante resultara entonces: EJ) Tambien podremos utilizar el método de Laplace, este método sirve para matrices de 3x3 o más grandes, pero para este método necesitamos definir otro concepto, la adjunta de una matriz.",
+    "keywords": [
+      "matriz",
+      "determinante",
+      "diagonales",
+      "número",
+      "inversa",
+      "será",
+      "diagonal",
+      "producto"
+    ]
+  },
+  {
+    "id": "clase_08_adjunta_de_una_matriz_03_001",
+    "clase": "Clase 8 - Matrices",
+    "tema": "Adjunta de una matriz:",
+    "contenido": "Dada una matriz cuadrada A, su matriz adjunta o matriz de cofactores es la resultante de sustituir cada término de A por el cofactor de . El término matriz adjunta suele crear confusión, ya que en muchos tratados clásicos sobre álgebra lineal corresponde a la matriz de cofactores transpuesta sin embargo, en otros textos, se corresponde a la matriz de cofactores, en este curso consideraremos: Los signos de los elementos en la matriz de cofactores siguen el siguiente orden: Es decir, si es par es si es impar es Cada elemento resultara de calcular el determinante de la matriz resultante eliminando la fila y la columna donde está el elemento (teniendo en cuenta la regla de los signos recién vistas. Veamos un ejemplo de 3x3: EJ) Resolvamos cada elemento de la matriz de cofactores: Matriz 4x4: El método de Laplace a través del cual el determinante se desarrolla usando una fila o columna. Este método, que también se puede usar para calcular determinantes de menor orden, consiste en reducir el cálculo de un determinante de cierto orden a un problema más sencillo. En esencia, para calcular un determinante de orden se deben calcular n determinantes de orden n–1 El determinante resultara la suma de los productos de los elementos de una línea cualquiera (fila o columna) por sus cofactores correspondientes. Dada una matriz genérica 3x3: Si consideramos la fila 1 Si consideramos la fila 3 Si consideramos la columna 2 Para una matriz genérica de : Si consideramos la fila 1 Si consideramos la columna 4 La fórmula no parece muy complicada, pero no olvidemos que cada cofactor implica la resolución de un determinante de una matriz de Si por ejemplo, buscamos el determinante de una matriz 4x4 deberemos resolver 4 determinantes de 3x3; Si en cambio fuera de 5x5 deberemos resolver 5 determinantes de 4x4 que a su vez deberemos resolver como 4 determinantes de 3x3 cada uno, es decir 20 determinantes 3x3. Ya que este método nos enfrenta a demasiadas cuentas, siempre elegiremos la fila o columna que tenga más cantidad de ceros, ya que cada “0” implicara que no debamos calcular el cofactor de ese elemento (ya que al multiplicar “0” por cualquier cosa siempre será “0”). EJ) Dada la matriz Para calcular su determinante buscamos la fila o columna con más ceros, en este caso, la tercera columna:",
+    "keywords": [
+      "matriz",
+      "determinante",
+      "fila",
+      "columna",
+      "cofactores",
+      "calcular",
+      "determinantes",
+      "orden"
+    ]
+  },
+  {
+    "id": "clase_08_adjunta_de_una_matriz_03_002",
+    "clase": "Clase 8 - Matrices",
+    "tema": "Adjunta de una matriz:",
+    "contenido": "Calculamos los cofactores que necesitamos: Elegimos en este caso la segunda fila Elegimos la primera columna Inversa de una matriz: Una matriz es inversa de otra cuando al multiplicar ambas (en cualquier orden) se obtiene la matriz identidad: No toda matriz tiene inversa, si el determinante de una matriz es “0” la matriz no tiene inversa y se denomina singular, si el determinante es distinto de “0” existirá la inversa y esta tendrá la siguiente forma: EJ) Para determinar si existe la inversa, primero calcularemos el determinante, podemos resolverlo con Sarrus o Laplace, en este caso es conveniente Laplace, ya que existe una columna con dos ceros: El determinante de la matriz es distinto de cero por lo que existe una inversa, a continuación calculamos la adjunta (lo resolvimos paso a paso anteriormente. Por ultimo aplicamos la fórmula: Esto significa que:",
+    "keywords": [
+      "inversa",
+      "matriz",
+      "determinante",
+      "existe",
+      "calculamos",
+      "elegimos",
+      "columna",
+      "distinto"
+    ]
+  },
+  {
+    "id": "clase_09_definicion_00_001",
+    "clase": "Clase 9 - Sistemas De Ecuaciones",
+    "tema": "Definición:",
+    "contenido": "Un sistema de ecuaciones es un conjunto de dos o más ecuaciones, la solución de un sistema de ecuaciones serán los valores que verificaran ambas ecuaciones en simultáneo, análogamente, podríamos tener un sistema de inecuaciones, veamos algunos ejemplos: EJ1) La primera ecuación tiene dos soluciones Mientras que la segunda tiene infinitas La solución de este sistema será la intersección de estas soluciones: EJ2) Noten que al resolver una inecuación (o una ecuación) con modulo, estamos resolviendo un sistema de ecuaciones EJ3) La solución tiene que verificar todas las ecuaciones siempre. Estos ejemplos son más fáciles ya que aparece una sola incógnita, normalmente, tendremos sistemas de ecuaciones con varias incógnitas, por lo que deberemos aprender varios métodos de resolución.",
+    "keywords": [
+      "ecuaciones",
+      "sistema",
+      "solución",
+      "ejemplos",
+      "ecuación",
+      "soluciones",
+      "conjunto",
+      "serán"
+    ]
+  },
+  {
+    "id": "clase_09_sistema_de_ecuaciones_lineal_01_001",
+    "clase": "Clase 9 - Sistemas De Ecuaciones",
+    "tema": "Sistema de ecuaciones lineales:",
+    "contenido": "Por ahora nos concentraremos en el estudio de los sistemas de ecuaciones lineales, en estos, todas las ecuaciones son lineales, de grado 1. Un sistema de ecuaciones lineales es un conjunto de ecuaciones lineales de la forma: Sistema de ecuaciones Sistema de incógnitas Coeficientes Términos independientes Incógnitas EJ1) Incógnitas , Coeficientes: y términos independientes: EJ2) Incógnitas , Coeficientes: y términos independientes: EJ3) Incógnitas ….. EJ4) Incógnitas …..",
+    "keywords": [
+      "incógnitas",
+      "ecuaciones",
+      "lineales",
+      "sistema",
+      "coeficientes",
+      "términos",
+      "independientes",
+      "ahora"
+    ]
+  },
+  {
+    "id": "clase_09_expresion_matricial_de_un_si_02_001",
+    "clase": "Clase 9 - Sistemas De Ecuaciones",
+    "tema": "Expresión matricial de un sistema de ecuaciones:",
+    "contenido": "La matriz ampliada es la matriz que se obtiene al añadir a la matriz “” de los coeficientes la columna “” de los términos independientes. Lo podemos representar como y Utilizando las matrices que acabamos de definir, el sistema se puede expresar como Si el número de incógnitas es igual al número de ecuaciones lineales, podemos asegurar que el sistema es cuadrado. Veamos un ejemplo:",
+    "keywords": [
+      "matriz",
+      "podemos",
+      "sistema",
+      "número",
+      "ampliada",
+      "obtiene",
+      "añadir",
+      "coeficientes"
+    ]
+  },
+  {
+    "id": "clase_09_ordenar_sistema_de_ecuacione_03_001",
+    "clase": "Clase 9 - Sistemas De Ecuaciones",
+    "tema": "Ordenar sistema de ecuaciones lineales:",
+    "contenido": "Podría ocurrir que el sistema de ecuaciones estuviera desordenado, e incluso que tengamos que operar algebraicamente para lograr ordenarlo. No siempre será necesario ordenar los sistemas, pero como para algunos métodos de resolución lo necesitamos, vamos a practicar como hacerlo. EJ1) Podríamos ordenarlo fácilmente: EJ2) Resolvamos y ordenemos:",
+    "keywords": [
+      "ordenarlo",
+      "podría",
+      "ocurrir",
+      "sistema",
+      "ecuaciones",
+      "estuviera",
+      "desordenado",
+      "incluso"
+    ]
+  },
+  {
+    "id": "clase_09_clasificacion_04_001",
+    "clase": "Clase 9 - Sistemas De Ecuaciones",
+    "tema": "Clasificación:",
+    "contenido": "Dependiendo del número de soluciones que tengan los sistemas de ecuaciones lineales tendremos: Sistema Incompatible: no tiene solución. Sistema Compatible Determinado (SCD): posee una única solución. Sistema Compatible Indeterminado (SCI): posee infinitas soluciones.",
+    "keywords": [
+      "sistema",
+      "soluciones",
+      "solución",
+      "compatible",
+      "posee",
+      "dependiendo",
+      "número",
+      "tengan"
+    ]
+  },
+  {
+    "id": "clase_09_sistemas_equivalentes_05_001",
+    "clase": "Clase 9 - Sistemas De Ecuaciones",
+    "tema": "Sistemas equivalentes:",
+    "contenido": "Son aquellos sistemas que poseen las mismas soluciones aunque posean distinto número de ecuaciones. Podremos obtener sistemas equivalentes si realizamos cualquiera de las siguientes transformaciones: Multiplicar o dividir los miembros de una ecuación por un número (distinto de cero). Cambiar una ecuación por otra. Sumarle a una ecuación otra multiplicada por un número. Eliminar una ecuación que sea igual a otra. Veamos un ejemplo:",
+    "keywords": [
+      "ecuación",
+      "número",
+      "otra",
+      "sistemas",
+      "distinto",
+      "aquellos",
+      "poseen",
+      "mismas"
+    ]
+  },
+  {
+    "id": "clase_09_sistemas_escalonados_06_001",
+    "clase": "Clase 9 - Sistemas De Ecuaciones",
+    "tema": "Sistemas escalonados:",
+    "contenido": "Son aquellos en los que cada ecuación tiene una incógnita menos que la anterior. Para resolverlos comenzamos por la ecuación con menos incógnitas",
+    "keywords": [
+      "ecuación",
+      "menos",
+      "aquellos",
+      "incógnita",
+      "anterior",
+      "resolverlos",
+      "comenzamos",
+      "incógnitas"
+    ]
+  },
+  {
+    "id": "clase_09_sistemas_homogeneos_07_001",
+    "clase": "Clase 9 - Sistemas De Ecuaciones",
+    "tema": "Sistemas homogéneos:",
+    "contenido": "Un sistema de ecuaciones lineales se denomina homogéneo si el término constante de cada ecuación del sistema es cero. Veamos algunos ejemplos:",
+    "keywords": [
+      "sistema",
+      "ecuaciones",
+      "lineales",
+      "denomina",
+      "homogéneo",
+      "término",
+      "constante",
+      "ecuación"
+    ]
+  },
+  {
+    "id": "clase_09_sustitucion_08_001",
+    "clase": "Clase 9 - Sistemas De Ecuaciones",
+    "tema": "Sustitución:",
+    "contenido": "Este método consiste en despejar una incógnita de una de las ecuaciones y sustituir en la otra ecuación el valor hallado, este método es utilizado sobre todo para sistemas de 2x2 (dos ecuaciones con dos incógnitas), vemos algunos ejemplos: EJ1) Para aplicar este método siempre conviene despejar la ecuación que sea más sencilla, en este caso la segunda, podemos elegir despejar tanto la incógnita como la , en este caso despejemos la : Ahora remplacemos la expresión que obtuvimos en la primera ecuación: Una vez que obtuvimos el valor de una incógnita, podemos remplazarlo en otras ecuaciones para despejar otras incógnitas: Al igual que as ecuaciones, los sistemas se pueden verificar (es altamente recomendable hacerlo para asegurar el correcto resultado de nuestros cálculos). Verificación: EJ2) Despejamos la ecuación mas conveniente: Ahora remplazamos en otra de las ecuaciones: Si tenemos 3 incognitas al hacer el primer remplazo quedaran 2, despejamos: Remplazamos en la ecuación que nos falta usar: Una vez que conseguimos el valor de la primera incógnita remplazamos en los despejes previos: Verificación:",
+    "keywords": [
+      "ecuaciones",
+      "ecuación",
+      "despejar",
+      "incógnita",
+      "método",
+      "valor",
+      "remplazamos",
+      "otra"
+    ]
+  },
+  {
+    "id": "clase_09_igualacion_09_001",
+    "clase": "Clase 9 - Sistemas De Ecuaciones",
+    "tema": "Igualación:",
+    "contenido": "Este método consiste en despejar la misma incógnita de las ecuaciones dadas y posteriormente hacer la igualación de ambas incógnitas, este método es utilizado sobre todo para sistemas de 2x2 (dos ecuaciones con dos incógnitas), vemos algunos ejemplos: EJ1) Para aplicar este método siempre conviene despejar las ecuaciones que sean más sencillas, en este caso, no podemos elegir ya que hay solamente dos ecuaciones, lo que si podemos elegir es que incógnita despejamos: Al igual que el método anterior, una vez que obtuvimos el valor de una incógnita, podemos remplazarlo en otras ecuaciones para despejar otras incógnitas: EJ2) En este caso, empezamos con las dos últimas ecuaciones e igualamos A: Hacemos lo mismo pero con otro par de ecuaciones, por ejemplo las primeras dos: Finalmente igualamos B: Una vez que conseguimos el valor de la primera incógnita remplazamos en los despejes previos tal cual vimos en el método anterior y verificamos para asegurar que nuestros cálculos fueron correctos.",
+    "keywords": [
+      "ecuaciones",
+      "método",
+      "incógnita",
+      "despejar",
+      "incógnitas",
+      "podemos",
+      "elegir",
+      "anterior"
+    ]
+  },
+  {
+    "id": "clase_09_metodo_de_gauss_10_001",
+    "clase": "Clase 9 - Sistemas De Ecuaciones",
+    "tema": "Método de Gauss:",
+    "contenido": "Este método consiste en transformar un sistema de ecuaciones en otro equivalente de forma que éste sea escalonado, para hacer esto usaremos la expresión matricial del sistema de ecuaciones y aplicaremos las transformaciones vistas anteriormente. Una vez que la matriz ampliada se encuentre escalonada, podremos resolverla y clasificarla, veamos un ejemplo de cada caso: EJ1) Sistema compatible determinado EJ2) Sistema compatible indeterminado Noten que nos quedaron más incógnitas que ecuaciones, ya que una fila está formada únicamente por ceros, en este caso definiremos un parámetro para definir la solución: EJ3) Sistema incompatible Una vez conseguida la matriz escalonada, observamos que en la fila 3 todos los términos son iguales a cero exceptuando el término independiente que es distinto de cero, esto nos lleva a una contradicción, ya que la fila 3 resultaría: Esto significa que el sistema no tiene solución",
+    "keywords": [
+      "sistema",
+      "ecuaciones",
+      "esto",
+      "fila",
+      "matriz",
+      "escalonada",
+      "compatible",
+      "solución"
+    ]
+  },
+  {
+    "id": "clase_09_metodo_de_gaussjordan_11_001",
+    "clase": "Clase 9 - Sistemas De Ecuaciones",
+    "tema": "Método de Gauss-Jordan:",
+    "contenido": "Es una variación del método visto anteriormente, el método de Gauss transforma la matriz de coeficientes en una matriz triangular superior. El método de Gauss-Jordan continúa el proceso de transformación hasta obtener una matriz diagonal. Tomemos un ejemplo resuelto anteriormente con método de Gauss y continuemos:",
+    "keywords": [
+      "método",
+      "gauss",
+      "matriz",
+      "anteriormente",
+      "variación",
+      "visto",
+      "transforma",
+      "coeficientes"
+    ]
+  },
+  {
+    "id": "clase_09_regla_de_cramer_para_sistema_12_001",
+    "clase": "Clase 9 - Sistemas De Ecuaciones",
+    "tema": "Regla de Cramer para Sistemas Cuadrados:",
+    "contenido": "Para resolver sistemas de ecuaciones lineales mediante la regla de Cramer se debe cumplir que el determinante de la matriz de los coeficientes sea distinto de cero. Tendremos un Sistema Compatible Determinado (S.C.D) cuya solución será: EJ)",
+    "keywords": [
+      "resolver",
+      "sistemas",
+      "ecuaciones",
+      "lineales",
+      "mediante",
+      "regla",
+      "cramer",
+      "debe"
+    ]
+  },
+  {
+    "id": "clase_09_teorema_de_rouchefrobenius_13_001",
+    "clase": "Clase 9 - Sistemas De Ecuaciones",
+    "tema": "Teorema de Rouché-Frobenius:",
+    "contenido": "Para entender este teorema, primero debemos saber que es el rango de una matriz. Rango de una matriz: es el número de filas linealmente independientes, es decir, filas que no pueden ser escritas como combinación lineal de las restantes. Veamos ejemplos: EJ1) EJ2) EJ3)",
+    "keywords": [
+      "rango",
+      "matriz",
+      "filas",
+      "entender",
+      "teorema",
+      "primero",
+      "debemos",
+      "saber"
+    ]
+  },
+  {
+    "id": "clase_09_metodo_matricial_14_001",
+    "clase": "Clase 9 - Sistemas De Ecuaciones",
+    "tema": "Método matricial:",
+    "contenido": "Los sistemas de ecuaciones lineales se pueden escribir como una ecuación matricial, de forma que cualquier sistema lo escribiremos como , donde es la matriz de coeficientes, la matriz de incógnitas y la matriz de términos independientes. Veamos un ejemplo:",
+    "keywords": [
+      "matriz",
+      "sistemas",
+      "ecuaciones",
+      "lineales",
+      "escribir",
+      "ecuación",
+      "matricial",
+      "cualquier"
+    ]
   }
 ]
