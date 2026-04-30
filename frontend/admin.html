@@ -6,27 +6,29 @@
     <title>AlgorIA // ADMIN PANEL</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
     <style>
         :root {
-            --bg: #0a0a0a;
-            --bg-card: #0d0d0d;
-            --bg-input: #111;
-            --green: #00ff41;
-            --green2: #0aff0a;
-            --cyan: #00ffff;
-            --yellow: #ffff00;
-            --red: #ff0040;
-            --border: rgba(0,255,65,0.15);
-            --border-bright: rgba(0,255,65,0.35);
-            --text: #c8ffc8;
-            --text-dim: rgba(0,255,65,0.55);
-            --text-muted: rgba(0,255,65,0.35);
+            --bg: #0b0f19;
+            --bg-card: #161d30;
+            --bg-input: #131a2c;
+            --accent: #38bdf8;
+            --accent-glow: rgba(56,189,248,0.2);
+            --accent-subtle: rgba(56,189,248,0.06);
+            --green: #34d399;
+            --green-glow: rgba(52,211,153,0.15);
+            --text: #e8edf5;
+            --text-dim: #94a3b8;
+            --text-muted: #64748b;
+            --border: rgba(56,189,248,0.1);
+            --border-bright: rgba(56,189,248,0.25);
+            --red: #f87171;
+            --yellow: #fbbf24;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'DM Sans', sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
@@ -41,8 +43,8 @@
                 0deg,
                 transparent,
                 transparent 2px,
-                rgba(0,0,0,0.07) 2px,
-                rgba(0,0,0,0.07) 3px
+                rgba(0,0,0,0.02) 2px,
+                rgba(0,0,0,0.02) 3px
             );
             pointer-events: none;
             z-index: 9999;
@@ -61,30 +63,24 @@
             border-bottom: 1px solid var(--border);
         }
         .dash-header-left h1 {
-            font-size: 1.25rem; font-weight: 700; letter-spacing: 0.12em;
-            text-transform: uppercase; color: var(--green);
-        }
-        .dash-header-left h1 .blink {
-            font-size: .72rem; color: var(--green2); margin-left: 14px;
-            animation: blink 1s step-end infinite; letter-spacing: 0.05em;
+            font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 800;
+            letter-spacing: -0.03em; color: var(--text);
         }
         .dash-header-left p {
-            color: var(--text-muted); font-size: 0.72rem; margin-top: 4px;
-            letter-spacing: 0.08em; text-transform: uppercase;
+            color: var(--text-muted); font-size: 0.78rem; margin-top: 4px;
         }
         .dash-header-right { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
         .hdr-btn {
-            padding: 8px 16px; border-radius: 6px; font-size: 0.72rem;
-            font-family: 'JetBrains Mono', monospace; cursor: pointer;
-            border: 1px solid var(--border); background: var(--bg-card);
-            color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em;
-            transition: all 0.2s;
+            padding: 7px 16px; border-radius: 8px; font-size: 0.78rem;
+            font-family: 'DM Sans', sans-serif; cursor: pointer;
+            border: 1px solid var(--border); background: transparent;
+            color: var(--text-dim); transition: all 0.2s;
         }
-        .hdr-btn:hover { border-color: var(--green); color: var(--green); box-shadow: 0 0 8px rgba(0,255,65,0.15); }
+        .hdr-btn:hover { border-color: var(--accent); color: var(--accent); }
         .hdr-btn.danger:hover { border-color: var(--red); color: var(--red); }
-        .hdr-btn.back { border-color: rgba(0,255,255,0.25); color: var(--cyan); }
-        .hdr-btn.back:hover { border-color: var(--cyan); box-shadow: 0 0 8px rgba(0,255,255,0.15); }
+        .hdr-btn.back { border-color: rgba(56,189,248,0.3); color: var(--accent); }
+        .hdr-btn.back:hover { border-color: var(--accent); }
 
         /* === STAT CARDS === */
         .stats-grid {
@@ -93,19 +89,19 @@
         }
         .stat-card {
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 8px; padding: 20px 22px;
+            border-radius: 12px; padding: 20px 22px;
             transition: border-color .2s;
         }
         .stat-card:hover { border-color: var(--border-bright); }
         .stat-label {
-            font-size: 0.66rem; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.75rem; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;
         }
         .stat-value {
-            font-size: 2rem; font-weight: 700; color: var(--green);
-            letter-spacing: -0.02em; line-height: 1;
+            font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 700;
+            color: var(--text); letter-spacing: -0.02em; line-height: 1;
         }
-        .stat-value.cyan { color: var(--cyan); }
+        .stat-value.cyan { color: var(--accent); }
         .stat-value.yellow { color: var(--yellow); }
         .stat-value.red { color: var(--red); }
 
@@ -113,34 +109,34 @@
         .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-bottom: 28px; }
         .chart-card {
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 8px; padding: 22px;
+            border-radius: 12px; padding: 22px;
         }
         .chart-card h3 {
-            font-size: 0.68rem; color: var(--text-muted); margin-bottom: 16px;
-            text-transform: uppercase; letter-spacing: 0.1em;
+            font-family: 'DM Sans', sans-serif; font-size: 0.75rem; color: var(--text-muted);
+            margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;
         }
         .chart-container { position: relative; height: 220px; }
 
         /* === TABLE === */
         .table-card {
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 8px; padding: 22px; overflow-x: auto; margin-bottom: 24px;
+            border-radius: 12px; padding: 22px; overflow-x: auto; margin-bottom: 24px;
         }
         .table-card h3 {
-            font-size: 0.68rem; color: var(--text-muted); margin-bottom: 16px;
-            text-transform: uppercase; letter-spacing: 0.1em;
+            font-family: 'DM Sans', sans-serif; font-size: 0.75rem; color: var(--text-muted);
+            margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em;
         }
         table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
         th {
             text-align: left; color: var(--text-muted); font-weight: 600; padding: 10px 12px;
-            border-bottom: 1px solid var(--border); font-size: 0.66rem;
-            text-transform: uppercase; letter-spacing: 0.08em;
+            border-bottom: 1px solid var(--border); font-size: 0.72rem; font-family: 'DM Sans', sans-serif;
+            text-transform: uppercase; letter-spacing: 0.05em;
         }
         td {
-            padding: 10px 12px; border-bottom: 1px solid rgba(0,255,65,0.05);
+            padding: 10px 12px; border-bottom: 1px solid rgba(56,189,248,0.05);
             color: var(--text-dim);
         }
-        tr:hover td { background: rgba(0,255,65,0.03); }
+        tr:hover td { background: rgba(56,189,248,0.03); }
 
         /* Row highlights */
         tr.row-admin td:first-child { border-left: 3px solid var(--green); }
@@ -152,13 +148,13 @@
             font-size: 0.66rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
         }
         .role-user { background: rgba(100,100,100,0.18); color: #888; border: 1px solid rgba(100,100,100,0.2); }
-        .role-admin { background: rgba(0,255,65,0.1); color: var(--green); border: 1px solid rgba(0,255,65,0.25); }
-        .role-superadmin { background: rgba(255,255,0,0.1); color: var(--yellow); border: 1px solid rgba(255,255,0,0.3); }
+        .role-admin { background: rgba(52,211,153,0.1); color: var(--green); border: 1px solid rgba(52,211,153,0.25); }
+        .role-superadmin { background: rgba(251,191,36,0.1); color: var(--yellow); border: 1px solid rgba(251,191,36,0.3); }
 
         /* Role action buttons */
         .role-btn {
-            padding: 3px 9px; border-radius: 4px; font-size: 0.66rem;
-            font-family: 'JetBrains Mono', monospace; cursor: pointer;
+            padding: 3px 9px; border-radius: 4px; font-size: 0.72rem;
+            font-family: 'DM Sans', sans-serif; cursor: pointer;
             border: 1px solid var(--border); background: transparent;
             color: var(--text-dim); transition: all .15s; margin-right: 4px;
         }
@@ -167,15 +163,15 @@
 
         /* Token bar */
         .token-bar-wrap { display: flex; align-items: center; gap: 8px; }
-        .token-bar { flex:1; height:5px; background:rgba(0,255,65,0.08); border-radius:3px; min-width:50px; }
-        .token-bar-fill { height:100%; border-radius:3px; background: var(--green); transition:width .3s; }
+        .token-bar { flex:1; height:5px; background:rgba(56,189,248,0.08); border-radius:3px; min-width:50px; }
+        .token-bar-fill { height:100%; border-radius:3px; background: var(--accent); transition:width .3s; }
         .token-bar-fill.warn { background: var(--yellow); }
         .token-bar-fill.danger { background: var(--red); }
         .token-pct { font-size:0.68rem; color:var(--text-muted); min-width:32px; text-align:right; }
 
         /* Interaction table badge */
         .badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.68rem; font-weight:600; }
-        .badge-algebra { background:rgba(0,255,255,0.08); color:var(--cyan); border:1px solid rgba(0,255,255,0.2); }
+        .badge-algebra { background:var(--accent-subtle); color:var(--accent); border:1px solid var(--border); }
         .msg-preview { max-width:280px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
         .loading { text-align:center; padding:60px; color:var(--text-muted); letter-spacing:.08em; }
@@ -188,7 +184,7 @@
         .star-dist { display:flex; flex-direction:column; gap:6px; }
         .star-row-dist { display:flex; align-items:center; gap:8px; font-size:0.74rem; color:var(--text-dim); }
         .star-row-dist .star-label { width:24px; text-align:right; flex-shrink:0; color:var(--yellow); }
-        .star-row-dist .star-bar { flex:1; height:6px; background:rgba(255,255,0,0.07); border-radius:3px; overflow:hidden; }
+        .star-row-dist .star-bar { flex:1; height:6px; background:rgba(251,191,36,0.1); border-radius:3px; overflow:hidden; }
         .star-row-dist .star-bar-fill { height:100%; border-radius:3px; background:var(--yellow); transition:width .4s; }
         .star-row-dist .star-count { width:22px; text-align:right; color:var(--text-muted); flex-shrink:0; }
         .feedback-comments { display:flex; flex-direction:column; gap:10px; }
@@ -221,7 +217,7 @@
     <div class="dashboard" id="dashboard">
         <header class="dash-header">
             <div class="dash-header-left">
-                <h1>AlgorIA // ADMIN PANEL <span style="color:var(--green2);font-size:.85rem;margin-left:10px;letter-spacing:0">●</span></h1>
+                <h1>AlgorIA // Admin Panel <span style="color:var(--green);font-size:.85rem;margin-left:10px;letter-spacing:0">●</span></h1>
                 <p>Panel de administración · UAI</p>
             </div>
             <div class="dash-header-right">
@@ -371,16 +367,16 @@
                     labels: data.map(d=>d.date.slice(5)),
                     datasets: [{
                         label: 'Interacciones', data: data.map(d=>d.count),
-                        backgroundColor: 'rgba(0,255,65,0.25)',
-                        borderColor: '#00ff41', borderWidth: 1, borderRadius: 3,
+                        backgroundColor: 'rgba(56,189,248,0.18)',
+                        borderColor: '#38bdf8', borderWidth: 1, borderRadius: 3,
                     }]
                 },
                 options: {
                     responsive:true, maintainAspectRatio:false,
                     plugins:{ legend:{display:false} },
                     scales:{
-                        x:{ ticks:{color:'rgba(0,255,65,0.4)',font:{size:9,family:'JetBrains Mono'}}, grid:{display:false} },
-                        y:{ ticks:{color:'rgba(0,255,65,0.4)',stepSize:1,font:{size:9,family:'JetBrains Mono'}}, grid:{color:'rgba(0,255,65,0.05)'}, beginAtZero:true }
+                        x:{ ticks:{color:'#64748b',font:{size:9,family:'DM Sans'}}, grid:{display:false} },
+                        y:{ ticks:{color:'#64748b',stepSize:1,font:{size:9,family:'DM Sans'}}, grid:{color:'rgba(56,189,248,0.06)'}, beginAtZero:true }
                     }
                 }
             });
@@ -396,13 +392,13 @@
                     labels: data.map(d=>d.topic),
                     datasets: [{
                         data: data.map(d=>d.count),
-                        backgroundColor: ['#00ff41','#00ffff','#ffff00','#ff0040','#7f00ff'],
+                        backgroundColor: ['#38bdf8','#34d399','#f472b6','#fb923c'],
                         borderWidth: 0,
                     }]
                 },
                 options: {
                     responsive:true, maintainAspectRatio:false,
-                    plugins:{ legend:{ position:'bottom', labels:{ color:'rgba(0,255,65,0.55)', font:{size:10,family:'JetBrains Mono'}, padding:12 } } }
+                    plugins:{ legend:{ position:'bottom', labels:{ color:'#94a3b8', font:{size:10,family:'DM Sans'}, padding:12 } } }
                 }
             });
         }
@@ -415,7 +411,7 @@
             if (ragChartInstance) ragChartInstance.destroy();
             const labels = ['Alta','Media','Baja','Sin RAG'];
             const keys = ['high','medium','low','none'];
-            const colors = ['#00ff41','#ffff00','#ff0040','rgba(0,255,65,0.2)'];
+            const colors = ['#34d399','#fbbf24','#f87171','rgba(56,189,248,0.2)'];
             ragChartInstance = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
@@ -424,7 +420,7 @@
                 options: {
                     responsive:true, maintainAspectRatio:false,
                     plugins:{
-                        legend:{ position:'bottom', labels:{ color:'rgba(0,255,65,0.55)', font:{size:10,family:'JetBrains Mono'}, padding:14 } },
+                        legend:{ position:'bottom', labels:{ color:'#94a3b8', font:{size:10,family:'DM Sans'}, padding:14 } },
                         tooltip:{ callbacks:{ label(ctx){ const t=ctx.dataset.data.reduce((a,b)=>a+b,0); const p=t?Math.round(ctx.parsed/t*100):0; return ` ${ctx.label}: ${ctx.parsed} (${p}%)`; } } }
                     }
                 }
