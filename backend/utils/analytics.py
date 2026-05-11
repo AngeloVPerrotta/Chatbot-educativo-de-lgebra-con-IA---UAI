@@ -1,8 +1,9 @@
+import os
 import sqlite3
 from datetime import datetime, timedelta
 from typing import Optional
 
-DB_PATH = '/tmp/analytics.db'
+DB_PATH = '/data/analytics.db' if os.path.exists('/data') else './analytics.db'
 
 
 def _get_conn():
