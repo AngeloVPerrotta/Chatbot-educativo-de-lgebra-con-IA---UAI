@@ -32,7 +32,10 @@ from utils.analytics import (
     is_superadmin,
     check_rate_limit,
     increment_rate_limit,
+    grant_extra_messages,
+    get_user_payment_status,
 )
+from utils.payments import create_payment_link
 
 load_dotenv(override=False)
 logger.info(f'GEMINI_API_KEY presente en env: {"Si" if os.getenv("GEMINI_API_KEY") else "No"}')
@@ -131,17 +134,23 @@ def chat_endpoint(request: ChatRequest, req: Request):
         if request.user_email and not check_token_limit(request.user_email):
             raise HTTPException(status_code=429, detail="TOKEN_LIMIT_EXCEEDED")
 
-        # Verificar rate limit (15 mensajes / 24hs por usuario o IP)
-        identifier = request.user_email.strip().lower() if request.user_email else req.client.host
-        rl = check_rate_limit(identifier)
-        if not rl["allowed"]:
-            hours_left = round(rl["resets_in_seconds"] / 3600, 1)
+        # Verificar rate limit (15 mensajes / 24hs) — doble: IP siempre + email si viene.
+        # Si cualquiera está limitado, rechazar (evita evasión cambiando de cuenta).
+        ip_identifier = req.client.host
+        email_identifier = request.user_email.strip().lower() if request.user_email else None
+
+        rl_ip = check_rate_limit(ip_identifier)
+        rl_email = check_rate_limit(email_identifier) if email_identifier else {"allowed": True, "resets_in_seconds": 0}
+
+        rl_blocked = rl_ip if not rl_ip["allowed"] else (rl_email if not rl_email["allowed"] else None)
+        if rl_blocked:
+            hours_left = round(rl_blocked["resets_in_seconds"] / 3600, 1)
             raise HTTPException(
                 status_code=429,
                 detail={
                     "code": "RATE_LIMITED",
                     "remaining": 0,
-                    "resets_in": rl["resets_in_seconds"],
+                    "resets_in": rl_blocked["resets_in_seconds"],
                     "message": f"Alcanzaste el límite de 15 consultas. Se renueva en {hours_left} horas.",
                 },
             )
@@ -177,8 +186,10 @@ def chat_endpoint(request: ChatRequest, req: Request):
         if request.user_email:
             add_tokens_used(request.user_email, len(respuesta))
 
-        # Incrementar contador de rate limit
-        increment_rate_limit(identifier)
+        # Incrementar contador de rate limit para IP y email (si aplica)
+        increment_rate_limit(ip_identifier)
+        if email_identifier:
+            increment_rate_limit(email_identifier)
 
         # Guardar historial de chat
         if request.user_email:
@@ -337,3 +348,74 @@ def session_detail(email: str, session_id: str):
 @app.get("/rate-limit")
 def rate_limit_check(identifier: str):
     return check_rate_limit(identifier.strip().lower())
+
+
+# --- POST /payment/create-link ---
+
+PLAN_QUANTITIES = {'basico': 15, 'estudiante': 60, 'intensivo': 200, 'apoyo': 25}
+
+class PaymentLinkRequest(BaseModel):
+    email: str
+    plan: str = "apoyo"
+
+@app.post("/payment/create-link")
+def payment_create_link(payload: PaymentLinkRequest):
+    email = payload.email.strip().lower()
+    if not email:
+        raise HTTPException(status_code=422, detail="Se requiere email.")
+    plan = payload.plan if payload.plan in PLAN_QUANTITIES else "apoyo"
+    try:
+        url = create_payment_link(email, plan)
+        return {"url": url}
+    except ValueError as e:
+        logger.error(f"Error de configuración en pago: {e}")
+        raise HTTPException(status_code=503, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error creando link de pago: {e}")
+        raise HTTPException(status_code=500, detail="No se pudo generar el link de pago.")
+
+
+# --- POST /payment/webhook ---
+
+@app.post("/payment/webhook")
+async def payment_webhook(req: Request):
+    try:
+        body = await req.json()
+    except Exception:
+        return {"ok": False}
+
+    if body.get("type") != "payment":
+        return {"ok": True}
+
+    payment_id = body.get("data", {}).get("id")
+    if not payment_id:
+        return {"ok": True}
+
+    try:
+        from utils.payments import create_payment_link as _  # ensure module loaded
+        import mercadopago, os
+        sdk = mercadopago.SDK(os.getenv("MP_ACCESS_TOKEN", ""))
+        result = sdk.payment().get(payment_id)
+        payment = result.get("response", {})
+        if payment.get("status") == "approved":
+            ref = payment.get("external_reference", "").strip()
+            if "|" in ref:
+                plan, email = ref.split("|", 1)
+                email = email.strip().lower()
+            else:
+                plan, email = "apoyo", ref.strip().lower()
+            qty = PLAN_QUANTITIES.get(plan, 25)
+            if email:
+                grant_extra_messages(email, qty)
+                logger.info(f"Pago aprobado: {qty} consultas extra otorgadas a {email} (plan: {plan})")
+    except Exception as e:
+        logger.error(f"Error procesando webhook de pago: {e}")
+
+    return {"ok": True}
+
+
+# --- GET /payment/status ---
+
+@app.get("/payment/status")
+def payment_status(email: str):
+    return get_user_payment_status(email.strip().lower())

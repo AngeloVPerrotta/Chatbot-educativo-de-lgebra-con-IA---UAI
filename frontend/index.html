@@ -206,6 +206,29 @@
         .suggestion-btn{padding:5px 11px;background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);font-size:.77rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .18s}
         .suggestion-btn:hover{border-color:var(--accent);color:var(--accent-soft);background:var(--accent-subtle)}
 
+        /* --- Billing popup --- */
+        .billing-overlay{position:fixed;inset:0;z-index:800;background:rgba(5,8,18,0.85);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeUp .35s ease}
+        .billing-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:32px 28px 24px;width:100%;max-width:540px;display:flex;flex-direction:column;align-items:center;gap:20px;box-shadow:0 12px 60px rgba(0,0,0,0.7)}
+        .billing-title{font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text-primary);text-align:center;letter-spacing:-0.02em}
+        .billing-sub{font-size:.85rem;color:var(--text-muted);text-align:center;margin-top:-12px}
+        .billing-plans{display:flex;gap:12px;width:100%;flex-wrap:wrap;justify-content:center}
+        .billing-plan{position:relative;flex:1;min-width:140px;background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:border-color .2s,box-shadow .2s}
+        .billing-plan:hover{border-color:var(--accent);box-shadow:0 0 16px var(--accent-glow)}
+        .billing-plan.popular{border-color:#22d3ee;box-shadow:0 0 14px rgba(34,211,238,0.2)}
+        .billing-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:#22d3ee;color:#0b0f19;font-size:.68rem;font-weight:700;padding:2px 10px;border-radius:20px;white-space:nowrap;letter-spacing:.04em}
+        .billing-plan-name{font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase}
+        .billing-plan-price{font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text-primary)}
+        .billing-plan-qty{font-size:.78rem;color:var(--accent);font-weight:600}
+        .billing-plan-desc{font-size:.75rem;color:var(--text-muted);text-align:center;line-height:1.4}
+        .billing-plan-btn{margin-top:4px;width:100%;padding:9px 0;background:var(--user-bubble);border:none;border-radius:9px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:opacity .2s}
+        .billing-plan-btn:hover{opacity:.88}
+        .billing-plan-btn:disabled{opacity:.45;cursor:not-allowed}
+        .billing-plan.popular .billing-plan-btn{background:linear-gradient(135deg,#22d3ee,#6c63ff)}
+        .billing-note{font-size:.73rem;color:var(--text-muted);text-align:center;line-height:1.5;max-width:380px}
+        .billing-dismiss{font-size:.82rem;color:var(--text-muted);cursor:pointer;text-decoration:none;transition:color .2s;background:none;border:none;font-family:'DM Sans',sans-serif}
+        .billing-dismiss:hover{color:var(--text-secondary)}
+        @media(max-width:480px){.billing-plans{flex-direction:column}.billing-plan{min-width:unset}}
+
         /* --- Feedback popup --- */
         .feedback-overlay{position:fixed;inset:0;z-index:600;background:rgba(11,15,25,0.7);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeUp .4s ease}
         .feedback-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:28px 28px 24px;width:100%;max-width:360px;display:flex;flex-direction:column;align-items:center;gap:16px;box-shadow:0 8px 40px rgba(0,0,0,0.5)}
@@ -292,6 +315,40 @@
                 <button class="auth-btn" onclick="submitFeedback()">Enviar</button>
                 <button class="clear-btn" onclick="closeFeedback()">Ahora no</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Billing popup -->
+    <div class="billing-overlay" id="billingPopup" style="display:none">
+        <div class="billing-card">
+            <div class="billing-title">Llegaste al límite de consultas diarias</div>
+            <div class="billing-sub">Elegí un plan para seguir aprendiendo</div>
+            <div class="billing-plans">
+                <div class="billing-plan" id="bplanBasico">
+                    <div class="billing-plan-name">Básico</div>
+                    <div class="billing-plan-price">$500 <span style="font-size:.9rem;font-weight:500">ARS</span></div>
+                    <div class="billing-plan-qty">15 consultas extra</div>
+                    <div class="billing-plan-desc">Para una sesión de estudio</div>
+                    <button class="billing-plan-btn" onclick="choosePlan('basico',this)">Elegir</button>
+                </div>
+                <div class="billing-plan popular" id="bplanEstudiante">
+                    <div class="billing-badge">Más popular</div>
+                    <div class="billing-plan-name">Estudiante</div>
+                    <div class="billing-plan-price">$1.500 <span style="font-size:.9rem;font-weight:500">ARS</span></div>
+                    <div class="billing-plan-qty">60 consultas extra</div>
+                    <div class="billing-plan-desc">Para preparar un parcial</div>
+                    <button class="billing-plan-btn" onclick="choosePlan('estudiante',this)">Elegir</button>
+                </div>
+                <div class="billing-plan" id="bplanIntensivo">
+                    <div class="billing-plan-name">Intensivo</div>
+                    <div class="billing-plan-price">$3.500 <span style="font-size:.9rem;font-weight:500">ARS</span></div>
+                    <div class="billing-plan-qty">200 consultas extra</div>
+                    <div class="billing-plan-desc">Para todo el cuatrimestre</div>
+                    <button class="billing-plan-btn" onclick="choosePlan('intensivo',this)">Elegir</button>
+                </div>
+            </div>
+            <div class="billing-note">Las consultas no usadas no vencen. Se renuevan 15 consultas gratis cada 24hs.</div>
+            <button class="billing-dismiss" onclick="closeBillingPopup()">Ahora no</button>
         </div>
     </div>
 
@@ -783,33 +840,27 @@
             chatArea.scrollTop = chatArea.scrollHeight;
         }
 
-        async function addPaymentButton(email) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'message bot';
-            wrapper.style.cssText = 'align-items:center;';
-            const av = document.createElement('div'); av.className = 'message-avatar'; av.textContent = 'A';
-            const bb = document.createElement('div'); bb.className = 'message-content';
-            const btn = document.createElement('button');
-            btn.textContent = 'Desbloquear 50 consultas — $1.000 ARS';
-            btn.style.cssText = 'margin-top:8px;padding:10px 18px;background:linear-gradient(135deg,#6c63ff,#a78bfa);color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:0.95rem;font-weight:600;transition:opacity .2s;';
-            btn.onmouseenter = () => btn.style.opacity = '0.85';
-            btn.onmouseleave = () => btn.style.opacity = '1';
-            btn.onclick = async () => {
-                btn.disabled = true; btn.textContent = 'Redirigiendo…';
-                try {
-                    const r = await fetch(`${BACKEND}/payment/create-link`, {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({email})
-                    });
-                    const d = await r.json();
-                    if (d.url) { window.location.href = d.url; }
-                    else { btn.textContent = 'Error al generar el link. Reintentá.'; btn.disabled = false; }
-                } catch(e) { btn.textContent = 'Error de conexión. Reintentá.'; btn.disabled = false; }
-            };
-            bb.appendChild(btn);
-            wrapper.appendChild(av); wrapper.appendChild(bb); chatArea.appendChild(wrapper);
-            chatArea.scrollTop = chatArea.scrollHeight;
+        function showBillingPopup() {
+            document.getElementById('billingPopup').style.display = 'flex';
+        }
+
+        function closeBillingPopup() {
+            document.getElementById('billingPopup').style.display = 'none';
+        }
+
+        async function choosePlan(plan, btn) {
+            const email = (currentUser && currentUser.email) ? currentUser.email : 'apoyo@algoria.com';
+            btn.disabled = true; btn.textContent = 'Redirigiendo…';
+            try {
+                const r = await fetch(`${BACKEND}/payment/create-link`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({email, plan})
+                });
+                const d = await r.json();
+                if (d.url) { window.open(d.url, '_blank'); closeBillingPopup(); }
+                else { btn.textContent = 'Error. Reintentá.'; btn.disabled = false; }
+            } catch(e) { btn.textContent = 'Error. Reintentá.'; btn.disabled = false; }
         }
 
         function showTyping() {
@@ -858,9 +909,7 @@
                     if (detail.code === 'RATE_LIMITED') {
                         const hours = Math.ceil((detail.resets_in || 86400) / 3600);
                         addMessage('bot', `Llegaste al límite de 15 consultas por hoy. Se renueva en ${hours} hora${hours !== 1 ? 's' : ''}.`);
-                        if (currentUser && currentUser.email) {
-                            addPaymentButton(currentUser.email);
-                        }
+                        showBillingPopup();
                         rlRemaining = 0;
                         updateRlCounter();
                     } else {
@@ -1103,18 +1152,20 @@
         // === SUPPORT LINK ===
         document.getElementById('supportLink').addEventListener('click', async function(e) {
             e.preventDefault();
-            const email = (currentUser && currentUser.email) ? currentUser.email : 'anonimo@algoria.com';
+            const email = (currentUser && currentUser.email) ? currentUser.email : 'apoyo@algoria.com';
+            const originalText = this.innerHTML;
             this.textContent = 'Redirigiendo…';
             try {
                 const r = await fetch(`${BACKEND}/payment/create-link`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({email})
+                    body: JSON.stringify({email, plan: 'apoyo'})
                 });
                 const d = await r.json();
-                if (d.url) { window.location.href = d.url; }
-                else { this.textContent = '&#9749; Apoy&#225; a AlgorIA'; }
-            } catch(e) { this.textContent = '&#9749; Apoy&#225; a AlgorIA'; }
+                if (d.url) { window.open(d.url, '_blank'); }
+                else { alert('No se pudo generar el link. Intentá de nuevo.'); }
+            } catch(e) { alert('No se pudo generar el link. Intentá de nuevo.'); }
+            this.innerHTML = originalText;
         });
 
         // === INIT ===

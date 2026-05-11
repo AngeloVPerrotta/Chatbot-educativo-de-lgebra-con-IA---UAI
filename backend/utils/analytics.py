@@ -91,9 +91,15 @@ def _init_db():
                 identifier TEXT UNIQUE NOT NULL,
                 message_count INTEGER DEFAULT 0,
                 window_start DATETIME NOT NULL,
-                created_at DATETIME DEFAULT (datetime('now'))
+                created_at DATETIME DEFAULT (datetime('now')),
+                bonus_messages INTEGER DEFAULT 0
             )
         """)
+        # Backward-compatible migration: add bonus_messages if not present
+        try:
+            conn.execute("ALTER TABLE rate_limits ADD COLUMN bonus_messages INTEGER DEFAULT 0")
+        except Exception:
+            pass
 
 
 _init_db()
@@ -359,32 +365,62 @@ def check_rate_limit(identifier: str) -> dict:
     with _get_conn() as conn:
         conn.row_factory = sqlite3.Row
         row = conn.execute(
-            "SELECT message_count, window_start FROM rate_limits WHERE identifier = ?",
+            "SELECT message_count, window_start, COALESCE(bonus_messages, 0) as bonus_messages FROM rate_limits WHERE identifier = ?",
             (identifier,),
         ).fetchone()
 
         if row is None:
-            # New identifier — will be created on first increment
             return {"allowed": True, "remaining": RATE_LIMIT_MAX, "resets_in_seconds": RATE_LIMIT_WINDOW_HOURS * 3600}
 
+        effective_limit = RATE_LIMIT_MAX + row["bonus_messages"]
         window_start = datetime.fromisoformat(row["window_start"])
         if window_start < window_cutoff:
-            # Window expired — reset
+            # Window expired — reset count but keep bonus
             conn.execute(
                 "UPDATE rate_limits SET message_count = 0, window_start = ? WHERE identifier = ?",
                 (now.isoformat(), identifier),
             )
             conn.commit()
-            return {"allowed": True, "remaining": RATE_LIMIT_MAX, "resets_in_seconds": RATE_LIMIT_WINDOW_HOURS * 3600}
+            return {"allowed": True, "remaining": effective_limit, "resets_in_seconds": RATE_LIMIT_WINDOW_HOURS * 3600}
 
         count = row["message_count"]
         resets_at = window_start + timedelta(hours=RATE_LIMIT_WINDOW_HOURS)
         resets_in = max(0, int((resets_at - now).total_seconds()))
 
-        if count >= RATE_LIMIT_MAX:
+        if count >= effective_limit:
             return {"allowed": False, "remaining": 0, "resets_in_seconds": resets_in}
 
-        return {"allowed": True, "remaining": RATE_LIMIT_MAX - count, "resets_in_seconds": resets_in}
+        return {"allowed": True, "remaining": effective_limit - count, "resets_in_seconds": resets_in}
+
+
+def grant_extra_messages(email: str, amount: int = 50):
+    """Suma `amount` consultas bonus al email (crea el registro si no existe)."""
+    now = datetime.utcnow()
+    with _get_conn() as conn:
+        existing = conn.execute(
+            "SELECT id FROM rate_limits WHERE identifier = ?", (email,)
+        ).fetchone()
+        if existing is None:
+            conn.execute(
+                "INSERT INTO rate_limits (identifier, message_count, window_start, bonus_messages) VALUES (?, 0, ?, ?)",
+                (email, now.isoformat(), amount),
+            )
+        else:
+            conn.execute(
+                "UPDATE rate_limits SET bonus_messages = COALESCE(bonus_messages, 0) + ? WHERE identifier = ?",
+                (amount, email),
+            )
+        conn.commit()
+
+
+def get_user_payment_status(email: str) -> dict:
+    with _get_conn() as conn:
+        row = conn.execute(
+            "SELECT COALESCE(bonus_messages, 0) as bonus FROM rate_limits WHERE identifier = ?",
+            (email,),
+        ).fetchone()
+    bonus = row[0] if row else 0
+    return {"email": email, "has_bonus": bonus > 0, "bonus_messages": bonus}
 
 
 def increment_rate_limit(identifier: str):
