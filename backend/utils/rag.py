@@ -24,7 +24,7 @@ def _tokenize(text: str) -> set:
     return tokens - stopwords
 
 
-def retrieve_context(query: str, top_k: int = 3) -> tuple:
+def retrieve_context(query: str, top_k: int = 2) -> tuple:
     """Returns (context_text, max_score). context_text is empty string if no results."""
     chunks = _load_chunks()
     query_tokens = _tokenize(query)
@@ -64,6 +64,6 @@ def retrieve_context(query: str, top_k: int = 3) -> tuple:
         parts.append(f"[{chunk['clase']} | {chunk['tema']}]\n{chunk['contenido']}")
 
     context = "\n\n".join(parts)
-    if len(context) > 800:
+    if len(context) > 400:
         context = context[:800]
     return context, max_score

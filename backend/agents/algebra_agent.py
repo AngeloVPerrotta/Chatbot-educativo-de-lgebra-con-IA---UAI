@@ -56,11 +56,14 @@ def chat(historial: list, session_id: str = None) -> str:
             historial = historial[-6:]
         logger.info(f'Total mensajes (truncado): {len(historial)}')
 
+        total_input = len(system_prompt) + sum(len(m.get('content','')) for m in historial)
+        logger.info(f'TOTAL INPUT ESTIMADO: {total_input} caracteres (~{total_input//4} tokens, costo estimado: ${total_input/4/1000000*0.80:.4f})')
+
         logger.info('Llamando a Anthropic API...')
         t_start = time.time()
         response = client.messages.create(
             model='claude-haiku-4-5-20251001',
-            max_tokens=700,
+            max_tokens=500,
             system=system_prompt,
             messages=historial
         )
