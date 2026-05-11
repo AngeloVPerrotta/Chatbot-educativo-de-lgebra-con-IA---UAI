@@ -32,13 +32,15 @@ def chat(historial: list, session_id: str = None) -> str:
         system_prompt = load_system_prompt()
         logger.info(f'System prompt cargado: {len(system_prompt)} caracteres')
 
-        logger.info(f'Total mensajes: {len(historial)}')
+        if len(historial) > 6:
+            historial = historial[-6:]
+        logger.info(f'Total mensajes (truncado): {len(historial)}')
 
         logger.info('Llamando a Anthropic API...')
         t_start = time.time()
         response = client.messages.create(
             model='claude-haiku-4-5-20251001',
-            max_tokens=1024,
+            max_tokens=700,
             system=system_prompt,
             messages=historial
         )

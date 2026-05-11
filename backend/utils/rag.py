@@ -63,4 +63,7 @@ def retrieve_context(query: str, top_k: int = 3) -> tuple:
     for chunk in top_chunks:
         parts.append(f"[{chunk['clase']} | {chunk['tema']}]\n{chunk['contenido']}")
 
-    return "\n\n".join(parts), max_score
+    context = "\n\n".join(parts)
+    if len(context) > 800:
+        context = context[:800]
+    return context, max_score

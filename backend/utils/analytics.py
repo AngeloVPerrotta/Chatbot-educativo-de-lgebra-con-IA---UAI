@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
 
 DB_PATH = '/tmp/analytics.db'
@@ -80,6 +80,16 @@ def _init_db():
                 session_id TEXT,
                 role TEXT NOT NULL,
                 content TEXT NOT NULL,
+                created_at DATETIME DEFAULT (datetime('now'))
+            )
+        """)
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS rate_limits (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                identifier TEXT UNIQUE NOT NULL,
+                message_count INTEGER DEFAULT 0,
+                window_start DATETIME NOT NULL,
                 created_at DATETIME DEFAULT (datetime('now'))
             )
         """)
@@ -332,3 +342,64 @@ def get_session_messages(session_id: str) -> list:
             (session_id,),
         ).fetchall()
     return [dict(r) for r in rows]
+
+
+# --- Rate limiting ---
+
+RATE_LIMIT_MAX = 15
+RATE_LIMIT_WINDOW_HOURS = 24
+
+
+def check_rate_limit(identifier: str) -> dict:
+    """Returns {allowed: bool, remaining: int, resets_in_seconds: int}."""
+    now = datetime.utcnow()
+    window_cutoff = now - timedelta(hours=RATE_LIMIT_WINDOW_HOURS)
+
+    with _get_conn() as conn:
+        conn.row_factory = sqlite3.Row
+        row = conn.execute(
+            "SELECT message_count, window_start FROM rate_limits WHERE identifier = ?",
+            (identifier,),
+        ).fetchone()
+
+        if row is None:
+            # New identifier — will be created on first increment
+            return {"allowed": True, "remaining": RATE_LIMIT_MAX, "resets_in_seconds": RATE_LIMIT_WINDOW_HOURS * 3600}
+
+        window_start = datetime.fromisoformat(row["window_start"])
+        if window_start < window_cutoff:
+            # Window expired — reset
+            conn.execute(
+                "UPDATE rate_limits SET message_count = 0, window_start = ? WHERE identifier = ?",
+                (now.isoformat(), identifier),
+            )
+            conn.commit()
+            return {"allowed": True, "remaining": RATE_LIMIT_MAX, "resets_in_seconds": RATE_LIMIT_WINDOW_HOURS * 3600}
+
+        count = row["message_count"]
+        resets_at = window_start + timedelta(hours=RATE_LIMIT_WINDOW_HOURS)
+        resets_in = max(0, int((resets_at - now).total_seconds()))
+
+        if count >= RATE_LIMIT_MAX:
+            return {"allowed": False, "remaining": 0, "resets_in_seconds": resets_in}
+
+        return {"allowed": True, "remaining": RATE_LIMIT_MAX - count, "resets_in_seconds": resets_in}
+
+
+def increment_rate_limit(identifier: str):
+    now = datetime.utcnow()
+    with _get_conn() as conn:
+        existing = conn.execute(
+            "SELECT id FROM rate_limits WHERE identifier = ?", (identifier,)
+        ).fetchone()
+        if existing is None:
+            conn.execute(
+                "INSERT INTO rate_limits (identifier, message_count, window_start) VALUES (?, 1, ?)",
+                (identifier, now.isoformat()),
+            )
+        else:
+            conn.execute(
+                "UPDATE rate_limits SET message_count = message_count + 1 WHERE identifier = ?",
+                (identifier,),
+            )
+        conn.commit()

@@ -30,6 +30,8 @@ from utils.analytics import (
     set_user_role,
     is_admin_or_super,
     is_superadmin,
+    check_rate_limit,
+    increment_rate_limit,
 )
 
 load_dotenv(override=False)
@@ -115,7 +117,7 @@ def auth_endpoint(payload: AuthRequest):
 # mantiene el historial de la sesión y retorna la respuesta del modelo.
 
 @app.post("/chat", response_model=ChatResponse)
-def chat_endpoint(request: ChatRequest):
+def chat_endpoint(request: ChatRequest, req: Request):
     try:
         logger.info(f'=== ENDPOINT /chat ===')
         logger.info(f'Materia: {request.materia}')
@@ -128,6 +130,21 @@ def chat_endpoint(request: ChatRequest):
         # Verificar límite de tokens si viene user_email
         if request.user_email and not check_token_limit(request.user_email):
             raise HTTPException(status_code=429, detail="TOKEN_LIMIT_EXCEEDED")
+
+        # Verificar rate limit (15 mensajes / 24hs por usuario o IP)
+        identifier = request.user_email.strip().lower() if request.user_email else req.client.host
+        rl = check_rate_limit(identifier)
+        if not rl["allowed"]:
+            hours_left = round(rl["resets_in_seconds"] / 3600, 1)
+            raise HTTPException(
+                status_code=429,
+                detail={
+                    "code": "RATE_LIMITED",
+                    "remaining": 0,
+                    "resets_in": rl["resets_in_seconds"],
+                    "message": f"Alcanzaste el límite de 15 consultas. Se renueva en {hours_left} horas.",
+                },
+            )
 
         # Agregar el mensaje del usuario al historial de la sesión
         append_message(request.session_id, "user", request.message)
@@ -159,6 +176,9 @@ def chat_endpoint(request: ChatRequest):
         # Actualizar tokens usados (aproximado por longitud de respuesta)
         if request.user_email:
             add_tokens_used(request.user_email, len(respuesta))
+
+        # Incrementar contador de rate limit
+        increment_rate_limit(identifier)
 
         # Guardar historial de chat
         if request.user_email:
@@ -310,3 +330,10 @@ def user_sessions(email: str):
 @app.get("/history/{email}/{session_id}")
 def session_detail(email: str, session_id: str):
     return get_session_messages(session_id)
+
+
+# --- GET /rate-limit ---
+
+@app.get("/rate-limit")
+def rate_limit_check(identifier: str):
+    return check_rate_limit(identifier.strip().lower())
