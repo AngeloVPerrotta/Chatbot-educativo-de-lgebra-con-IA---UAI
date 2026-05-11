@@ -414,7 +414,7 @@
                 </div>
             </div>
             <footer class="footer">
-                <p>Hecho por <strong>Angelo Perrotta</strong> · Ingenier&#237;a en Sistemas · <a href="https://www.uai.edu.ar" target="_blank" rel="noopener">UAI</a> · <a href="#" id="supportLink" style="color:var(--accent);font-weight:500">&#9749; Apoy&#225; a AlgorIA</a></p>
+                <p>Hecho por <strong>Angelo Perrotta</strong> · Ingenier&#237;a en Sistemas · <a href="https://www.uai.edu.ar" target="_blank" rel="noopener">UAI</a> · <a href="https://mpago.la/1Eg2XRW" target="_blank" rel="noopener" style="color:var(--accent);font-weight:500">&#9749; Apoy&#225; a AlgorIA</a></p>
             </footer>
         </div>
     </div>
@@ -1149,24 +1149,6 @@
             cursorGlow.style.top = e.clientY + 'px';
         });
 
-        // === SUPPORT LINK ===
-        document.getElementById('supportLink').addEventListener('click', async function(e) {
-            e.preventDefault();
-            const email = (currentUser && currentUser.email) ? currentUser.email : 'apoyo@algoria.com';
-            const originalText = this.innerHTML;
-            this.textContent = 'Redirigiendo…';
-            try {
-                const r = await fetch(`${BACKEND}/payment/create-link`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({email, plan: 'apoyo'})
-                });
-                const d = await r.json();
-                if (d.url) { window.open(d.url, '_blank'); }
-                else { alert('No se pudo generar el link. Intentá de nuevo.'); }
-            } catch(e) { alert('No se pudo generar el link. Intentá de nuevo.'); }
-            this.innerHTML = originalText;
-        });
 
         // === INIT ===
         initUI();
