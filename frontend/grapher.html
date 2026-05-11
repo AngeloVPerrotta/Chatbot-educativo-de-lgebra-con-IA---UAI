@@ -113,25 +113,32 @@
 
         /* === KEYBOARD PANEL === */
         .gkbd{background:var(--bg-card);border-top:1px solid var(--border);flex-shrink:0}
-        .gkbd-bar{display:flex;align-items:center;border-bottom:1px solid var(--border);padding:0 8px;height:32px;flex-shrink:0}
+        .gkbd-bar{display:flex;align-items:center;border-bottom:1px solid var(--border);padding:0 8px;height:34px;flex-shrink:0;transition:justify-content .2s}
         .gkbd-tabs{display:flex;flex:1;gap:0}
-        .gkbd-tab{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-muted);font-size:.76rem;padding:0 14px;height:32px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap}
+        .gkbd-tab{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-muted);font-size:.82rem;padding:0 15px;height:34px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap}
         .gkbd-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-        .gkbd-collapse-btn{background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:.7rem;width:24px;height:24px;border-radius:6px;cursor:pointer;transition:all .2s;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+        .gkbd-collapse-btn{background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:.72rem;width:26px;height:26px;border-radius:6px;cursor:pointer;transition:all .2s;flex-shrink:0;display:flex;align-items:center;justify-content:center}
         .gkbd-collapse-btn:hover{border-color:var(--accent);color:var(--accent)}
-        .gkbd-body{padding:5px 10px 6px;overflow:hidden;transition:max-height .35s cubic-bezier(0.4,0,0.2,1)}
-        .gkbd.open .gkbd-body{max-height:163px}
+        /* Pastilla centrada visible cuando el teclado está colapsado */
+        .gkbd-closed-handle{display:none;align-items:center;gap:7px;background:var(--bg-input);border:1px solid rgba(56,189,248,0.28);border-radius:20px;padding:5px 20px;color:var(--text-secondary);font-size:.8rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;user-select:none;letter-spacing:.01em}
+        .gkbd-closed-handle:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-subtle);box-shadow:0 0 10px var(--accent-glow)}
+        .gkbd.closed .gkbd-closed-handle{display:flex}
+        .gkbd.closed .gkbd-tabs{display:none}
+        .gkbd.closed .gkbd-collapse-btn{display:none}
+        .gkbd.closed .gkbd-bar{justify-content:center;border-bottom:none}
+        .gkbd-body{padding:6px 12px 8px;overflow:hidden;transition:max-height .35s cubic-bezier(0.4,0,0.2,1);display:flex;justify-content:center;align-items:flex-start}
+        .gkbd.open .gkbd-body{max-height:205px}
         .gkbd.closed .gkbd-body{max-height:0;padding:0}
-        .gkbd-zones{display:flex;height:100%;gap:0}
-        .gkbd-zone{display:flex;flex-direction:column;gap:3px}
-        .gkbd-zone-left{border-right:1px solid var(--border);padding-right:8px;margin-right:8px;flex-shrink:0}
+        .gkbd-zones{display:flex;height:100%;gap:0;width:100%;max-width:860px}
+        .gkbd-zone{display:flex;flex-direction:column;gap:4px}
+        .gkbd-zone-left{border-right:1px solid var(--border);padding-right:10px;margin-right:10px;flex-shrink:0}
         .gkbd-zone-right{flex:1}
-        .gkbd-single{display:flex;flex-direction:column;gap:3px;height:158px}
-        .gkbd-row{display:flex;gap:3px;flex:1}
-        .gkbd-key{background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:.78rem;padding:2px 7px;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .15s;min-width:30px;text-align:center;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+        .gkbd-single{display:flex;flex-direction:column;gap:4px;height:188px;width:100%;max-width:860px}
+        .gkbd-row{display:flex;gap:4px;flex:1;justify-content:center}
+        .gkbd-key{background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:.86rem;padding:3px 9px;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all .15s;min-width:34px;text-align:center;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;justify-content:center}
         .gkbd-key:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-subtle)}
         .gkbd-key-special{background:rgba(13,18,32,0.9);border-color:rgba(56,189,248,0.18)}
-        .gkbd-key-wide{flex:1;min-width:50px}
+        .gkbd-key-wide{flex:1;min-width:54px}
 
         /* === ANALYSIS MODAL === */
         .ganalysis-overlay{position:fixed;inset:0;z-index:800;background:rgba(11,15,25,0.8);display:none;align-items:center;justify-content:center;padding:20px}
@@ -176,7 +183,7 @@
         <div class="gh-left">
             <div class="gh-logo">&#8721;</div>
             <div>
-                <div class="gh-title">Algor<span>IA</span> Graficador</div>
+                <div class="gh-title">Algor<span>IA</span> Graficador <span style="font-size:10px;font-weight:700;background:#7c3aed;color:#fff;padding:2px 6px;border-radius:4px;vertical-align:middle;letter-spacing:.5px;">Beta</span></div>
                 <div class="gh-sub">Graficador matemático interactivo</div>
             </div>
         </div>
@@ -231,6 +238,7 @@
                         <button class="gkbd-tab" data-tab="2">ABC</button>
                         <button class="gkbd-tab" data-tab="3">#&amp;¬</button>
                     </div>
+                    <div class="gkbd-closed-handle" onclick="toggleKeyboard()">⌨&nbsp;Teclado&nbsp;▲</div>
                     <button class="gkbd-collapse-btn" id="kbdCollapseBtn" onclick="toggleKeyboard()">▼</button>
                 </div>
                 <div class="gkbd-body" id="kbdBody"></div>
