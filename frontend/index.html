@@ -357,7 +357,7 @@
                 </div>
             </div>
             <footer class="footer">
-                <p>Hecho por <strong>Angelo Perrotta</strong> · Ingenier&#237;a en Sistemas · <a href="https://www.uai.edu.ar" target="_blank" rel="noopener">UAI</a></p>
+                <p>Hecho por <strong>Angelo Perrotta</strong> · Ingenier&#237;a en Sistemas · <a href="https://www.uai.edu.ar" target="_blank" rel="noopener">UAI</a> · <a href="#" id="supportLink" style="color:var(--accent);font-weight:500">&#9749; Apoy&#225; a AlgorIA</a></p>
             </footer>
         </div>
     </div>
@@ -783,6 +783,35 @@
             chatArea.scrollTop = chatArea.scrollHeight;
         }
 
+        async function addPaymentButton(email) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'message bot';
+            wrapper.style.cssText = 'align-items:center;';
+            const av = document.createElement('div'); av.className = 'message-avatar'; av.textContent = 'A';
+            const bb = document.createElement('div'); bb.className = 'message-content';
+            const btn = document.createElement('button');
+            btn.textContent = 'Desbloquear 50 consultas — $1.000 ARS';
+            btn.style.cssText = 'margin-top:8px;padding:10px 18px;background:linear-gradient(135deg,#6c63ff,#a78bfa);color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:0.95rem;font-weight:600;transition:opacity .2s;';
+            btn.onmouseenter = () => btn.style.opacity = '0.85';
+            btn.onmouseleave = () => btn.style.opacity = '1';
+            btn.onclick = async () => {
+                btn.disabled = true; btn.textContent = 'Redirigiendo…';
+                try {
+                    const r = await fetch(`${BACKEND}/payment/create-link`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({email})
+                    });
+                    const d = await r.json();
+                    if (d.url) { window.location.href = d.url; }
+                    else { btn.textContent = 'Error al generar el link. Reintentá.'; btn.disabled = false; }
+                } catch(e) { btn.textContent = 'Error de conexión. Reintentá.'; btn.disabled = false; }
+            };
+            bb.appendChild(btn);
+            wrapper.appendChild(av); wrapper.appendChild(bb); chatArea.appendChild(wrapper);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
         function showTyping() {
             const el = document.createElement('div'); el.className = 'typing-indicator'; el.id = 'typingIndicator';
             el.innerHTML = `<div class="message-avatar" style="background:var(--user-bubble);color:#fff;font-weight:700;box-shadow:0 2px 10px var(--accent-glow)">A</div><div class="typing-dots"><span></span><span></span><span></span></div>`;
@@ -828,7 +857,10 @@
                     const detail = errData.detail || {};
                     if (detail.code === 'RATE_LIMITED') {
                         const hours = Math.ceil((detail.resets_in || 86400) / 3600);
-                        addMessage('bot', `Llegaste al límite de 15 consultas por hoy. Se renueva en ${hours} hora${hours !== 1 ? 's' : ''}. ¿Querés acceso ilimitado? Contactá al administrador.`);
+                        addMessage('bot', `Llegaste al límite de 15 consultas por hoy. Se renueva en ${hours} hora${hours !== 1 ? 's' : ''}.`);
+                        if (currentUser && currentUser.email) {
+                            addPaymentButton(currentUser.email);
+                        }
                         rlRemaining = 0;
                         updateRlCounter();
                     } else {
@@ -1068,11 +1100,45 @@
             cursorGlow.style.top = e.clientY + 'px';
         });
 
+        // === SUPPORT LINK ===
+        document.getElementById('supportLink').addEventListener('click', async function(e) {
+            e.preventDefault();
+            const email = (currentUser && currentUser.email) ? currentUser.email : 'anonimo@algoria.com';
+            this.textContent = 'Redirigiendo…';
+            try {
+                const r = await fetch(`${BACKEND}/payment/create-link`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({email})
+                });
+                const d = await r.json();
+                if (d.url) { window.location.href = d.url; }
+                else { this.textContent = '&#9749; Apoy&#225; a AlgorIA'; }
+            } catch(e) { this.textContent = '&#9749; Apoy&#225; a AlgorIA'; }
+        });
+
         // === INIT ===
         initUI();
         setupWelcome();
         fetchRateLimit();
         if (currentUser) msgInput.focus();
+
+        // Check ?payment=success en URL
+        (function checkPaymentReturn() {
+            const params = new URLSearchParams(window.location.search);
+            const payment = params.get('payment');
+            if (payment === 'success') {
+                addMessage('bot', '¡Pago recibido! Ya tenés 50 consultas extra disponibles. ¡Seguí consultando!');
+                // Limpiar el parámetro de la URL sin recargar
+                const cleanUrl = window.location.pathname;
+                window.history.replaceState({}, '', cleanUrl);
+                fetchRateLimit();
+            } else if (payment === 'failure') {
+                addMessage('bot', 'El pago no se completó. Podés intentarlo de nuevo cuando quieras.');
+                const cleanUrl = window.location.pathname;
+                window.history.replaceState({}, '', cleanUrl);
+            }
+        })();
     </script>
 </body>
 </html>

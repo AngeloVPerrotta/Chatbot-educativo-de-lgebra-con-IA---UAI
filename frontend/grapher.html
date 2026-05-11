@@ -173,6 +173,105 @@
 
         /* Intersection tooltip */
         .gtooltip{position:absolute;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text-primary);pointer-events:none;display:none;box-shadow:0 4px 16px rgba(0,0,0,0.4);white-space:nowrap;z-index:10}
+
+        /* === MOBILE OVERLAY === */
+        .mobile-panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:590;display:none}
+        .mobile-panel-overlay.active{display:block}
+
+        /* === HAMBURGER === */
+        .g-hamburger{display:none;background:transparent;border:1px solid var(--border);color:var(--text-secondary);font-size:1.2rem;width:36px;height:36px;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;line-height:1}
+        .g-hamburger:hover{border-color:var(--accent);color:var(--accent)}
+
+        /* === PANEL CLOSE (mobile only) === */
+        .gp-close-btn{display:none;background:transparent;border:none;color:var(--text-muted);font-size:1.1rem;cursor:pointer;line-height:1;padding:2px}
+        .gp-close-btn:hover{color:var(--text-primary)}
+
+        /* === ACTIVE EXPRESSION BAR === */
+        .gactive-bar{display:none;align-items:center;gap:6px;height:38px;padding:0 12px;background:var(--bg-input);border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--text-primary);flex-shrink:0;overflow:hidden}
+        .gactive-label{color:var(--accent);font-size:.72rem;flex-shrink:0;opacity:.8}
+        .gactive-preview{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .gactive-cursor{display:inline-block;width:2px;height:.9em;background:var(--accent);margin-left:1px;vertical-align:text-bottom;animation:kbd-blink 1s step-end infinite}
+        @keyframes kbd-blink{0%,100%{opacity:1}50%{opacity:0}}
+
+        /* === @media MOBILE === */
+        @media (max-width: 768px) {
+            .gh { padding: 8px 12px; }
+            .gh-sub { display: none; }
+            .gh-right { gap: 4px; }
+            .g-btn { padding: 6px 8px; }
+            .g-btn-label { display: none; }
+            .g-hamburger { display: flex; }
+            .gp-close-btn { display: block; }
+
+            /* Panel — slide-in drawer */
+            .gpanel {
+                position: fixed;
+                top: 0; left: -100%;
+                width: 85vw; max-width: 320px;
+                height: 100vh;
+                z-index: 600;
+                transition: left .3s ease;
+                overflow-y: auto;
+                border-right: 1px solid var(--border);
+            }
+            .gpanel.mobile-open { left: 0; }
+
+            /* Main body stacks vertically */
+            .gmain { flex-direction: column; }
+
+            .gcanvas-col {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                width: 100%;
+            }
+            .gcanvas-wrap { flex: 1; min-height: 0; }
+
+            /* Active bar visible */
+            .gactive-bar { display: flex; }
+
+            /* Keyboard — always open, max half screen */
+            .gkbd {
+                flex-shrink: 0;
+                max-height: 50vh;
+                overflow-y: auto;
+                position: static !important;
+            }
+            .gkbd .gkbd-collapse-btn { display: none !important; }
+            .gkbd .gkbd-closed-handle { display: none !important; }
+            /* Force open even if JS toggled it closed */
+            .gkbd.closed .gkbd-bar { justify-content: flex-start !important; border-bottom: 1px solid var(--border) !important; }
+            .gkbd.closed .gkbd-tabs { display: flex !important; }
+            .gkbd.closed .gkbd-body { max-height: none !important; padding: 4px 8px 8px !important; }
+            .gkbd.open .gkbd-body { max-height: none; padding: 4px 8px 8px; }
+
+            /* Two-zone layout stacks vertically */
+            .gkbd-zones { flex-direction: column; max-width: 100%; gap: 4px; }
+            .gkbd-zone { flex: none; }
+            .gkbd-zone-left {
+                border-right: none; padding-right: 0; margin-right: 0;
+                border-bottom: 1px solid var(--border); padding-bottom: 4px;
+            }
+            .gkbd-single { height: auto; max-width: 100%; }
+
+            /* Larger keys for touch */
+            .gkbd-key {
+                font-size: 1rem;
+                padding: 8px 6px;
+                min-width: 0;
+                min-height: 40px;
+                flex: 1;
+            }
+            .gkbd-key-wide { flex: 2; }
+            .gkbd-row { gap: 3px; }
+            .gkbd-tab { padding: 0 10px; font-size: .78rem; }
+
+            /* Move FAB above keyboard */
+            .gfab { bottom: calc(50vh + 14px); right: 12px; }
+
+            .gcoords { font-size: .65rem; padding: 3px 8px; bottom: 6px; }
+        }
     </style>
 </head>
 <body>
@@ -181,6 +280,7 @@
     <!-- HEADER -->
     <header class="gh">
         <div class="gh-left">
+            <button class="g-hamburger" id="mobileMenuBtn" onclick="toggleMobilePanel()" title="Expresiones">&#9776;</button>
             <div class="gh-logo">&#8721;</div>
             <div>
                 <div class="gh-title">Algor<span>IA</span> Graficador <span style="font-size:10px;font-weight:700;background:#7c3aed;color:#fff;padding:2px 6px;border-radius:4px;vertical-align:middle;letter-spacing:.5px;">Beta</span></div>
@@ -190,18 +290,21 @@
         <div class="gh-right">
             <button class="g-btn" onclick="exportImage()" title="Exportar como imagen PNG">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                Exportar PNG
+                <span class="g-btn-label">Exportar PNG</span>
             </button>
             <button class="g-btn" onclick="exportExpressions()" title="Exportar expresiones como texto">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                Exportar .txt
+                <span class="g-btn-label">Exportar .txt</span>
             </button>
             <button class="g-btn back" onclick="window.location.href='index.html'">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                Chat
+                <span class="g-btn-label">Chat</span>
             </button>
         </div>
     </header>
+
+    <!-- MOBILE PANEL OVERLAY -->
+    <div class="mobile-panel-overlay" id="mobilePanelOverlay" onclick="closeMobilePanel()"></div>
 
     <!-- MAIN -->
     <div class="gmain">
@@ -210,6 +313,7 @@
         <div class="gpanel">
             <div class="gp-header">
                 <span class="gp-header-title">Expresiones</span>
+                <button class="gp-close-btn" onclick="closeMobilePanel()" title="Cerrar">&#x2715;</button>
             </div>
             <div class="gp-exprs" id="exprList"></div>
             <button class="gp-add-btn" onclick="addExprRow()">+ Agregar expresión</button>
@@ -227,6 +331,13 @@
                 </div>
                 <div class="gcoords" id="gcoords">x: 0.00  y: 0.00</div>
                 <div class="gtooltip" id="gtooltip"></div>
+            </div>
+
+            <!-- ACTIVE EXPRESSION BAR (mobile) -->
+            <div class="gactive-bar" id="gActiveBar">
+                <span class="gactive-label">f(x)</span>
+                <span class="gactive-preview" id="gActivePreview"></span>
+                <span class="gactive-cursor"></span>
             </div>
 
             <!-- KEYBOARD PANEL -->
@@ -823,7 +934,7 @@ function renderExprRow(expr) {
     row.innerHTML = `
         <div class="expr-row-top">
             <div class="expr-color" id="ecolor-${expr.id}" style="background:${expr.color}" title="Cambiar color" onclick="toggleColorPicker(${expr.id})"></div>
-            <input class="expr-input" id="einput-${expr.id}" type="text" value="${escHtml(expr.raw)}" placeholder="Expresión..." spellcheck="false">
+            <input class="expr-input" id="einput-${expr.id}" type="text" inputmode="none" value="${escHtml(expr.raw)}" placeholder="Expresión..." spellcheck="false" autocomplete="off" autocorrect="off">
             <button class="expr-eye" id="eeye-${expr.id}" onclick="toggleVisible(${expr.id})" title="Mostrar/ocultar">${eyeIcon}</button>
             <button class="expr-menu-btn" id="emenu-${expr.id}" onclick="openExprMenu(${expr.id})" title="Opciones">⋮</button>
             <div class="expr-dropdown" id="edrop-${expr.id}" style="display:none">
@@ -857,12 +968,16 @@ function renderExprRow(expr) {
     list.appendChild(row);
 
     const input = row.querySelector(`#einput-${expr.id}`);
-    input.addEventListener('focus', () => { activeInputId = expr.id; });
+    input.addEventListener('focus', () => {
+        activeInputId = expr.id;
+        if (isMobile) updateActiveBar();
+    });
     input.addEventListener('input', () => {
         expr.raw = input.value;
         parseExpression(expr.raw, expr);
         updateExprRowUI(expr);
         requestDraw();
+        if (isMobile) updateActiveBar();
     });
     input.addEventListener('keydown', e => {
         if (e.key === 'Enter') { addExprRow(); }
@@ -1161,6 +1276,85 @@ function escHtml(str) {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// ── Mobile detection ─────────────────────────────────────────────────────────
+const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window);
+
+// ── Touch events: pan (1 finger) + pinch-to-zoom (2 fingers) ─────────────────
+let _touchStart = null, _touchOriginStart = null;
+let _pinchDist0 = null, _pinchScale0 = null, _pinchMidWorld = null;
+
+canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    if (e.touches.length === 1) {
+        const t = e.touches[0];
+        _touchStart = { x: t.clientX - rect.left, y: t.clientY - rect.top };
+        _touchOriginStart = { x: originX, y: originY };
+        _pinchDist0 = null;
+    } else if (e.touches.length === 2) {
+        const t0 = e.touches[0], t1 = e.touches[1];
+        _pinchDist0 = Math.hypot(t0.clientX - t1.clientX, t0.clientY - t1.clientY);
+        _pinchScale0 = scale;
+        const mx = (t0.clientX + t1.clientX) / 2 - rect.left;
+        const my = (t0.clientY + t1.clientY) / 2 - rect.top;
+        _pinchMidWorld = screenToWorld(mx, my);
+        _touchStart = null;
+    }
+}, { passive: false });
+
+canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    if (e.touches.length === 1 && _touchStart) {
+        const t = e.touches[0];
+        originX = _touchOriginStart.x + (t.clientX - rect.left - _touchStart.x);
+        originY = _touchOriginStart.y + (t.clientY - rect.top  - _touchStart.y);
+        requestDraw();
+    } else if (e.touches.length === 2 && _pinchDist0 !== null) {
+        const t0 = e.touches[0], t1 = e.touches[1];
+        const dist = Math.hypot(t0.clientX - t1.clientX, t0.clientY - t1.clientY);
+        scale = Math.max(4, Math.min(_pinchScale0 * (dist / _pinchDist0), 2000));
+        const mx = (t0.clientX + t1.clientX) / 2 - rect.left;
+        const my = (t0.clientY + t1.clientY) / 2 - rect.top;
+        originX = mx - _pinchMidWorld.x * scale;
+        originY = my + _pinchMidWorld.y * scale;
+        requestDraw();
+    }
+}, { passive: false });
+
+canvas.addEventListener('touchend', e => {
+    if (e.touches.length < 2) _pinchDist0 = null;
+    if (e.touches.length === 0) _touchStart = null;
+}, { passive: true });
+
+// ── Mobile panel (drawer) ─────────────────────────────────────────────────────
+function toggleMobilePanel() {
+    const panel = document.querySelector('.gpanel');
+    const overlay = document.getElementById('mobilePanelOverlay');
+    if (panel.classList.contains('mobile-open')) {
+        panel.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+    } else {
+        panel.classList.add('mobile-open');
+        overlay.classList.add('active');
+    }
+}
+
+function closeMobilePanel() {
+    document.querySelector('.gpanel').classList.remove('mobile-open');
+    document.getElementById('mobilePanelOverlay').classList.remove('active');
+}
+
+// ── Active expression bar ─────────────────────────────────────────────────────
+function updateActiveBar() {
+    const preview = document.getElementById('gActivePreview');
+    if (!preview) return;
+    let id = activeInputId;
+    if (id === null && expressions.length > 0) id = expressions[expressions.length - 1].id;
+    const inp = id !== null ? document.getElementById(`einput-${id}`) : null;
+    preview.textContent = inp ? inp.value : '';
+}
+
 // ── Keyboard ─────────────────────────────────────────────────────────────────
 let kbdOpen = true;
 let kbdTabIdx = 0;
@@ -1257,6 +1451,7 @@ document.getElementById('kbdTabs').addEventListener('click', e => {
 });
 
 function toggleKeyboard() {
+    if (isMobile) return; // always open on mobile
     kbdOpen = !kbdOpen;
     document.getElementById('gkbd').className = 'gkbd ' + (kbdOpen ? 'open' : 'closed');
     const btn = document.getElementById('kbdCollapseBtn');
@@ -1306,6 +1501,7 @@ function insertKey(val) {
         if (kbdShift) { kbdShift = false; buildKeyboard(kbdTabIdx); }
     }
     input.dispatchEvent(new Event('input'));
+    if (isMobile) updateActiveBar();
 }
 
 // ── Export ────────────────────────────────────────────────────────────────────
@@ -1374,6 +1570,7 @@ document.addEventListener('mousedown', e => {
 addExprRow('y = x^2');
 addExprRow('y = 2*x + 1');
 buildKeyboard(0);
+if (isMobile) updateActiveBar();
 
 </script>
 </body>
