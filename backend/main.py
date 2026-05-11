@@ -34,6 +34,9 @@ from utils.analytics import (
     increment_rate_limit,
     grant_extra_messages,
     get_user_payment_status,
+    save_error_report,
+    get_error_reports,
+    update_report_status,
 )
 from utils.payments import create_payment_link
 
@@ -65,6 +68,7 @@ class ChatRequest(BaseModel):
     materia: str = "algebra"
     session_id: str
     user_email: Optional[str] = None
+    device_fp: Optional[str] = None
 
 class ChatResponse(BaseModel):
     response: str
@@ -86,6 +90,11 @@ class FeedbackRequest(BaseModel):
 class SetRoleRequest(BaseModel):
     target_email: str
     role: str
+
+class ErrorReportRequest(BaseModel):
+    description: str
+    page: str
+    user_email: Optional[str] = None
 
 
 # --- Endpoints base ---
@@ -134,15 +143,22 @@ def chat_endpoint(request: ChatRequest, req: Request):
         if request.user_email and not check_token_limit(request.user_email):
             raise HTTPException(status_code=429, detail="TOKEN_LIMIT_EXCEEDED")
 
-        # Verificar rate limit (15 mensajes / 24hs) — doble: IP siempre + email si viene.
-        # Si cualquiera está limitado, rechazar (evita evasión cambiando de cuenta).
+        # Verificar rate limit (15 mensajes / 24hs) — triple: IP + email + device fingerprint.
+        # Si cualquiera está limitado, rechazar (evita evasión cambiando de cuenta o IP).
         ip_identifier = req.client.host
         email_identifier = request.user_email.strip().lower() if request.user_email else None
+        fp_identifier = f"fp:{request.device_fp.strip()}" if request.device_fp else None
 
         rl_ip = check_rate_limit(ip_identifier)
         rl_email = check_rate_limit(email_identifier) if email_identifier else {"allowed": True, "resets_in_seconds": 0}
+        rl_fp = check_rate_limit(fp_identifier) if fp_identifier else {"allowed": True, "resets_in_seconds": 0}
 
-        rl_blocked = rl_ip if not rl_ip["allowed"] else (rl_email if not rl_email["allowed"] else None)
+        rl_blocked = (
+            rl_ip if not rl_ip["allowed"] else
+            rl_email if not rl_email["allowed"] else
+            rl_fp if not rl_fp["allowed"] else
+            None
+        )
         if rl_blocked:
             hours_left = round(rl_blocked["resets_in_seconds"] / 3600, 1)
             raise HTTPException(
@@ -186,10 +202,12 @@ def chat_endpoint(request: ChatRequest, req: Request):
         if request.user_email:
             add_tokens_used(request.user_email, len(respuesta))
 
-        # Incrementar contador de rate limit para IP y email (si aplica)
+        # Incrementar contador de rate limit para IP, email y device fingerprint (si aplican)
         increment_rate_limit(ip_identifier)
         if email_identifier:
             increment_rate_limit(email_identifier)
+        if fp_identifier:
+            increment_rate_limit(fp_identifier)
 
         # Guardar historial de chat
         if request.user_email:
@@ -315,6 +333,36 @@ def feedback_endpoint(payload: FeedbackRequest):
 def admin_feedback(request: Request):
     _require_admin(request)
     return {"stats": get_feedback_stats(), "recent": get_recent_feedback()}
+
+
+# --- POST /report-error ---
+
+@app.post("/report-error")
+def report_error(payload: ErrorReportRequest):
+    desc = (payload.description or "").strip()
+    if not desc:
+        raise HTTPException(status_code=422, detail="La descripción no puede estar vacía.")
+    if len(desc) > 500:
+        raise HTTPException(status_code=422, detail="La descripción no puede superar los 500 caracteres.")
+    result = save_error_report(payload.user_email or None, desc, payload.page or "chat")
+    return {"ok": True, "id": result["id"]}
+
+
+# --- GET /admin/reports ---
+
+@app.get("/admin/reports")
+def admin_reports(request: Request):
+    _require_admin(request)
+    return get_error_reports()
+
+
+# --- POST /admin/reports/{id}/resolve ---
+
+@app.post("/admin/reports/{report_id}/resolve")
+def admin_resolve_report(report_id: int, request: Request):
+    _require_admin(request)
+    update_report_status(report_id, "resolved")
+    return {"ok": True}
 
 
 # --- GET /sessions/{session_id} ---

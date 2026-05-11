@@ -95,6 +95,17 @@ def _init_db():
                 bonus_messages INTEGER DEFAULT 0
             )
         """)
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS error_reports (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_email TEXT,
+                description TEXT,
+                page TEXT,
+                created_at DATETIME DEFAULT (datetime('now')),
+                status TEXT DEFAULT 'pending'
+            )
+        """)
         # Backward-compatible migration: add bonus_messages if not present
         try:
             conn.execute("ALTER TABLE rate_limits ADD COLUMN bonus_messages INTEGER DEFAULT 0")
@@ -421,6 +432,35 @@ def get_user_payment_status(email: str) -> dict:
         ).fetchone()
     bonus = row[0] if row else 0
     return {"email": email, "has_bonus": bonus > 0, "bonus_messages": bonus}
+
+
+# --- Error reports ---
+
+def save_error_report(user_email: Optional[str], description: str, page: str) -> dict:
+    with _get_conn() as conn:
+        cur = conn.execute(
+            "INSERT INTO error_reports (user_email, description, page) VALUES (?, ?, ?)",
+            (user_email, description, page),
+        )
+        conn.commit()
+        report_id = cur.lastrowid
+    return {"id": report_id, "status": "pending"}
+
+
+def get_error_reports(limit: int = 50) -> list:
+    with _get_conn() as conn:
+        conn.row_factory = sqlite3.Row
+        rows = conn.execute(
+            "SELECT id, user_email, description, page, created_at, status FROM error_reports ORDER BY id DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def update_report_status(report_id: int, status: str):
+    with _get_conn() as conn:
+        conn.execute("UPDATE error_reports SET status = ? WHERE id = ?", (status, report_id))
+        conn.commit()
 
 
 def increment_rate_limit(identifier: str):

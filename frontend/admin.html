@@ -194,6 +194,14 @@
         .feedback-comment-meta { font-size:0.68rem; color:var(--text-muted); }
         .feedback-comment-text { font-size:0.8rem; color:var(--text-dim); line-height:1.5; }
 
+        /* === REPORT STATUS BADGES === */
+        .status-badge { display:inline-block; padding:2px 9px; border-radius:4px; font-size:0.66rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; }
+        .status-pending { background:rgba(251,191,36,0.1); color:var(--yellow); border:1px solid rgba(251,191,36,0.3); }
+        .status-resolved { background:rgba(52,211,153,0.1); color:var(--green); border:1px solid rgba(52,211,153,0.25); }
+        .resolve-btn { padding:3px 9px; border-radius:4px; font-size:0.72rem; font-family:'DM Sans',sans-serif; cursor:pointer; border:1px solid rgba(52,211,153,0.3); background:transparent; color:var(--green); transition:all .15s; }
+        .resolve-btn:hover { border-color:var(--green); background:rgba(52,211,153,0.08); }
+        .report-desc { max-width:260px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
         /* === PRINT === */
         @media print {
             body { background:#fff; color:#000; font-family:monospace; }
@@ -276,6 +284,15 @@
             </table>
         </div>
 
+        <!-- REPORTES DE ERRORES -->
+        <div class="table-card">
+            <h3>Reportes de errores</h3>
+            <table>
+                <thead><tr><th>Fecha</th><th>Usuario</th><th>Página</th><th>Descripción</th><th>Estado</th><th>Acción</th></tr></thead>
+                <tbody id="reportsBody"><tr><td colspan="6" class="loading">Cargando...</td></tr></tbody>
+            </table>
+        </div>
+
         <!-- INTERACCIONES -->
         <div class="table-card">
             <h3>Últimas interacciones</h3>
@@ -326,22 +343,25 @@
 
         async function loadDashboard() {
             try {
-                const [statsRes, intRes, usersRes, feedbackRes] = await Promise.all([
+                const [statsRes, intRes, usersRes, feedbackRes, reportsRes] = await Promise.all([
                     fetch(`${BACKEND}/admin/stats`, { headers: adminHeaders() }),
                     fetch(`${BACKEND}/admin/interactions`, { headers: adminHeaders() }),
                     fetch(`${BACKEND}/admin/users`, { headers: adminHeaders() }),
                     fetch(`${BACKEND}/admin/feedback`, { headers: adminHeaders() }).catch(()=>null),
+                    fetch(`${BACKEND}/admin/reports`, { headers: adminHeaders() }).catch(()=>null),
                 ]);
                 const stats = await statsRes.json();
                 const interactions = await intRes.json();
                 const users = usersRes.ok ? await usersRes.json() : [];
                 const feedback = feedbackRes && feedbackRes.ok ? await feedbackRes.json().catch(()=>null) : null;
+                const reports = reportsRes && reportsRes.ok ? await reportsRes.json().catch(()=>[]) : [];
                 renderStats(stats, users);
                 renderDailyChart(stats.interactions_by_day || []);
                 renderTopicChart(stats.top_topics || []);
                 renderRagChart(stats.rag_stats || null);
                 renderFeedback(feedback);
                 renderUsersTable(users);
+                renderReportsTable(Array.isArray(reports) ? reports : []);
                 renderInteractionsTable(interactions);
             } catch(e) {
                 console.error('Dashboard error:', e);
@@ -516,6 +536,41 @@
                 });
                 if (res.ok) loadDashboard();
                 else console.error('set-role failed');
+            } catch(e) { console.error(e); }
+        }
+
+        function renderReportsTable(rows) {
+            const tbody = document.getElementById('reportsBody');
+            if (!rows.length) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Sin reportes aún.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = rows.map(r => {
+                const fecha = r.created_at ? r.created_at.slice(0,16).replace('T',' ') : '—';
+                const statusBadge = r.status === 'resolved'
+                    ? '<span class="status-badge status-resolved">Resuelto</span>'
+                    : '<span class="status-badge status-pending">Pendiente</span>';
+                const action = r.status !== 'resolved'
+                    ? `<button class="resolve-btn" onclick="resolveReport(${r.id})">Resolver</button>`
+                    : '—';
+                return `<tr>
+                    <td>${fecha}</td>
+                    <td style="font-size:0.72rem;color:var(--text-muted)">${escapeHtml(r.user_email||'anónimo')}</td>
+                    <td>${escapeHtml(r.page||'—')}</td>
+                    <td class="report-desc" title="${escapeHtml(r.description||'')}">${escapeHtml(r.description||'—')}</td>
+                    <td>${statusBadge}</td>
+                    <td>${action}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        async function resolveReport(id) {
+            try {
+                const res = await fetch(`${BACKEND}/admin/reports/${id}/resolve`, {
+                    method: 'POST',
+                    headers: adminHeaders()
+                });
+                if (res.ok) loadDashboard();
             } catch(e) { console.error(e); }
         }
 

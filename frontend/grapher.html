@@ -27,10 +27,10 @@
             --bot-bubble: #1a2238;
         }
         *{margin:0;padding:0;box-sizing:border-box}
-        html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;background:var(--bg-primary);color:var(--text-primary)}
+        html,body{height:100%;overflow:hidden;position:fixed;width:100%;font-family:'DM Sans',sans-serif;background:var(--bg-primary);color:var(--text-primary)}
 
         /* === LAYOUT === */
-        .root{display:flex;flex-direction:column;height:100vh}
+        .root{display:flex;flex-direction:column;height:100vh;height:100dvh}
 
         /* === HEADER === */
         .gh{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--bg-card);border-bottom:1px solid var(--border);flex-shrink:0;gap:12px}
@@ -209,6 +209,7 @@
                 top: 0; left: -100%;
                 width: 85vw; max-width: 320px;
                 height: 100vh;
+                height: 100dvh;
                 z-index: 600;
                 transition: left .3s ease;
                 overflow-y: auto;
@@ -234,9 +235,11 @@
             /* Keyboard — always open, max half screen */
             .gkbd {
                 flex-shrink: 0;
-                max-height: 50vh;
+                max-height: 44vh;
+                max-height: 44dvh;
                 overflow-y: auto;
                 position: static !important;
+                padding-bottom: env(safe-area-inset-bottom, 12px);
             }
             .gkbd .gkbd-collapse-btn { display: none !important; }
             .gkbd .gkbd-closed-handle { display: none !important; }
@@ -261,6 +264,7 @@
                 padding: 8px 6px;
                 min-width: 0;
                 min-height: 40px;
+                max-height: 38px;
                 flex: 1;
             }
             .gkbd-key-wide { flex: 2; }
@@ -268,7 +272,7 @@
             .gkbd-tab { padding: 0 10px; font-size: .78rem; }
 
             /* Move FAB above keyboard */
-            .gfab { bottom: calc(50vh + 14px); right: 12px; }
+            .gfab { bottom: calc(44vh + 14px); right: 12px; }
 
             .gcoords { font-size: .65rem; padding: 3px 8px; bottom: 6px; }
         }

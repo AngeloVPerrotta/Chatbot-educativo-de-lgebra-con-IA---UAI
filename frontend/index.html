@@ -131,10 +131,31 @@
         .send-btn:hover:not(:disabled){transform:scale(1.05);box-shadow:0 4px 16px var(--accent-glow)}
         .send-btn:disabled{opacity:.35;cursor:not-allowed}
         .send-btn svg{width:18px;height:18px}
-        .footer{text-align:center;padding:6px 0 12px;flex-shrink:0}
+        .footer{text-align:center;padding:6px 0 12px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:8px}
         .footer p{font-size:.7rem;color:var(--text-muted);letter-spacing:.015em}
         .footer a{color:var(--accent);text-decoration:none}
         .footer a:hover{text-decoration:underline}
+        .footer-btns{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}
+        .footer-action-btn{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:8px 18px;border-radius:8px;font-size:.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+        .footer-action-btn:hover{background:var(--accent-subtle)}
+        .footer-action-btn.bug{border-color:rgba(248,113,113,0.3);color:var(--text-muted)}
+        .footer-action-btn.bug:hover{border-color:rgba(248,113,113,0.7);color:#f87171;background:rgba(248,113,113,0.06)}
+        /* === POPUPS === */
+        .popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px}
+        .popup-overlay.hidden{display:none}
+        .popup-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:28px 32px;max-width:420px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,0.5)}
+        .popup-card h2{font-family:'Outfit',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:10px;color:var(--text-primary)}
+        .popup-card p{font-size:.82rem;color:var(--text-secondary);line-height:1.55;margin-bottom:14px}
+        .popup-amount{font-size:.82rem;color:var(--accent);margin-bottom:20px;font-weight:500}
+        .popup-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+        .popup-primary-btn{background:var(--user-bubble);border:none;color:#fff;padding:9px 20px;border-radius:8px;font-size:.84rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;transition:opacity .2s}
+        .popup-primary-btn:hover{opacity:.88}
+        .popup-cancel-link{font-size:.78rem;color:var(--text-muted);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;padding:4px}
+        .popup-cancel-link:hover{color:var(--text-secondary)}
+        .popup-textarea{width:100%;background:var(--bg-input);border:1px solid var(--border);color:var(--text-primary);font-family:'DM Sans',sans-serif;font-size:.82rem;padding:10px 12px;border-radius:8px;resize:vertical;min-height:90px;outline:none;transition:border-color .2s;margin-bottom:6px}
+        .popup-textarea:focus{border-color:var(--accent)}
+        .popup-char-counter{font-size:.72rem;color:var(--text-muted);text-align:right;margin-bottom:14px}
+        .popup-success{font-size:.82rem;color:var(--green);margin-top:10px;display:none}
         .clear-btn{background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:.76rem;padding:5px 12px;border-radius:8px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
         .clear-btn:hover{border-color:#f87171;color:#f87171;background:rgba(248,113,113,0.08)}
 
@@ -414,8 +435,39 @@
                 </div>
             </div>
             <footer class="footer">
-                <p>Hecho por <strong>Angelo Perrotta</strong> · Ingenier&#237;a en Sistemas · <a href="https://www.uai.edu.ar" target="_blank" rel="noopener">UAI</a> · <a href="https://mpago.la/1Eg2XRW" target="_blank" rel="noopener" style="color:var(--accent);font-weight:500">&#9749; Apoy&#225; a AlgorIA</a></p>
+                <p>Hecho por <strong>Angelo Perrotta</strong> · Ingenier&#237;a en Sistemas · <a href="https://www.uai.edu.ar" target="_blank" rel="noopener">UAI</a></p>
+                <div class="footer-btns">
+                    <button class="footer-action-btn" onclick="openSupportPopup()">&#9749; Apoy&#225; a AlgorIA</button>
+                    <button class="footer-action-btn bug" onclick="openReportPopup()">&#x1F41B; Reportar error</button>
+                </div>
             </footer>
+
+            <!-- POPUP: Apoyo -->
+            <div class="popup-overlay hidden" id="supportPopup">
+                <div class="popup-card">
+                    <h2>Ayud&#225; a mantener AlgorIA funcionando</h2>
+                    <p>AlgorIA es un proyecto independiente creado por un estudiante de la UAI. Tu aporte ayuda a cubrir los costos de servidores, inteligencia artificial y desarrollo para que la herramienta siga siendo accesible para todos los estudiantes.</p>
+                    <p class="popup-amount">Monto sugerido: $1.000 ARS</p>
+                    <div class="popup-actions">
+                        <button class="popup-primary-btn" onclick="window.open('https://mpago.la/1Eg2XRW','_blank');closeSupportPopup()">Apoyar ahora &#8594;</button>
+                        <button class="popup-cancel-link" onclick="closeSupportPopup()">Ahora no</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- POPUP: Reporte de error -->
+            <div class="popup-overlay hidden" id="reportPopup">
+                <div class="popup-card">
+                    <h2>Reportar un problema</h2>
+                    <textarea class="popup-textarea" id="reportDesc" placeholder="Describ&#237; el error o problema que encontraste" maxlength="500" oninput="updateReportCounter()"></textarea>
+                    <div class="popup-char-counter"><span id="reportCounter">0</span>/500</div>
+                    <div class="popup-actions">
+                        <button class="popup-primary-btn" id="reportSendBtn" onclick="submitReport()">Enviar reporte</button>
+                        <button class="popup-cancel-link" onclick="closeReportPopup()">Cancelar</button>
+                    </div>
+                    <p class="popup-success" id="reportSuccess">Gracias por reportar. Lo vamos a revisar.</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -431,6 +483,18 @@
         const msgInput = document.getElementById('msgInput');
         const sendBtn = document.getElementById('sendBtn');
         const welcome = document.getElementById('welcome');
+
+        function generateFingerprint() {
+            const raw = navigator.userAgent + screen.width + screen.height + navigator.language + new Date().getTimezoneOffset();
+            let hash = 0;
+            for (let i = 0; i < raw.length; i++) {
+                hash = (Math.imul(31, hash) + raw.charCodeAt(i)) | 0;
+            }
+            const hex = (hash >>> 0).toString(16).padStart(8, '0');
+            localStorage.setItem('device_fp', hex);
+            return hex;
+        }
+        const deviceFp = localStorage.getItem('device_fp') || generateFingerprint();
 
         let currentUser = null;
         try { currentUser = JSON.parse(localStorage.getItem('algoria_user')); } catch(e) {}
@@ -895,7 +959,7 @@
             addMessage('user', text); showTyping();
 
             try {
-                const body = { message: text, materia: 'algebra', session_id: sessionId };
+                const body = { message: text, materia: 'algebra', session_id: sessionId, device_fp: deviceFp };
                 if (currentUser) body.user_email = currentUser.email;
                 const res = await fetch(`${BACKEND}/chat`, {
                     method: 'POST',
@@ -1172,6 +1236,62 @@
                 window.history.replaceState({}, '', cleanUrl);
             }
         })();
+
+        // === POPUP: APOYO ===
+        function openSupportPopup() {
+            document.getElementById('supportPopup').classList.remove('hidden');
+        }
+        function closeSupportPopup() {
+            document.getElementById('supportPopup').classList.add('hidden');
+        }
+        document.getElementById('supportPopup').addEventListener('click', function(e) {
+            if (e.target === this) closeSupportPopup();
+        });
+
+        // === POPUP: REPORTE DE ERROR ===
+        function openReportPopup() {
+            document.getElementById('reportDesc').value = '';
+            document.getElementById('reportCounter').textContent = '0';
+            document.getElementById('reportSuccess').style.display = 'none';
+            document.getElementById('reportSendBtn').disabled = false;
+            document.getElementById('reportSendBtn').textContent = 'Enviar reporte';
+            document.getElementById('reportPopup').classList.remove('hidden');
+        }
+        function closeReportPopup() {
+            document.getElementById('reportPopup').classList.add('hidden');
+        }
+        function updateReportCounter() {
+            const len = document.getElementById('reportDesc').value.length;
+            document.getElementById('reportCounter').textContent = len;
+        }
+        async function submitReport() {
+            const desc = document.getElementById('reportDesc').value.trim();
+            if (!desc) return;
+            const btn = document.getElementById('reportSendBtn');
+            btn.disabled = true;
+            btn.textContent = 'Enviando...';
+            try {
+                const body = {
+                    description: desc,
+                    page: 'chat',
+                    user_email: currentUser ? currentUser.email : null
+                };
+                await fetch(BACKEND + '/report-error', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                document.getElementById('reportSuccess').style.display = 'block';
+                btn.textContent = 'Enviado';
+                setTimeout(closeReportPopup, 2000);
+            } catch(e) {
+                btn.disabled = false;
+                btn.textContent = 'Enviar reporte';
+            }
+        }
+        document.getElementById('reportPopup').addEventListener('click', function(e) {
+            if (e.target === this) closeReportPopup();
+        });
     </script>
 </body>
 </html>
