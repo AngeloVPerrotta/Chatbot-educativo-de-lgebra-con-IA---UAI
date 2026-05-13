@@ -143,22 +143,29 @@ def chat_endpoint(request: ChatRequest, req: Request):
         if request.user_email and not check_token_limit(request.user_email):
             raise HTTPException(status_code=429, detail="TOKEN_LIMIT_EXCEEDED")
 
-        # Verificar rate limit (15 mensajes / 24hs) — triple: IP + email + device fingerprint.
-        # Si cualquiera está limitado, rechazar (evita evasión cambiando de cuenta o IP).
+        # Verificar rate limit (15 mensajes / 24hs).
+        # Registrado: verificar por email + device_fp (no por IP, para no bloquear compañeros en la misma WiFi).
+        # Anónimo: verificar por IP + device_fp.
         ip_identifier = req.client.host
         email_identifier = request.user_email.strip().lower() if request.user_email else None
         fp_identifier = f"fp:{request.device_fp.strip()}" if request.device_fp else None
 
-        rl_ip = check_rate_limit(ip_identifier)
-        rl_email = check_rate_limit(email_identifier) if email_identifier else {"allowed": True, "resets_in_seconds": 0}
-        rl_fp = check_rate_limit(fp_identifier) if fp_identifier else {"allowed": True, "resets_in_seconds": 0}
-
-        rl_blocked = (
-            rl_ip if not rl_ip["allowed"] else
-            rl_email if not rl_email["allowed"] else
-            rl_fp if not rl_fp["allowed"] else
-            None
-        )
+        if email_identifier:
+            rl_email = check_rate_limit(email_identifier)
+            rl_fp = check_rate_limit(fp_identifier) if fp_identifier else {"allowed": True, "resets_in_seconds": 0}
+            rl_blocked = (
+                rl_email if not rl_email["allowed"] else
+                rl_fp if not rl_fp["allowed"] else
+                None
+            )
+        else:
+            rl_ip = check_rate_limit(ip_identifier)
+            rl_fp = check_rate_limit(fp_identifier) if fp_identifier else {"allowed": True, "resets_in_seconds": 0}
+            rl_blocked = (
+                rl_ip if not rl_ip["allowed"] else
+                rl_fp if not rl_fp["allowed"] else
+                None
+            )
         if rl_blocked:
             hours_left = round(rl_blocked["resets_in_seconds"] / 3600, 1)
             raise HTTPException(
@@ -202,12 +209,15 @@ def chat_endpoint(request: ChatRequest, req: Request):
         if request.user_email:
             add_tokens_used(request.user_email, len(respuesta))
 
-        # Incrementar contador de rate limit para IP, email y device fingerprint (si aplican)
-        increment_rate_limit(ip_identifier)
+        # Incrementar solo los identificadores que se verificaron
         if email_identifier:
             increment_rate_limit(email_identifier)
-        if fp_identifier:
-            increment_rate_limit(fp_identifier)
+            if fp_identifier:
+                increment_rate_limit(fp_identifier)
+        else:
+            increment_rate_limit(ip_identifier)
+            if fp_identifier:
+                increment_rate_limit(fp_identifier)
 
         # Guardar historial de chat
         if request.user_email:
@@ -400,7 +410,7 @@ def rate_limit_check(identifier: str):
 
 # --- POST /payment/create-link ---
 
-PLAN_QUANTITIES = {'basico': 15, 'estudiante': 60, 'intensivo': 200, 'apoyo': 25}
+PLAN_QUANTITIES = {'basico': 15, 'estudiante': 60, 'intensivo': 200, 'apoyo': 60}
 
 class PaymentLinkRequest(BaseModel):
     email: str

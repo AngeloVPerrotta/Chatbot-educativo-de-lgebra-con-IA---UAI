@@ -343,32 +343,40 @@
     <div class="billing-overlay" id="billingPopup" style="display:none">
         <div class="billing-card">
             <div class="billing-title">Llegaste al límite de consultas diarias</div>
-            <div class="billing-sub">Elegí un plan para seguir aprendiendo</div>
-            <div class="billing-plans">
-                <div class="billing-plan" id="bplanBasico">
-                    <div class="billing-plan-name">Básico</div>
-                    <div class="billing-plan-price">$500 <span style="font-size:.9rem;font-weight:500">ARS</span></div>
-                    <div class="billing-plan-qty">15 consultas extra</div>
-                    <div class="billing-plan-desc">Para una sesión de estudio</div>
-                    <button class="billing-plan-btn" onclick="choosePlan('basico',this)">Elegir</button>
-                </div>
-                <div class="billing-plan popular" id="bplanEstudiante">
-                    <div class="billing-badge">Más popular</div>
-                    <div class="billing-plan-name">Estudiante</div>
-                    <div class="billing-plan-price">$1.500 <span style="font-size:.9rem;font-weight:500">ARS</span></div>
-                    <div class="billing-plan-qty">60 consultas extra</div>
-                    <div class="billing-plan-desc">Para preparar un parcial</div>
-                    <button class="billing-plan-btn" onclick="choosePlan('estudiante',this)">Elegir</button>
-                </div>
-                <div class="billing-plan" id="bplanIntensivo">
-                    <div class="billing-plan-name">Intensivo</div>
-                    <div class="billing-plan-price">$3.500 <span style="font-size:.9rem;font-weight:500">ARS</span></div>
-                    <div class="billing-plan-qty">200 consultas extra</div>
-                    <div class="billing-plan-desc">Para todo el cuatrimestre</div>
-                    <button class="billing-plan-btn" onclick="choosePlan('intensivo',this)">Elegir</button>
-                </div>
+            <!-- Login gate: mostrado cuando no está registrado -->
+            <div id="billingLoginGate" style="display:none;flex-direction:column;align-items:center;gap:16px;width:100%">
+                <div class="billing-sub">Para desbloquear consultas extra necesitás una cuenta</div>
+                <button class="billing-plan-btn" style="max-width:240px;padding:12px 0" onclick="closeBillingPopup();pendingBillingAfterLogin=true;showSavePopup()">Crear cuenta</button>
             </div>
-            <div class="billing-note">Las consultas no usadas no vencen. Se renuevan 15 consultas gratis cada 24hs.</div>
+            <!-- Planes: mostrados cuando está registrado -->
+            <div id="billingPlansSection">
+                <div class="billing-sub">Elegí un plan para seguir aprendiendo</div>
+                <div class="billing-plans">
+                    <div class="billing-plan" id="bplanBasico">
+                        <div class="billing-plan-name">Básico</div>
+                        <div class="billing-plan-price">$500 <span style="font-size:.9rem;font-weight:500">ARS</span></div>
+                        <div class="billing-plan-qty">15 consultas extra</div>
+                        <div class="billing-plan-desc">Para una sesión de estudio</div>
+                        <button class="billing-plan-btn" onclick="choosePlan('basico',this)">Elegir</button>
+                    </div>
+                    <div class="billing-plan popular" id="bplanEstudiante">
+                        <div class="billing-badge">Más popular</div>
+                        <div class="billing-plan-name">Estudiante</div>
+                        <div class="billing-plan-price">$1.500 <span style="font-size:.9rem;font-weight:500">ARS</span></div>
+                        <div class="billing-plan-qty">60 consultas extra</div>
+                        <div class="billing-plan-desc">Para preparar un parcial</div>
+                        <button class="billing-plan-btn" onclick="choosePlan('estudiante',this)">Elegir</button>
+                    </div>
+                    <div class="billing-plan" id="bplanIntensivo">
+                        <div class="billing-plan-name">Intensivo</div>
+                        <div class="billing-plan-price">$3.500 <span style="font-size:.9rem;font-weight:500">ARS</span></div>
+                        <div class="billing-plan-qty">200 consultas extra</div>
+                        <div class="billing-plan-desc">Para todo el cuatrimestre</div>
+                        <button class="billing-plan-btn" onclick="choosePlan('intensivo',this)">Elegir</button>
+                    </div>
+                </div>
+                <div class="billing-note">Las consultas no usadas no vencen. Se renuevan 15 consultas gratis cada 24hs.</div>
+            </div>
             <button class="billing-dismiss" onclick="closeBillingPopup()">Ahora no</button>
         </div>
     </div>
@@ -447,7 +455,7 @@
                 <div class="popup-card">
                     <h2>Ayud&#225; a mantener AlgorIA funcionando</h2>
                     <p>AlgorIA es un proyecto independiente creado por un estudiante de la UAI. Tu aporte ayuda a cubrir los costos de servidores, inteligencia artificial y desarrollo para que la herramienta siga siendo accesible para todos los estudiantes.</p>
-                    <p class="popup-amount">Monto sugerido: $1.000 ARS</p>
+                    <p class="popup-amount">Monto sugerido: $1.500 ARS</p>
                     <div class="popup-actions">
                         <button class="popup-primary-btn" onclick="window.open('https://mpago.la/1Eg2XRW','_blank');closeSupportPopup()">Apoyar ahora &#8594;</button>
                         <button class="popup-cancel-link" onclick="closeSupportPopup()">Ahora no</button>
@@ -632,6 +640,10 @@
             loadHistoryList();
             fetchRateLimit();
             msgInput.focus();
+            if (pendingBillingAfterLogin) {
+                pendingBillingAfterLogin = false;
+                showBillingPopup();
+            }
         }
 
         // === ADMIN POPUP ===
@@ -904,7 +916,18 @@
             chatArea.scrollTop = chatArea.scrollHeight;
         }
 
+        let pendingBillingAfterLogin = false;
+
         function showBillingPopup() {
+            const gate = document.getElementById('billingLoginGate');
+            const plans = document.getElementById('billingPlansSection');
+            if (currentUser) {
+                gate.style.display = 'none';
+                plans.style.display = '';
+            } else {
+                gate.style.display = 'flex';
+                plans.style.display = 'none';
+            }
             document.getElementById('billingPopup').style.display = 'flex';
         }
 
@@ -1224,15 +1247,39 @@
         (function checkPaymentReturn() {
             const params = new URLSearchParams(window.location.search);
             const payment = params.get('payment');
+            const cleanUrl = window.location.pathname;
             if (payment === 'success') {
-                addMessage('bot', '¡Pago recibido! Ya tenés 50 consultas extra disponibles. ¡Seguí consultando!');
-                // Limpiar el parámetro de la URL sin recargar
-                const cleanUrl = window.location.pathname;
                 window.history.replaceState({}, '', cleanUrl);
-                fetchRateLimit();
+                if (currentUser && currentUser.email) {
+                    let attempts = 0;
+                    function verifyCredits() {
+                        fetch(`${BACKEND}/payment/status?email=${encodeURIComponent(currentUser.email)}`)
+                            .then(r => r.json())
+                            .then(data => {
+                                if (data && data.extra_messages > 0) {
+                                    addMessage('bot', `¡Pago recibido! Ya tenés ${data.extra_messages} consultas extra disponibles. ¡Seguí aprendiendo!`);
+                                    fetchRateLimit();
+                                } else if (attempts < 3) {
+                                    attempts++;
+                                    addMessage('bot', 'Tu pago está siendo procesado. Los créditos se acreditan en unos minutos.');
+                                    setTimeout(verifyCredits, 5000);
+                                } else {
+                                    addMessage('bot', 'Tu pago está siendo procesado. Los créditos se acreditan en unos minutos. Si no se reflejan pronto, contactanos.');
+                                    fetchRateLimit();
+                                }
+                            })
+                            .catch(() => {
+                                addMessage('bot', '¡Pago recibido! Los créditos se acreditarán en unos minutos.');
+                                fetchRateLimit();
+                            });
+                    }
+                    verifyCredits();
+                } else {
+                    addMessage('bot', '¡Pago recibido! Los créditos se acreditan en unos minutos. Iniciá sesión para verlos reflejados.');
+                    fetchRateLimit();
+                }
             } else if (payment === 'failure') {
                 addMessage('bot', 'El pago no se completó. Podés intentarlo de nuevo cuando quieras.');
-                const cleanUrl = window.location.pathname;
                 window.history.replaceState({}, '', cleanUrl);
             }
         })();
