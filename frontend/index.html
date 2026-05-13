@@ -143,7 +143,8 @@
         .inline-footer{display:flex;justify-content:space-between;align-items:center;padding:6px 8px 0;font-size:.68rem;color:var(--text-muted)}
         .inline-footer a{color:var(--text-muted);text-decoration:none;transition:color .2s}
         .inline-footer a:hover{color:var(--text-secondary)}
-        .inline-footer-left{display:flex;gap:8px;align-items:center}
+        .inline-footer-left{margin-right:auto}
+        .inline-footer-right{margin-left:auto;text-align:right}
         .donate-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;margin:8px 0;background:rgba(15,23,42,0.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.05);border-radius:12px;animation:msgIn .4s ease}
         .donate-banner p{font-size:.83rem;color:var(--text-secondary);line-height:1.5}
         .donate-banner a{color:var(--accent-soft);font-weight:500;text-decoration:none;white-space:nowrap}
@@ -472,9 +473,9 @@
                     <span class="char-counter" id="charCounter">0/500</span>
                 </div>
                 <div class="inline-footer">
-                    <div class="inline-footer-left"><span class="rl-counter" id="rlCounterFooter"></span><span class="char-counter" id="charCounterFooter">0/500</span></div>
+                    <span class="inline-footer-left"><span class="char-counter" id="charCounterFooter">0/500</span></span>
                     <span>Hecho por Angelo Perrotta · <a href="https://www.uai.edu.ar" target="_blank" rel="noopener">UAI</a></span>
-                    <span></span>
+                    <span class="inline-footer-right rl-counter" id="rlCounterFooter"></span>
                 </div>
             </div>
 
