@@ -970,6 +970,22 @@
                 return;
             }
 
+            // /llenartokens command — debug fill rate limit, don't show in chat
+            if (text === '/llenartokens') {
+                msgInput.value = ''; msgInput.style.height = 'auto';
+                updateCharCounter(0);
+                try {
+                    const headers = { 'Content-Type': 'application/json' };
+                    await fetch(`${BACKEND}/debug/fill-rate-limit`, {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify({ identifier: currentUser?.email || 'test', count: 14 })
+                    });
+                } catch(e) {}
+                addMessage('bot', 'Debug: rate limit llenado. Te queda 1 consulta antes del límite.');
+                return;
+            }
+
             // Track message count (for save popup, only when not logged in)
             let localMsgCount = 0;
             if (!currentUser) {
