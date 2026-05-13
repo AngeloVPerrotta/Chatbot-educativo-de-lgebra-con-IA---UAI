@@ -25,7 +25,6 @@ def chat(historial: list, session_id: str = None) -> str:
 
         api_key = os.getenv('ANTHROPIC_API_KEY')
         logger.info(f'API Key presente: {"Si" if api_key else "No"}')
-        logger.info(f'API Key primeros 10 chars: {api_key[:10] if api_key else "None"}')
 
         logger.info('Creando cliente Anthropic...')
         client = Anthropic(api_key=api_key)

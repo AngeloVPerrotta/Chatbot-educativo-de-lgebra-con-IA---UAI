@@ -345,8 +345,8 @@
             <div class="billing-title">Llegaste al límite de consultas diarias</div>
             <!-- Login gate: mostrado cuando no está registrado -->
             <div id="billingLoginGate" style="display:none;flex-direction:column;align-items:center;gap:16px;width:100%">
-                <div class="billing-sub">Para desbloquear consultas extra necesitás una cuenta</div>
-                <button class="billing-plan-btn" style="max-width:240px;padding:12px 0" onclick="closeBillingPopup();pendingBillingAfterLogin=true;showSavePopup()">Crear cuenta</button>
+                <div class="billing-sub">Necesitás una cuenta para desbloquear consultas</div>
+                <button class="billing-plan-btn" style="max-width:240px;padding:12px 0" onclick="closeBillingPopup();pendingBillingAfterLogin=true;showSavePopup()">Crear cuenta ahora</button>
             </div>
             <!-- Planes: mostrados cuando está registrado -->
             <div id="billingPlansSection">
@@ -1066,7 +1066,9 @@
             const list = document.getElementById('historyList');
             list.innerHTML = '<div class="history-empty">Cargando...</div>';
             try {
-                const res = await fetch(`${BACKEND}/history/${encodeURIComponent(currentUser.email)}`);
+                const res = await fetch(`${BACKEND}/history/${encodeURIComponent(currentUser.email)}`, {
+                    headers: { 'X-User-Email': currentUser.email }
+                });
                 if (!res.ok) throw new Error();
                 const sessions = await res.json();
                 if (!sessions.length) {
@@ -1109,7 +1111,9 @@
             document.querySelectorAll('.history-session').forEach(s => s.classList.remove('active'));
             if (el) el.classList.add('active');
             try {
-                const res = await fetch(`${BACKEND}/history/${encodeURIComponent(currentUser.email)}/${encodeURIComponent(sid)}`);
+                const res = await fetch(`${BACKEND}/history/${encodeURIComponent(currentUser.email)}/${encodeURIComponent(sid)}`, {
+                    headers: { 'X-User-Email': currentUser.email }
+                });
                 if (!res.ok) throw new Error();
                 const messages = await res.json();
                 savedChatHTML = chatArea.innerHTML;
@@ -1249,27 +1253,27 @@
             const payment = params.get('payment');
             const cleanUrl = window.location.pathname;
             if (payment === 'success') {
-                window.history.replaceState({}, '', cleanUrl);
+                history.replaceState({}, '', cleanUrl);
                 if (currentUser && currentUser.email) {
+                    addMessage('bot', 'Verificando tu pago...');
                     let attempts = 0;
                     function verifyCredits() {
                         fetch(`${BACKEND}/payment/status?email=${encodeURIComponent(currentUser.email)}`)
                             .then(r => r.json())
                             .then(data => {
-                                if (data && data.extra_messages > 0) {
-                                    addMessage('bot', `¡Pago recibido! Ya tenés ${data.extra_messages} consultas extra disponibles. ¡Seguí aprendiendo!`);
+                                if (data && data.has_bonus) {
+                                    addMessage('bot', `¡Pago acreditado! Tenés ${data.bonus_messages} consultas extra.`);
                                     fetchRateLimit();
                                 } else if (attempts < 3) {
                                     attempts++;
-                                    addMessage('bot', 'Tu pago está siendo procesado. Los créditos se acreditan en unos minutos.');
                                     setTimeout(verifyCredits, 5000);
                                 } else {
-                                    addMessage('bot', 'Tu pago está siendo procesado. Los créditos se acreditan en unos minutos. Si no se reflejan pronto, contactanos.');
+                                    addMessage('bot', 'Tu pago está siendo procesado. Los créditos aparecerán en unos minutos.');
                                     fetchRateLimit();
                                 }
                             })
                             .catch(() => {
-                                addMessage('bot', '¡Pago recibido! Los créditos se acreditarán en unos minutos.');
+                                addMessage('bot', 'Tu pago está siendo procesado. Los créditos aparecerán en unos minutos.');
                                 fetchRateLimit();
                             });
                     }
@@ -1280,7 +1284,7 @@
                 }
             } else if (payment === 'failure') {
                 addMessage('bot', 'El pago no se completó. Podés intentarlo de nuevo cuando quieras.');
-                window.history.replaceState({}, '', cleanUrl);
+                history.replaceState({}, '', cleanUrl);
             }
         })();
 

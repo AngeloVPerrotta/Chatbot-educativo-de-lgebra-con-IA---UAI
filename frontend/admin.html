@@ -330,8 +330,8 @@
                 // Verify PIN + role with a protected endpoint
                 const statsRes = await fetch(`${BACKEND}/admin/stats`, { headers: adminHeaders() });
                 if (!statsRes.ok) { window.location.href = 'index.html'; return; }
-                // Get superadmin flag (check-access doesn't need PIN)
-                const accessRes = await fetch(`${BACKEND}/admin/check-access`, { headers: { 'X-Admin-Email': adminEmail } });
+                // Get superadmin flag
+                const accessRes = await fetch(`${BACKEND}/admin/check-access`, { headers: adminHeaders() });
                 if (accessRes.ok) {
                     const data = await accessRes.json();
                     isSuperAdmin = !!data.is_superadmin;

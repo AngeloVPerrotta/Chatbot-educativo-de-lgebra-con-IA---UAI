@@ -135,45 +135,43 @@ def chat_endpoint(request: ChatRequest, req: Request):
         logger.info(f'Materia: {request.materia}')
         logger.info(f'Session: {request.session_id}')
 
-        # Verificar longitud del mensaje
+        # Validar inputs
         if len(request.message) > 500:
             raise HTTPException(status_code=400, detail="El mensaje no puede superar los 500 caracteres.")
+        if len(request.session_id) > 64:
+            raise HTTPException(status_code=400, detail="session_id inválido.")
+        if request.device_fp and len(request.device_fp) > 128:
+            raise HTTPException(status_code=400, detail="device_fp inválido.")
+        if request.user_email and len(request.user_email) > 100:
+            raise HTTPException(status_code=400, detail="email inválido.")
 
         # Verificar límite de tokens si viene user_email
         if request.user_email and not check_token_limit(request.user_email):
             raise HTTPException(status_code=429, detail="TOKEN_LIMIT_EXCEEDED")
 
         # Verificar rate limit (15 mensajes / 24hs).
-        # Registrado: verificar por email + device_fp (no por IP, para no bloquear compañeros en la misma WiFi).
-        # Anónimo: verificar por IP + device_fp.
+        # Un solo identificador por orden de prioridad: email > device_fp > IP.
+        # Así la WiFi de la universidad nunca bloquea a múltiples alumnos.
         ip_identifier = req.client.host
         email_identifier = request.user_email.strip().lower() if request.user_email else None
         fp_identifier = f"fp:{request.device_fp.strip()}" if request.device_fp else None
 
         if email_identifier:
-            rl_email = check_rate_limit(email_identifier)
-            rl_fp = check_rate_limit(fp_identifier) if fp_identifier else {"allowed": True, "resets_in_seconds": 0}
-            rl_blocked = (
-                rl_email if not rl_email["allowed"] else
-                rl_fp if not rl_fp["allowed"] else
-                None
-            )
+            rl_identifier = email_identifier
+        elif fp_identifier:
+            rl_identifier = fp_identifier
         else:
-            rl_ip = check_rate_limit(ip_identifier)
-            rl_fp = check_rate_limit(fp_identifier) if fp_identifier else {"allowed": True, "resets_in_seconds": 0}
-            rl_blocked = (
-                rl_ip if not rl_ip["allowed"] else
-                rl_fp if not rl_fp["allowed"] else
-                None
-            )
-        if rl_blocked:
-            hours_left = round(rl_blocked["resets_in_seconds"] / 3600, 1)
+            rl_identifier = ip_identifier
+
+        rl_check = check_rate_limit(rl_identifier)
+        if not rl_check["allowed"]:
+            hours_left = round(rl_check["resets_in_seconds"] / 3600, 1)
             raise HTTPException(
                 status_code=429,
                 detail={
                     "code": "RATE_LIMITED",
                     "remaining": 0,
-                    "resets_in": rl_blocked["resets_in_seconds"],
+                    "resets_in": rl_check["resets_in_seconds"],
                     "message": f"Alcanzaste el límite de 15 consultas. Se renueva en {hours_left} horas.",
                 },
             )
@@ -209,15 +207,8 @@ def chat_endpoint(request: ChatRequest, req: Request):
         if request.user_email:
             add_tokens_used(request.user_email, len(respuesta))
 
-        # Incrementar solo los identificadores que se verificaron
-        if email_identifier:
-            increment_rate_limit(email_identifier)
-            if fp_identifier:
-                increment_rate_limit(fp_identifier)
-        else:
-            increment_rate_limit(ip_identifier)
-            if fp_identifier:
-                increment_rate_limit(fp_identifier)
+        # Incrementar solo el identificador que se usó para verificar
+        increment_rate_limit(rl_identifier)
 
         # Guardar historial de chat
         if request.user_email:
@@ -280,8 +271,11 @@ def admin_verify(payload: AdminVerifyRequest):
 @app.get("/admin/check-access")
 def admin_check_access(request: Request):
     email = request.headers.get("X-Admin-Email", "").strip().lower()
-    if not email:
-        return {"is_admin": False, "is_superadmin": False, "email": email}
+    pin = request.headers.get("X-Admin-Pin", "")
+    admin_pin = os.getenv("ADMIN_PIN", "")
+    # Requiere PIN para no exponer qué emails son admin
+    if not email or not pin or pin != admin_pin:
+        return {"is_admin": False, "is_superadmin": False, "email": ""}
     _is_super = is_superadmin(email)
     _is_admin = is_admin_or_super(email)
     return {"is_admin": _is_admin, "is_superadmin": _is_super, "email": email}
@@ -333,6 +327,8 @@ def admin_users(request: Request):
 def feedback_endpoint(payload: FeedbackRequest):
     if not 1 <= payload.rating <= 5:
         raise HTTPException(status_code=422, detail="El rating debe ser entre 1 y 5.")
+    if payload.message and len(payload.message) > 1000:
+        raise HTTPException(status_code=422, detail="El mensaje no puede superar los 1000 caracteres.")
     save_feedback(payload.user_email, payload.rating, payload.message)
     return {"ok": True}
 
@@ -390,14 +386,22 @@ def get_session_history(session_id: str):
 # --- GET /history/{email} ---
 
 @app.get("/history/{email}")
-def user_sessions(email: str):
-    return get_user_sessions(email.strip().lower())
+def user_sessions(email: str, request: Request):
+    # Verificar que el solicitante sea el dueño del historial
+    requesting_email = request.headers.get("X-User-Email", "").strip().lower()
+    email_clean = email.strip().lower()
+    if not requesting_email or requesting_email != email_clean:
+        raise HTTPException(status_code=403, detail="Forbidden")
+    return get_user_sessions(email_clean)
 
 
 # --- GET /history/{email}/{session_id} ---
 
 @app.get("/history/{email}/{session_id}")
-def session_detail(email: str, session_id: str):
+def session_detail(email: str, session_id: str, request: Request):
+    requesting_email = request.headers.get("X-User-Email", "").strip().lower()
+    if not requesting_email or requesting_email != email.strip().lower():
+        raise HTTPException(status_code=403, detail="Forbidden")
     return get_session_messages(session_id)
 
 
