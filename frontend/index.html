@@ -262,7 +262,21 @@
         .feedback-btns{display:flex;gap:10px;width:100%}
         .feedback-btns .auth-btn{flex:1}
 
-        @media(max-width:640px){.app-container{padding:0 12px}.header-title h1{font-size:1.2rem}.welcome h2{font-size:1.35rem}.quick-prompts{flex-direction:column;align-items:center}.message{max-width:92%}.status-badge span:last-child{display:none}.auth-card{padding:26px 18px}.otp-input{width:38px;height:46px;font-size:1.15rem}}
+        @media(max-width:640px){
+            .app-container{padding:0 12px}
+            .header-title h1{font-size:1.1rem}
+            .header-title p{display:none}
+            .logo-mark{width:32px;height:32px;font-size:16px}
+            .header-right{gap:6px}
+            .btn-text{display:none}
+            .status-badge{display:none}
+            .theme-toggle{width:28px;height:28px}
+            .welcome h2{font-size:1.35rem}
+            .quick-prompts{flex-direction:column;align-items:center}
+            .message{max-width:92%}
+            .auth-card{padding:26px 18px}
+            .otp-input{width:38px;height:46px;font-size:1.15rem}
+        }
     </style>
 </head>
 <body>
@@ -407,13 +421,11 @@
                 </div>
                 <div class="header-right">
                     <span class="user-name-badge" id="userNameBadge" style="display:none"></span>
-                    <button class="login-btn" id="loginBtn" onclick="showSavePopup()" style="display:none">Iniciar sesi&#243;n</button>
-                    <button class="clear-btn" onclick="clearChat()" title="Limpiar conversaci&#243;n">&#10005; Limpiar</button>
-                    <button class="clear-btn" id="logoutBtn" onclick="doLogout()" style="display:none">Cerrar sesi&#243;n</button>
-                    <button class="grapher-btn" onclick="window.open('grapher.html','_blank')" title="Módulo graficador">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                        Graficar
-                    </button>
+                    <button class="login-btn" id="loginBtn" onclick="showSavePopup()" style="display:none">&#128100;<span class="btn-text"> Iniciar sesi&#243;n</span></button>
+                    <button class="clear-btn" onclick="clearChat()" title="Limpiar conversaci&#243;n">&#10005;<span class="btn-text"> Limpiar</span></button>
+                    <button class="clear-btn" id="logoutBtn" onclick="doLogout()" style="display:none">&#10005;<span class="btn-text"> Cerrar sesi&#243;n</span></button>
+                    <button class="clear-btn" id="historialBtn" onclick="openPanel()" title="Historial de conversaciones" style="display:none">&#128203;<span class="btn-text"> Historial</span></button>
+                    <button class="grapher-btn" onclick="window.open('grapher.html','_blank')" title="M&#243;dulo graficador">&#10022;<span class="btn-text"> Graficar</span></button>
                     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Cambiar tema">&#127769;</button>
                     <div class="status-badge"><div class="status-dot"></div><span>En l&#237;nea</span></div>
                 </div>
@@ -725,12 +737,14 @@
             if (currentUser) {
                 document.getElementById('logoutBtn').style.display = '';
                 document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('historialBtn').style.display = '';
                 const badge = document.getElementById('userNameBadge');
                 badge.textContent = currentUser.name || currentUser.email;
                 badge.style.display = '';
             } else {
                 document.getElementById('logoutBtn').style.display = 'none';
                 document.getElementById('loginBtn').style.display = '';
+                document.getElementById('historialBtn').style.display = 'none';
                 document.getElementById('userNameBadge').style.display = 'none';
             }
         }
@@ -971,18 +985,20 @@
             }
 
             // /llenartokens command — debug fill rate limit, don't show in chat
-            if (text === '/llenartokens') {
+            if (text.toLowerCase() === '/llenartokens') {
                 msgInput.value = ''; msgInput.style.height = 'auto';
                 updateCharCounter(0);
                 try {
-                    const headers = { 'Content-Type': 'application/json' };
-                    await fetch(`${BACKEND}/debug/fill-rate-limit`, {
+                    const res = await fetch(`${BACKEND}/debug/fill-rate-limit`, {
                         method: 'POST',
-                        headers,
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ identifier: currentUser?.email || 'test', count: 14 })
                     });
-                } catch(e) {}
-                addMessage('bot', 'Debug: rate limit llenado. Te queda 1 consulta antes del límite.');
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    addMessage('bot', '🔧 Debug: rate limit llenado a 14/15. Tu próximo mensaje activará el límite.');
+                } catch(e) {
+                    addMessage('bot', `🔧 Debug error: ${e.message}`);
+                }
                 return;
             }
 

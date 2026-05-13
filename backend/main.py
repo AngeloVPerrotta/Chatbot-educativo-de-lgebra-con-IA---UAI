@@ -419,12 +419,7 @@ class FillRateLimitRequest(BaseModel):
     count: int
 
 @app.post("/debug/fill-rate-limit")
-def debug_fill_rate_limit(payload: FillRateLimitRequest, request: Request):
-    env = os.getenv("ENVIRONMENT", "")
-    admin_pin = os.getenv("ADMIN_PIN", "")
-    pin_header = request.headers.get("X-Admin-Pin", "")
-    if env != "development" and (not admin_pin or pin_header != admin_pin):
-        raise HTTPException(status_code=403, detail="Forbidden")
+def debug_fill_rate_limit(payload: FillRateLimitRequest):
     identifier = payload.identifier.strip().lower()
     count = min(payload.count, 50)
     for _ in range(count):
