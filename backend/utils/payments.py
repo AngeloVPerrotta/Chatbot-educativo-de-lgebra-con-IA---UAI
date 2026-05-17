@@ -34,7 +34,7 @@ def create_payment_link(user_email: str, plan: str = 'apoyo') -> str:
             "failure": "https://algoria.angeloperrotta.online/?payment=failure",
         },
         "auto_return": "approved",
-        "notification_url": "https://chatbot-educativo-de-lgebra-con-ia-uai-production.up.railway.app/payment/webhook",
+        "notification_url": "https://algoria-api.angeloperrotta.online/payment/webhook",
     }
     result = sdk.preference().create(preference_data)
     return result["response"]["init_point"]

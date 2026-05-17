@@ -49,10 +49,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         'https://algoria.angeloperrotta.online',
-        'https://blanchedalmond-buffalo-707381.hostingersite.com',
-        'https://chatbot-educativo-de-lgebra-con-ia-uai-production.up.railway.app',
-        'https://*.netlify.app',  # Permite cualquier dominio de Netlify
-        'http://localhost:5500',  # Para desarrollo local
+        'http://localhost:5500',
         'http://127.0.0.1:5500'
     ],
     allow_credentials=True,
