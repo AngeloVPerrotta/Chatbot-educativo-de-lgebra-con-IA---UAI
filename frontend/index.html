@@ -775,12 +775,12 @@
 
         // === WELCOME ===
         const ALL_QUICK_PROMPTS = [
-            'Explicame vectores en R²','¿Cómo resuelvo un sistema 3×3?','¿Qué es una transformación lineal?',
-            'Ayudame con matrices inversas','¿Cómo calculo el determinante?','¿Qué son los números complejos?',
-            'Explicame la regla de Cramer','¿Qué es el rango de una matriz?','¿Cómo se multiplican matrices?',
-            '¿Qué es un autovalor?','Forma polar de un número complejo','¿Cómo factorizo un polinomio?',
-            '¿Qué es la proyección ortogonal?','Ayudame con eliminación gaussiana','¿Cuándo un sistema no tiene solución?',
-            '¿Qué es la base de un espacio vectorial?','¿Cómo calculo el módulo de un vector?','¿Qué es la traza de una matriz?'
+            '¿Qué entra en el primer parcial?','Explicame números complejos',
+            '¿Cómo resuelvo un sistema de ecuaciones?','Dame un ejercicio de matrices',
+            '¿Cómo grafico una función cuadrática?','Explicame vectores en R²',
+            '¿Qué es el determinante de una matriz?','¿Cómo paso de forma binómica a polar?',
+            'Explicame la ecuación de la recta','Dame un ejercicio de cónicas',
+            '¿Qué es el Teorema de Rouché-Frobenius?','¿Cómo calculo la inversa de una matriz?'
         ];
         // === SISTEMA DE SALUDOS ===
         const SALUDOS = {
@@ -995,6 +995,7 @@
         async function sendMessage() {
             const text = msgInput.value.trim();
             if (!text || isWaiting) return;
+            lastUserMessage = text;
 
             // /admin command — intercept, don't show in chat
             if (text === '/admin') {
@@ -1194,30 +1195,39 @@
 
         // === SUGGESTIONS ===
         const SUGGESTION_TEMPLATES = {
-            matrix:['¿Podés mostrarme un ejemplo con números?','¿Cómo se calcula la inversa?','¿Cuándo una matriz no tiene inversa?'],
-            determinant:['¿Podés hacer un ejemplo 3×3?','¿Cuándo el determinante es cero?','¿Cómo aplico la regla de Sarrus?'],
-            system:['¿Podés resolverlo con eliminación de Gauss?','¿Cuándo un sistema no tiene solución?','¿Cómo uso la regla de Cramer?'],
-            vector:['¿Podés mostrar el módulo paso a paso?','¿Cómo verifico si dos vectores son paralelos?','¿Qué es el producto escalar?'],
-            complex:['¿Cómo paso este número a forma polar?','¿Podés dar un ejemplo de multiplicación?','¿Cómo calculo el módulo de un complejo?'],
-            function:['¿Podés graficar un ejemplo?','¿Cómo encuentro el dominio?','¿Cómo determino la imagen?'],
-            equation:['¿Podés resolverlo paso a paso?','¿Cómo verifico si el resultado es correcto?','¿Qué pasa si hay más de una solución?'],
-            conic:['¿Podés escribir la ecuación canónica?','¿Cómo identifico el tipo de cónica?','¿Dónde están el foco y la directriz?'],
-            default:['¿Podés darme un ejemplo concreto?','¿Cómo se resuelve paso a paso?','¿Podés proponerme un ejercicio?'],
+            equation:['Dame un ejercicio de ecuaciones para practicar','¿Qué tipos de ecuaciones existen?'],
+            matrix:['¿Cómo calculo la inversa?','Mostrame la regla de Sarrus'],
+            vector:['¿Cómo calculo el módulo?','¿Qué es el producto escalar?'],
+            complex:['¿Cómo paso de binómica a polar?','Dame un ejercicio de operaciones con complejos'],
+            function:['¿Cómo encuentro el dominio?','Graficame un ejemplo'],
+            system:['¿Cuándo uso Gauss y cuándo Cramer?','Dame un sistema 3x3 para practicar'],
+            determinant:['Explicame cofactores','¿Cómo se usa Laplace?'],
+            recta:['¿Cómo calculo la pendiente?','¿Cómo sé si dos rectas son paralelas?'],
+            conic:['¿Cómo distingo una elipse de una hipérbola?','Dame la ecuación canónica de una parábola'],
+            parcial:['¿Qué temas entran en el primer parcial?','¿Qué debería estudiar primero?'],
+            default:['Dame un ejercicio para practicar','Explicame la teoría de este tema','¿Qué otros temas se relacionan?'],
         };
+
+        let lastUserMessage = '';
 
         function generateSuggestions(text) {
             const t = text.toLowerCase();
             let tmpl;
-            if(/matriz|matrices|transpuesta|inversa/.test(t)) tmpl=SUGGESTION_TEMPLATES.matrix;
-            else if(/determinante|sarrus|laplace|cofactor/.test(t)) tmpl=SUGGESTION_TEMPLATES.determinant;
-            else if(/sistema|ecuaciones lineales|gauss|cramer|rouché/.test(t)) tmpl=SUGGESTION_TEMPLATES.system;
-            else if(/vector|módulo|producto escalar|paralel/.test(t)) tmpl=SUGGESTION_TEMPLATES.vector;
-            else if(/complejo|binómica|polar|trigonométric/.test(t)) tmpl=SUGGESTION_TEMPLATES.complex;
-            else if(/función|dominio|imagen|polinómica|exponencial|logarítm/.test(t)) tmpl=SUGGESTION_TEMPLATES.function;
-            else if(/ecuación|raíz|solución|despejá|inecuac/.test(t)) tmpl=SUGGESTION_TEMPLATES.equation;
-            else if(/cónica|circunferencia|elipse|hipérbola|parábola/.test(t)) tmpl=SUGGESTION_TEMPLATES.conic;
+            if(/parcial|examen|final/.test(t)) tmpl=SUGGESTION_TEMPLATES.parcial;
+            else if(/ecuaci[oó]n|ecuaciones|inecuac|despej/.test(t)) tmpl=SUGGESTION_TEMPLATES.equation;
+            else if(/matriz|matrices/.test(t)) tmpl=SUGGESTION_TEMPLATES.matrix;
+            else if(/vector|vectores/.test(t)) tmpl=SUGGESTION_TEMPLATES.vector;
+            else if(/complejo|complejos/.test(t)) tmpl=SUGGESTION_TEMPLATES.complex;
+            else if(/funci[oó]n|funciones/.test(t)) tmpl=SUGGESTION_TEMPLATES.function;
+            else if(/sistema|sistemas/.test(t)) tmpl=SUGGESTION_TEMPLATES.system;
+            else if(/determinante/.test(t)) tmpl=SUGGESTION_TEMPLATES.determinant;
+            else if(/recta|pendiente/.test(t)) tmpl=SUGGESTION_TEMPLATES.recta;
+            else if(/c[oó]nica|c[oó]nicas|elipse|hip[eé]rbola|par[aá]bola|circunferencia/.test(t)) tmpl=SUGGESTION_TEMPLATES.conic;
             else tmpl=SUGGESTION_TEMPLATES.default;
-            return [...tmpl].sort(()=>Math.random()-.5).slice(0,2+Math.floor(Math.random()*2));
+            const userLower = lastUserMessage.toLowerCase();
+            const filtered = tmpl.filter(s => !userLower.includes(s.toLowerCase().slice(0,20)));
+            const pool = filtered.length >= 2 ? filtered : tmpl;
+            return [...pool].sort(()=>Math.random()-.5).slice(0,2);
         }
 
         function addSuggestions(text) {
