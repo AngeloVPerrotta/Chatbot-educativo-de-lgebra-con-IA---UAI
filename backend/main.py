@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 from agents.algebra_agent import chat as algebra_chat
 from agents.calculo_agent import chat as calculo_chat
 from utils.rag import warmup_rag
+from utils.llm_router import get_llm_stats
 from utils.session_manager import get_session, append_message, get_messages, clear_session
 from utils.analytics import (
     get_stats,
@@ -325,6 +326,14 @@ def admin_interactions(request: Request):
 def admin_users(request: Request):
     _require_admin(request)
     return get_all_users()
+
+
+# --- GET /admin/llm-stats ---
+
+@app.get("/admin/llm-stats")
+def admin_llm_stats(request: Request):
+    _require_admin(request)
+    return get_llm_stats()
 
 
 # --- POST /feedback ---

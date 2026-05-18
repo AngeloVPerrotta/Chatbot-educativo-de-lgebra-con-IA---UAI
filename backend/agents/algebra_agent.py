@@ -5,13 +5,11 @@ import traceback
 from pathlib import Path
 from utils.rag import retrieve_context
 from utils.analytics import log_interaction
+from utils.llm_router import call_llm
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-LLM_PROVIDER = os.getenv('LLM_PROVIDER', 'groq')  # 'groq' o 'anthropic'
-logger.info(f'Proveedor LLM: {LLM_PROVIDER}')
 
 
 def load_system_prompt() -> str:
@@ -57,29 +55,10 @@ def chat(historial: list, session_id: str = None) -> str:
         logger.info('Llamando a LLM API...')
         t_start = time.time()
 
-        if LLM_PROVIDER == 'groq':
-            from groq import Groq
-            client = Groq(api_key=os.getenv('GROQ_API_KEY'))
-            response = client.chat.completions.create(
-                model='llama-3.3-70b-versatile',
-                messages=[{"role": "system", "content": system_prompt}] + historial,
-                max_tokens=700,
-                temperature=0.7
-            )
-            result = response.choices[0].message.content
-        else:
-            from anthropic import Anthropic
-            client = Anthropic(api_key=os.getenv('ANTHROPIC_API_KEY'))
-            response = client.messages.create(
-                model='claude-haiku-4-5-20251001',
-                max_tokens=700,
-                system=system_prompt,
-                messages=historial
-            )
-            result = response.content[0].text
+        result = call_llm(historial, system_prompt)
 
         response_time_ms = int((time.time() - t_start) * 1000)
-        logger.info(f'Respuesta recibida de {LLM_PROVIDER}')
+        logger.info(f'Respuesta recibida')
         logger.info(f'Respuesta length: {len(result)} caracteres')
 
         user_msg_len = len(user_messages[-1].get("content", "")) if user_messages else 0
@@ -104,4 +83,4 @@ def chat(historial: list, session_id: str = None) -> str:
         logger.error(f'Mensaje de error: {str(e)}')
         logger.error('Traceback completo:')
         logger.error(traceback.format_exc())
-        raise RuntimeError(f'Error al comunicarse con {LLM_PROVIDER} API: {str(e)}')
+        raise RuntimeError(f'Error al comunicarse con LLM API: {str(e)}')
