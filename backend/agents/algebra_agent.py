@@ -22,7 +22,6 @@ def chat(historial: list, session_id: str = None) -> str:
         logger.info('=== INICIO CHAT ALGEBRA ===')
         logger.info(f'Session ID: {session_id}')
         logger.info(f'Historial length: {len(historial)}')
-        logger.info(f'Proveedor LLM: {LLM_PROVIDER}')
 
         system_prompt = load_system_prompt()
         logger.info(f'System prompt cargado: {len(system_prompt)} caracteres')
