@@ -40,6 +40,7 @@ from utils.analytics import (
     get_user_payment_status,
     get_fp_status,
     link_fp_email,
+    get_linked_fingerprints,
     save_error_report,
     get_error_reports,
     update_report_status,
@@ -429,11 +430,31 @@ def session_detail(email: str, session_id: str, request: Request):
 
 @app.get("/rate-limit")
 def rate_limit_check(identifier: str):
-    # Accept raw fp or fp:xxx format
+    """Resolve any identifier (email, raw fp, fp:xxx) to the canonical
+    fingerprint-based key before querying the counter."""
     clean = identifier.strip().lower()
-    if not clean.startswith("fp:") and not clean.startswith("ip:") and "@" not in clean:
-        clean = f"fp:{clean}"
-    return check_rate_limit(clean)
+
+    if clean.startswith("fp:"):
+        # Already canonical — use as-is
+        canonical = clean
+    elif "@" in clean:
+        # Email → look up the most recent linked fingerprint
+        fps = get_linked_fingerprints(clean)
+        if fps:
+            canonical = f"fp:{fps[-1]}"  # most recent (last by first_seen ASC)
+            logger.info(f"Rate-limit check: resolved email {clean} → {canonical}")
+        else:
+            # No fingerprint ever linked to this email — user never sent a message
+            from datetime import datetime as _dt, timedelta as _td
+            _now = _dt.utcnow()
+            _midnight = _now.replace(hour=0, minute=0, second=0, microsecond=0) + _td(days=1)
+            resets_in = max(0, int((_midnight - _now).total_seconds()))
+            return {"allowed": True, "remaining": FREE_DAILY_LIMIT, "resets_in_seconds": resets_in}
+    else:
+        # Raw fingerprint without prefix
+        canonical = f"fp:{clean}"
+
+    return check_rate_limit(canonical)
 
 
 # --- POST /debug/fill-rate-limit ---
