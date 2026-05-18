@@ -5,6 +5,8 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+MAX_CONTEXT_CHARS = 1200
+
 _collection = None
 
 
@@ -74,11 +76,16 @@ def retrieve_context(query: str, top_k: int = 2) -> tuple:
         context_parts = []
         total_chars = 0
         for doc, meta in zip(results['documents'][0], results['metadatas'][0]):
-            logger.info(f'RAG DEBUG | acumulando chunk len={len(doc)}, total_chars actual={total_chars}')
-            if total_chars + len(doc) > 400:
+            available = MAX_CONTEXT_CHARS - total_chars
+            if available <= 80:
                 break
-            context_parts.append(f"[{meta['topic']}] {doc}")
-            total_chars += len(doc)
+            logger.info(f'RAG DEBUG | acumulando chunk len={len(doc)}, total_chars actual={total_chars}')
+            if len(doc) > available:
+                doc_to_add = doc[:available - 3] + '...'
+            else:
+                doc_to_add = doc
+            context_parts.append(f"[{meta['topic']}] {doc_to_add}")
+            total_chars += len(doc_to_add)
 
         context = '\n'.join(context_parts)
 
