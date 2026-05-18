@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """
-build_chunks.py
-Lee los .docx de backend/knowledge/fuentes/ y genera algebra_chunks.json
-con chunks semánticos de ~300-500 palabras.
+build_chunks.py (v2 — chunking semántico con metadata enriquecida)
+
+Lee los .docx de las 14 clases en knowledge/fuentes/ y genera
+knowledge/algebra_chunks_v2.json con chunks semánticos compatibles
+con utils/rag.py (campos: id, contenido, tema).
 
 Uso:
     cd backend
@@ -16,274 +18,311 @@ from pathlib import Path
 
 try:
     from docx import Document
+    from docx.oxml.ns import qn
+    from docx.table import Table
+    from docx.text.paragraph import Paragraph
 except ImportError:
     print("ERROR: python-docx no instalado. Ejecutá: pip install python-docx")
     sys.exit(1)
 
 # ── Rutas ───────────────────────────────────────────────────────────────────
-SCRIPT_DIR  = Path(__file__).parent
-FUENTES_DIR = SCRIPT_DIR.parent / "knowledge" / "fuentes"
-OUTPUT_FILE = SCRIPT_DIR.parent / "knowledge" / "algebra_chunks.json"
+FUENTES_DIR = Path("knowledge") / "fuentes"
+OUTPUT_FILE = Path("knowledge") / "algebra_chunks_v2.json"
 
-# ── Parámetros de chunking ───────────────────────────────────────────────────
-CHUNK_TARGET = 380   # palabras objetivo por chunk
-CHUNK_MAX    = 530   # máximo antes de forzar corte
-MIN_TAIL     = 80    # mínimo para crear chunk propio (si es menor, se fusiona)
+# ── Parámetros de chunking ──────────────────────────────────────────────────
+CHUNK_FLUSH = 800       # flush buffer cuando supera este largo en chars
+CHUNK_MAX = 1200        # máximo absoluto por chunk antes de subdividir
+CHUNK_MIN = 80          # descartar chunks menores a esto
 
-STOPWORDS = {
-    "el", "la", "los", "las", "de", "del", "en", "un", "una", "que",
-    "es", "son", "se", "con", "por", "para", "como", "qué", "cómo",
-    "a", "al", "y", "o", "si", "no", "me", "te", "le", "su", "sus",
-    "lo", "ya", "más", "pero", "este", "esta", "estos", "estas",
-    "ese", "esa", "esos", "esas", "hay", "ser", "estar", "tiene",
-    "tienen", "pueden", "puede", "caso", "forma", "tipo", "tipos",
-    "dos", "tres", "cada", "todo", "toda", "todos", "todas",
-    "tanto", "también", "cuando", "donde", "dado", "sea", "cual",
-    "dicho", "dicha", "mismo", "misma", "entre", "sobre", "sin",
+# ── Regex para filtrar solo archivos de clase ────────────────────────────────
+CLASE_RE = re.compile(r'[Cc]lase[\s_-]*(\d{1,2})\s*[-_]?\s*(.*)')
+
+# ── Heading styles ──────────────────────────────────────────────────────────
+HEADING_MAP = {
+    'heading 1': 1, 'heading 2': 2, 'heading 3': 3,
+    'título 1': 1,  'título 2': 2,  'título 3': 3,
+    'titulo 1': 1,  'titulo 2': 2,  'titulo 3': 3,
 }
 
 
-# ── Helpers ──────────────────────────────────────────────────────────────────
+# ── Helpers ─────────────────────────────────────────────────────────────────
 
-def slugify(text: str) -> str:
-    """Convierte texto a slug ASCII apto para IDs."""
-    _ACCENT_MAP = {
-        "\u00e1": "a", "\u00e0": "a", "\u00e4": "a",
-        "\u00e9": "e", "\u00e8": "e", "\u00eb": "e",
-        "\u00ed": "i", "\u00ec": "i", "\u00ef": "i",
-        "\u00f3": "o", "\u00f2": "o", "\u00f6": "o",
-        "\u00fa": "u", "\u00f9": "u", "\u00fc": "u",
-        "\u00f1": "n",
-        "\u00c1": "a", "\u00c0": "a", "\u00c4": "a",
-        "\u00c9": "e", "\u00c8": "e", "\u00cb": "e",
-        "\u00cd": "i", "\u00cc": "i", "\u00cf": "i",
-        "\u00d3": "o", "\u00d2": "o", "\u00d6": "o",
-        "\u00da": "u", "\u00d9": "u", "\u00dc": "u",
-        "\u00d1": "n",
-    }
-    text = "".join(_ACCENT_MAP.get(c, c) for c in text).lower()
-    text = re.sub(r"[^\w\s]", "", text)
-    text = re.sub(r"\s+", "_", text.strip())
-    return text[:28]
-
-
-def extract_keywords(text: str, max_kw: int = 8) -> list[str]:
-    """Extrae las palabras más frecuentes y significativas del texto."""
-    words = re.sub(r"[^\w\s]", " ", text.lower()).split()
-    freq: dict[str, int] = {}
-    for w in words:
-        if len(w) > 3 and w not in STOPWORDS:
-            freq[w] = freq.get(w, 0) + 1
-    return sorted(freq, key=lambda k: freq[k], reverse=True)[:max_kw]
-
-
-def parse_filename(filename: str) -> tuple[int, str]:
+def parse_filename(filename: str):
     """
-    'Clase 1 - CONJUNTOS NUMERICOS.docx' → (1, 'Clase 1 - Conjuntos Numéricos')
-    'Clase 10 INTRODUCCIÓN A LAS FUNCIONES.docx' → (10, 'Clase 10 - Introducción A Las Funciones')
+    'Clase 8 - MATRICES.docx' -> (8, 'MATRICES')
+    'Clase 14 FUNCIONES ESPECIALES Y TRIGONOMETRICAS.docx' -> (14, 'FUNCIONES ESPECIALES Y TRIGONOMETRICAS')
     """
-    name = filename.replace(".docx", "")
-    m = re.match(r"Clase\s+(\d+)\s*[-–]?\s*(.+)", name, re.IGNORECASE)
-    if m:
-        num   = int(m.group(1))
-        title = m.group(2).strip().title()
-        return num, f"Clase {num} - {title}"
-    return 0, name.title()
+    name = filename.replace('.docx', '')
+    m = CLASE_RE.match(name)
+    if not m:
+        return None, None
+    num = int(m.group(1))
+    tema = m.group(2).strip().strip('-').strip('_').strip()
+    return num, tema
 
 
-# ── Parseo del .docx ─────────────────────────────────────────────────────────
-
-def _is_heading(para) -> bool:
-    """Detecta si un párrafo es un encabezado."""
-    style = para.style.name.lower() if para.style else ""
-    if "heading" in style:
-        return True
-    # Heurística: texto corto, todo en negrita, sin ser una fórmula
-    runs = [r for r in para.runs if r.text.strip()]
-    if not runs:
-        return False
-    text = para.text.strip()
-    if len(text) < 4 or len(text) > 120:
-        return False
-    return all(r.bold for r in runs)
-
-
-def extract_sections(doc) -> list[dict]:
+def iter_block_items(parent):
     """
-    Devuelve lista de secciones: [{'heading': str, 'paragraphs': [str]}]
-    Preserva estructura de títulos y agrupa párrafos bajo cada sección.
+    Itera párrafos y tablas en orden de documento.
+    Devuelve objetos Paragraph o Table.
     """
-    sections: list[dict] = []
-    current_heading = "Introducción"
-    current_paragraphs: list[str] = []
+    for child in parent.element.body.iterchildren():
+        if child.tag == qn('w:p'):
+            yield Paragraph(child, parent)
+        elif child.tag == qn('w:tbl'):
+            yield Table(child, parent)
 
-    for para in doc.paragraphs:
-        text = para.text.strip()
+
+def table_to_text(table) -> str:
+    """Convierte una tabla Word a texto plano con | como separador."""
+    lines = []
+    for row in table.rows:
+        cells = [cell.text.strip().replace('\n', ' ') for cell in row.cells]
+        lines.append(' | '.join(cells))
+    return '\n'.join(lines)
+
+
+def get_heading_level(para) -> int | None:
+    """Devuelve 1/2/3 si es heading, None si no."""
+    if not para.style:
+        return None
+    style_name = para.style.name.lower()
+    return HEADING_MAP.get(style_name)
+
+
+def detect_tipo(text: str) -> str:
+    """Heurística para clasificar el tipo de chunk."""
+    prefix = text[:250].lower()
+    if re.search(r'\bej\)', prefix) or 'ejemplo:' in prefix or 'por ejemplo' in prefix:
+        return 'ejemplo'
+    if re.search(r'\bdefinici[oó]n\b', prefix) or 'def.' in prefix or 'se define' in prefix:
+        return 'definicion'
+    if re.search(r'\bejercicio\s+\d', prefix) or 'resolver' in prefix or 'calcular' in prefix or 'demostrar' in prefix:
+        return 'ejercicio'
+    return 'teoria'
+
+
+def split_long_chunk(text: str) -> list[str]:
+    """
+    Divide texto > CHUNK_MAX respetando oraciones.
+    Último recurso: corte por palabras.
+    """
+    if len(text) <= CHUNK_MAX:
+        return [text]
+
+    # Intentar split por oraciones (punto + espacio + mayúscula)
+    sentences = re.split(r'(?<=\.)\s+(?=[A-ZÁÉÍÓÚÑ])', text)
+
+    parts = []
+    current = ''
+    for sent in sentences:
+        if current and len(current) + len(sent) + 1 > CHUNK_MAX:
+            parts.append(current.strip())
+            current = sent
+        else:
+            current = current + ' ' + sent if current else sent
+
+    if current.strip():
+        parts.append(current.strip())
+
+    # Si algún fragmento sigue siendo > CHUNK_MAX, cortar por palabras
+    final = []
+    for part in parts:
+        if len(part) <= CHUNK_MAX:
+            final.append(part)
+        else:
+            words = part.split()
+            buf = ''
+            for w in words:
+                if buf and len(buf) + len(w) + 1 > CHUNK_MAX:
+                    final.append(buf.strip())
+                    buf = w
+                else:
+                    buf = buf + ' ' + w if buf else w
+            if buf.strip():
+                final.append(buf.strip())
+
+    return final
+
+
+# ── Procesamiento de un archivo ─────────────────────────────────────────────
+
+def process_docx(filepath: Path) -> list[dict]:
+    clase_num, tema_clase = parse_filename(filepath.name)
+    if clase_num is None:
+        return []
+
+    print(f"  {filepath.name}")
+    print(f"     Clase {clase_num} — {tema_clase}")
+
+    doc = Document(str(filepath))
+
+    # Estado del parser
+    h1 = None
+    h2 = None
+    h3 = None
+    buffer = ''
+    chunks = []
+    chunk_counter = 0
+
+    def flush_buffer():
+        nonlocal buffer, chunk_counter
+        text = buffer.strip()
+        buffer = ''
+        if len(text) < CHUNK_MIN:
+            return
+
+        fragments = split_long_chunk(text)
+        for frag in fragments:
+            if len(frag) < CHUNK_MIN:
+                continue
+            chunk_counter += 1
+            tema = h2 or h1 or tema_clase
+            chunks.append({
+                'id': f'clase_{clase_num:02d}_chunk_{chunk_counter:03d}',
+                'contenido': frag,
+                'tema': tema,
+                'topic': tema,
+                'clase': clase_num,
+                'tema_clase': tema_clase,
+                'seccion': h1,
+                'subseccion': h2,
+                'subsubseccion': h3,
+                'tipo': detect_tipo(frag),
+                'longitud_chars': len(frag),
+                'fuente': filepath.name,
+            })
+
+    for block in iter_block_items(doc):
+        if isinstance(block, Table):
+            table_text = table_to_text(block)
+            if table_text.strip():
+                buffer += '\n[Tabla]:\n' + table_text + '\n'
+                if len(buffer) > CHUNK_FLUSH:
+                    flush_buffer()
+            continue
+
+        # Es un Paragraph
+        text = block.text.strip()
         if not text:
             continue
 
-        if _is_heading(para) and len(text) > 2:
-            if current_paragraphs:
-                sections.append({
-                    "heading": current_heading,
-                    "paragraphs": current_paragraphs[:]
-                })
-                current_paragraphs = []
-            current_heading = text
-        else:
-            current_paragraphs.append(text)
+        level = get_heading_level(block)
+        if level is not None:
+            # Nuevo heading: flush lo acumulado
+            flush_buffer()
+            if level == 1:
+                h1 = text
+                h2 = None
+                h3 = None
+            elif level == 2:
+                h2 = text
+                h3 = None
+            elif level == 3:
+                h3 = text
+            continue
 
-    if current_paragraphs:
-        sections.append({
-            "heading": current_heading,
-            "paragraphs": current_paragraphs[:]
-        })
+        buffer += text + '\n'
+        if len(buffer) > CHUNK_FLUSH:
+            flush_buffer()
 
-    return sections
+    # Flush final
+    flush_buffer()
 
-
-# ── Chunking ─────────────────────────────────────────────────────────────────
-
-def make_chunk(
-    content: str,
-    clase_name: str,
-    clase_slug: str,
-    topic_slug: str,
-    heading: str,
-    section_idx: int,
-    chunk_idx: int,
-) -> dict:
-    chunk_id = f"{clase_slug}_{topic_slug}_{section_idx:02d}_{chunk_idx:03d}"
-    return {
-        "id":        chunk_id,
-        "clase":     clase_name,
-        "tema":      heading,
-        "contenido": content,
-        "keywords":  extract_keywords(content),
-    }
-
-
-def chunk_section(
-    section: dict,
-    clase_name: str,
-    class_num: int,
-    section_idx: int,
-) -> list[dict]:
-    """Divide una sección en chunks de ~CHUNK_TARGET palabras."""
-    heading     = section["heading"]
-    paragraphs  = section["paragraphs"]
-    clase_slug  = f"clase_{class_num:02d}"
-    topic_slug  = slugify(heading)
-
-    chunks: list[dict]   = []
-    current_words: list[str] = []
-    chunk_idx = 1
-
-    for para in paragraphs:
-        para_words = para.split()
-
-        # Si sumar este párrafo supera el máximo → flush antes
-        if current_words and len(current_words) + len(para_words) > CHUNK_MAX:
-            chunks.append(make_chunk(
-                " ".join(current_words),
-                clase_name, clase_slug, topic_slug,
-                heading, section_idx, chunk_idx,
-            ))
-            chunk_idx += 1
-            current_words = []
-
-        current_words.extend(para_words)
-
-        # Si alcanzamos el target → flush
-        if len(current_words) >= CHUNK_TARGET:
-            chunks.append(make_chunk(
-                " ".join(current_words),
-                clase_name, clase_slug, topic_slug,
-                heading, section_idx, chunk_idx,
-            ))
-            chunk_idx += 1
-            current_words = []
-
-    # Resto final
-    if current_words:
-        if chunks and len(current_words) < MIN_TAIL:
-            # Demasiado pequeño → fusionar con el último chunk
-            chunks[-1]["contenido"] += " " + " ".join(current_words)
-            chunks[-1]["keywords"]   = extract_keywords(chunks[-1]["contenido"])
-        else:
-            chunks.append(make_chunk(
-                " ".join(current_words),
-                clase_name, clase_slug, topic_slug,
-                heading, section_idx, chunk_idx,
-            ))
-
+    print(f"     [OK] {chunk_counter} chunks generados")
     return chunks
 
 
-# ── Procesamiento por archivo ─────────────────────────────────────────────────
-
-def process_docx(filepath: Path) -> list[dict]:
-    class_num, clase_name = parse_filename(filepath.name)
-    print(f"  {filepath.name}")
-    print(f"     -> {clase_name}")
-
-    doc      = Document(str(filepath))
-    sections = extract_sections(doc)
-
-    if not sections:
-        print(f"     [WARN] Sin secciones detectadas")
-        return []
-
-    all_chunks: list[dict] = []
-    for i, section in enumerate(sections):
-        section_chunks = chunk_section(section, clase_name, class_num, i)
-        all_chunks.extend(section_chunks)
-
-    print(f"     [OK] {len(sections)} secciones -> {len(all_chunks)} chunks")
-    return all_chunks
-
-
-# ── Main ──────────────────────────────────────────────────────────────────────
+# ── Main ────────────────────────────────────────────────────────────────────
 
 def main():
-    print(f"[INFO] Leyendo .docx desde: {FUENTES_DIR}\n")
-
-    docx_files = sorted(FUENTES_DIR.glob("*.docx"))
-    if not docx_files:
-        print(f"ERROR: No hay archivos .docx en {FUENTES_DIR}")
+    if not FUENTES_DIR.exists():
+        print(f"ERROR: No existe el directorio {FUENTES_DIR}")
         sys.exit(1)
 
-    print(f"Encontrados {len(docx_files)} archivos\n" + "-"*50)
+    docx_files = sorted(FUENTES_DIR.glob('*.docx'))
 
-    all_chunks: list[dict] = []
-    for docx_file in docx_files:
+    # Filtrar solo archivos de clase
+    clase_files = []
+    for f in docx_files:
+        num, _ = parse_filename(f.name)
+        if num is not None:
+            clase_files.append(f)
+
+    if not clase_files:
+        print(f"ERROR: No se encontraron archivos de clase en {FUENTES_DIR}")
+        sys.exit(1)
+
+    print(f"[INFO] Leyendo .docx desde: {FUENTES_DIR}")
+    print(f"[INFO] Archivos de clase encontrados: {len(clase_files)}")
+    skipped = len(docx_files) - len(clase_files)
+    if skipped:
+        print(f"[INFO] Archivos ignorados (no son clase): {skipped}")
+    print('-' * 60)
+
+    all_chunks = []
+    for docx_file in clase_files:
         chunks = process_docx(docx_file)
         all_chunks.extend(chunks)
         print()
 
     # Escribir JSON
     OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
         json.dump(all_chunks, f, ensure_ascii=False, indent=2)
 
-    print("-"*50)
-    print(f"[OK] Total chunks generados: {len(all_chunks)}")
-    print(f"[OK] Guardado en:            {OUTPUT_FILE}\n")
+    print('=' * 60)
+    print(f'Total chunks generados: {len(all_chunks)}')
+    print(f'Guardado en: {OUTPUT_FILE}')
+    print('=' * 60)
 
-    # Resumen por clase
-    print("Resumen por clase:")
-    clase_counts = Counter(c["clase"] for c in all_chunks)
-    for clase, count in sorted(clase_counts.items()):
-        print(f"  {clase}: {count} chunks")
+    # ── Estadísticas ────────────────────────────────────────────────────────
 
-    # Verificar IDs unicos
-    ids = [c["id"] for c in all_chunks]
+    # Por clase
+    print('\nChunks por clase:')
+    clase_counts = Counter(c['clase'] for c in all_chunks)
+    for clase_num in sorted(clase_counts):
+        print(f'  Clase {clase_num:2d}: {clase_counts[clase_num]:3d} chunks')
+
+    # Distribución de tamaños
+    buckets = {'<200': 0, '200-400': 0, '400-800': 0, '800-1200': 0, '>1200': 0}
+    lengths = [c['longitud_chars'] for c in all_chunks]
+    for l in lengths:
+        if l < 200:
+            buckets['<200'] += 1
+        elif l < 400:
+            buckets['200-400'] += 1
+        elif l < 800:
+            buckets['400-800'] += 1
+        elif l <= 1200:
+            buckets['800-1200'] += 1
+        else:
+            buckets['>1200'] += 1
+
+    print('\nDistribución de tamaños:')
+    for bucket, count in buckets.items():
+        print(f'  {bucket:>8s}: {count:3d}')
+
+    # Tipos
+    tipo_counts = Counter(c['tipo'] for c in all_chunks)
+    print('\nTipos detectados:')
+    for tipo, count in sorted(tipo_counts.items()):
+        print(f'  {tipo:>12s}: {count:3d}')
+
+    # Min/max/promedio
+    if lengths:
+        print(f'\nLongitud promedio: {sum(lengths) / len(lengths):.0f} chars')
+        print(f'Longitud mínima:  {min(lengths)} chars')
+        print(f'Longitud máxima:  {max(lengths)} chars')
+
+    # IDs únicos
+    ids = [c['id'] for c in all_chunks]
     dupes = [id_ for id_, cnt in Counter(ids).items() if cnt > 1]
     if dupes:
-        print(f"\n[WARN] IDs duplicados detectados: {dupes}")
+        print(f'\n[WARN] IDs duplicados: {dupes}')
     else:
-        print(f"\n[OK] Todos los IDs son unicos")
+        print(f'\n[OK] Todos los IDs son únicos')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
