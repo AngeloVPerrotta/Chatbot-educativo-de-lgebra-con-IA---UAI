@@ -35,8 +35,8 @@ def _get_collection():
             chunks = json.load(f)
 
         ids = [c['id'] for c in chunks]
-        documents = [c['content'] for c in chunks]
-        metadatas = [{'topic': c['topic']} for c in chunks]
+        documents = [c['contenido'] for c in chunks]
+        metadatas = [{'topic': c['tema']} for c in chunks]
 
         _collection.add(ids=ids, documents=documents, metadatas=metadatas)
         logger.info(f'Indexados {len(chunks)} chunks')
