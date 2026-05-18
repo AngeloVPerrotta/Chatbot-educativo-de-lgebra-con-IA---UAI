@@ -85,8 +85,14 @@ def _init_db():
             )
         """)
 
+        # Legacy table rename (one-time migration)
+        try:
+            conn.execute("ALTER TABLE rate_limits RENAME TO rate_limits_legacy")
+        except Exception:
+            pass  # already renamed or doesn't exist
+
         conn.execute("""
-            CREATE TABLE IF NOT EXISTS rate_limits (
+            CREATE TABLE IF NOT EXISTS rate_limits_legacy (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 identifier TEXT UNIQUE NOT NULL,
                 message_count INTEGER DEFAULT 0,
@@ -95,6 +101,42 @@ def _init_db():
                 bonus_messages INTEGER DEFAULT 0
             )
         """)
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS rate_limits (
+                identifier TEXT PRIMARY KEY,
+                message_count INTEGER DEFAULT 0,
+                day TEXT NOT NULL
+            )
+        """)
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS email_credits (
+                email TEXT PRIMARY KEY,
+                balance INTEGER DEFAULT 0,
+                last_topup DATETIME
+            )
+        """)
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS fp_email_links (
+                fingerprint TEXT NOT NULL,
+                email TEXT NOT NULL,
+                first_seen DATETIME DEFAULT (datetime('now')),
+                PRIMARY KEY (fingerprint, email)
+            )
+        """)
+
+        # Migrate legacy bonus_messages → email_credits (identifiers with '@')
+        try:
+            conn.execute("""
+                INSERT OR IGNORE INTO email_credits (email, balance, last_topup)
+                SELECT identifier, bonus_messages, created_at
+                FROM rate_limits_legacy
+                WHERE identifier LIKE '%@%' AND COALESCE(bonus_messages, 0) > 0
+            """)
+        except Exception:
+            pass
 
         conn.execute("""
             CREATE TABLE IF NOT EXISTS error_reports (
@@ -106,9 +148,9 @@ def _init_db():
                 status TEXT DEFAULT 'pending'
             )
         """)
-        # Backward-compatible migration: add bonus_messages if not present
+        # Backward-compatible migration for legacy table
         try:
-            conn.execute("ALTER TABLE rate_limits ADD COLUMN bonus_messages INTEGER DEFAULT 0")
+            conn.execute("ALTER TABLE rate_limits_legacy ADD COLUMN bonus_messages INTEGER DEFAULT 0")
         except Exception:
             pass
 
@@ -364,74 +406,219 @@ def get_session_messages(session_id: str) -> list:
 
 # --- Rate limiting ---
 
-RATE_LIMIT_MAX = 15
-RATE_LIMIT_WINDOW_HOURS = 24
+import logging as _logging
+_rl_logger = _logging.getLogger("rate_limit")
+
+FREE_DAILY_LIMIT = 15
 
 
-def check_rate_limit(identifier: str) -> dict:
-    """Returns {allowed: bool, remaining: int, resets_in_seconds: int}."""
-    now = datetime.utcnow()
-    window_cutoff = now - timedelta(hours=RATE_LIMIT_WINDOW_HOURS)
+def _today_utc() -> str:
+    return datetime.utcnow().strftime("%Y-%m-%d")
 
+
+def link_fp_email(fingerprint: str, email: str):
+    """Register a fingerprint ↔ email association (idempotent)."""
     with _get_conn() as conn:
-        conn.row_factory = sqlite3.Row
+        conn.execute(
+            "INSERT OR IGNORE INTO fp_email_links (fingerprint, email) VALUES (?, ?)",
+            (fingerprint, email),
+        )
+        conn.commit()
+
+
+def get_linked_emails(fingerprint: str) -> list:
+    """Return emails linked to a fingerprint, ordered by first_seen ASC (FIFO)."""
+    with _get_conn() as conn:
+        rows = conn.execute(
+            "SELECT email FROM fp_email_links WHERE fingerprint = ? ORDER BY first_seen ASC",
+            (fingerprint,),
+        ).fetchall()
+    return [r[0] for r in rows]
+
+
+def get_linked_fingerprints(email: str) -> list:
+    """Return fingerprints linked to an email."""
+    with _get_conn() as conn:
+        rows = conn.execute(
+            "SELECT fingerprint FROM fp_email_links WHERE email = ? ORDER BY first_seen ASC",
+            (email,),
+        ).fetchall()
+    return [r[0] for r in rows]
+
+
+def _get_free_count(identifier: str) -> int:
+    """Get today's free message count for an identifier (fp or ip)."""
+    today = _today_utc()
+    with _get_conn() as conn:
         row = conn.execute(
-            "SELECT message_count, window_start, COALESCE(bonus_messages, 0) as bonus_messages FROM rate_limits WHERE identifier = ?",
-            (identifier,),
+            "SELECT message_count FROM rate_limits WHERE identifier = ? AND day = ?",
+            (identifier, today),
         ).fetchone()
+    return row[0] if row else 0
 
-        if row is None:
-            return {"allowed": True, "remaining": RATE_LIMIT_MAX, "resets_in_seconds": RATE_LIMIT_WINDOW_HOURS * 3600}
 
-        effective_limit = RATE_LIMIT_MAX + row["bonus_messages"]
-        window_start = datetime.fromisoformat(row["window_start"])
-        if window_start < window_cutoff:
-            # Window expired — reset count but keep bonus
+def _increment_free_count(identifier: str):
+    """Increment today's free message count for an identifier."""
+    today = _today_utc()
+    with _get_conn() as conn:
+        existing = conn.execute(
+            "SELECT identifier FROM rate_limits WHERE identifier = ? AND day = ?",
+            (identifier, today),
+        ).fetchone()
+        if existing:
             conn.execute(
-                "UPDATE rate_limits SET message_count = 0, window_start = ? WHERE identifier = ?",
-                (now.isoformat(), identifier),
+                "UPDATE rate_limits SET message_count = message_count + 1 WHERE identifier = ? AND day = ?",
+                (identifier, today),
             )
-            conn.commit()
-            return {"allowed": True, "remaining": effective_limit, "resets_in_seconds": RATE_LIMIT_WINDOW_HOURS * 3600}
+        else:
+            # New day or new identifier — clean old entry and insert fresh
+            conn.execute("DELETE FROM rate_limits WHERE identifier = ?", (identifier,))
+            conn.execute(
+                "INSERT INTO rate_limits (identifier, message_count, day) VALUES (?, 1, ?)",
+                (identifier, today),
+            )
+        conn.commit()
 
-        count = row["message_count"]
-        resets_at = window_start + timedelta(hours=RATE_LIMIT_WINDOW_HOURS)
-        resets_in = max(0, int((resets_at - now).total_seconds()))
 
-        if count >= effective_limit:
-            return {"allowed": False, "remaining": 0, "resets_in_seconds": resets_in}
+def _get_credit_balance(email: str) -> int:
+    """Get paid credit balance for an email."""
+    with _get_conn() as conn:
+        row = conn.execute(
+            "SELECT balance FROM email_credits WHERE email = ?", (email,)
+        ).fetchone()
+    return row[0] if row else 0
 
-        return {"allowed": True, "remaining": effective_limit - count, "resets_in_seconds": resets_in}
+
+def _decrement_credit(email: str):
+    """Decrement one paid credit from an email."""
+    with _get_conn() as conn:
+        conn.execute(
+            "UPDATE email_credits SET balance = balance - 1 WHERE email = ? AND balance > 0",
+            (email,),
+        )
+        conn.commit()
+
+
+def consume_message(fp_identifier: str, email: Optional[str] = None) -> dict:
+    """Cascade: free quota → paid credits → block.
+
+    Returns {allowed, source, remaining_free, credit_email, credit_balance}.
+    """
+    today = _today_utc()
+    free_count = _get_free_count(fp_identifier)
+
+    # Step 1: free daily quota
+    if free_count < FREE_DAILY_LIMIT:
+        _increment_free_count(fp_identifier)
+        remaining = FREE_DAILY_LIMIT - free_count - 1
+        _rl_logger.info(
+            f"[FREE] {fp_identifier} msg #{free_count + 1}/{FREE_DAILY_LIMIT} | remaining={remaining}"
+        )
+        return {
+            "allowed": True,
+            "source": "free",
+            "remaining_free": remaining,
+            "credit_email": None,
+            "credit_balance": 0,
+        }
+
+    # Step 2: paid credits — FIFO by first_seen across linked emails
+    # Raw fingerprint without the "fp:" prefix for the links table
+    raw_fp = fp_identifier[3:] if fp_identifier.startswith("fp:") else fp_identifier
+    linked_emails = get_linked_emails(raw_fp)
+
+    for linked_email in linked_emails:
+        balance = _get_credit_balance(linked_email)
+        if balance > 0:
+            _decrement_credit(linked_email)
+            _rl_logger.info(
+                f"[CREDIT] {fp_identifier} charged 1 credit to {linked_email} | balance={balance - 1}"
+            )
+            return {
+                "allowed": True,
+                "source": "credit",
+                "remaining_free": 0,
+                "credit_email": linked_email,
+                "credit_balance": balance - 1,
+            }
+
+    # Step 3: blocked
+    _rl_logger.info(
+        f"[BLOCKED] {fp_identifier} free={free_count}/{FREE_DAILY_LIMIT} linked_emails={linked_emails}"
+    )
+    return {
+        "allowed": False,
+        "source": "none",
+        "remaining_free": 0,
+        "credit_email": None,
+        "credit_balance": 0,
+    }
+
+
+def check_rate_limit(fp_identifier: str, email: Optional[str] = None) -> dict:
+    """Check status without consuming. Returns {allowed, remaining, resets_in_seconds}."""
+    free_count = _get_free_count(fp_identifier)
+    # Seconds until midnight UTC
+    now = datetime.utcnow()
+    midnight = now.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
+    resets_in = max(0, int((midnight - now).total_seconds()))
+
+    if free_count < FREE_DAILY_LIMIT:
+        return {"allowed": True, "remaining": FREE_DAILY_LIMIT - free_count, "resets_in_seconds": resets_in}
+
+    # Check paid credits
+    raw_fp = fp_identifier[3:] if fp_identifier.startswith("fp:") else fp_identifier
+    linked_emails = get_linked_emails(raw_fp)
+    total_credits = sum(_get_credit_balance(e) for e in linked_emails)
+
+    if total_credits > 0:
+        return {"allowed": True, "remaining": total_credits, "resets_in_seconds": resets_in}
+
+    return {"allowed": False, "remaining": 0, "resets_in_seconds": resets_in}
 
 
 def grant_extra_messages(email: str, amount: int = 50):
-    """Suma `amount` consultas bonus al email (crea el registro si no existe)."""
+    """Add paid credits to an email account."""
     now = datetime.utcnow()
+    _rl_logger.info(f"[TOPUP] {email} +{amount} credits")
     with _get_conn() as conn:
         existing = conn.execute(
-            "SELECT id FROM rate_limits WHERE identifier = ?", (email,)
+            "SELECT email FROM email_credits WHERE email = ?", (email,)
         ).fetchone()
-        if existing is None:
+        if existing:
             conn.execute(
-                "INSERT INTO rate_limits (identifier, message_count, window_start, bonus_messages) VALUES (?, 0, ?, ?)",
-                (email, now.isoformat(), amount),
+                "UPDATE email_credits SET balance = balance + ?, last_topup = ? WHERE email = ?",
+                (amount, now.isoformat(), email),
             )
         else:
             conn.execute(
-                "UPDATE rate_limits SET bonus_messages = COALESCE(bonus_messages, 0) + ? WHERE identifier = ?",
-                (amount, email),
+                "INSERT INTO email_credits (email, balance, last_topup) VALUES (?, ?, ?)",
+                (email, amount, now.isoformat()),
             )
         conn.commit()
 
 
 def get_user_payment_status(email: str) -> dict:
-    with _get_conn() as conn:
-        row = conn.execute(
-            "SELECT COALESCE(bonus_messages, 0) as bonus FROM rate_limits WHERE identifier = ?",
-            (email,),
-        ).fetchone()
-    bonus = row[0] if row else 0
-    return {"email": email, "has_bonus": bonus > 0, "bonus_messages": bonus}
+    balance = _get_credit_balance(email)
+    return {"email": email, "has_bonus": balance > 0, "bonus_messages": balance}
+
+
+def get_fp_status(fingerprint: str) -> dict:
+    """Full status for a fingerprint — for admin inspection."""
+    fp_id = f"fp:{fingerprint}" if not fingerprint.startswith("fp:") else fingerprint
+    raw_fp = fingerprint.lstrip("fp:")
+    free_count = _get_free_count(fp_id)
+    linked = get_linked_emails(raw_fp)
+    credits_by_email = {e: _get_credit_balance(e) for e in linked}
+    return {
+        "fingerprint": raw_fp,
+        "free_used_today": free_count,
+        "free_limit": FREE_DAILY_LIMIT,
+        "day": _today_utc(),
+        "linked_emails": linked,
+        "credits_by_email": credits_by_email,
+        "total_credits": sum(credits_by_email.values()),
+    }
 
 
 # --- Error reports ---
@@ -464,19 +651,5 @@ def update_report_status(report_id: int, status: str):
 
 
 def increment_rate_limit(identifier: str):
-    now = datetime.utcnow()
-    with _get_conn() as conn:
-        existing = conn.execute(
-            "SELECT id FROM rate_limits WHERE identifier = ?", (identifier,)
-        ).fetchone()
-        if existing is None:
-            conn.execute(
-                "INSERT INTO rate_limits (identifier, message_count, window_start) VALUES (?, 1, ?)",
-                (identifier, now.isoformat()),
-            )
-        else:
-            conn.execute(
-                "UPDATE rate_limits SET message_count = message_count + 1 WHERE identifier = ?",
-                (identifier,),
-            )
-        conn.commit()
+    """Legacy shim — redirects to _increment_free_count."""
+    _increment_free_count(identifier)

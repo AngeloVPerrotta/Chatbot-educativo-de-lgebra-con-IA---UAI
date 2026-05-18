@@ -124,8 +124,12 @@
         .message-content .katex{font-size:1.05em;color:var(--text-primary)}
         .typing-indicator{display:flex;gap:12px;animation:msgIn .3s ease;align-items:flex-start}
         .typing-content{display:flex;align-items:center;gap:10px;padding:14px 18px;background:rgba(15,23,42,0.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.05);border-radius:12px;border-bottom-left-radius:2px}
-        .typing-sigma{width:28px;height:28px;background:var(--user-bubble);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;animation:think 0.8s ease-in-out infinite;flex-shrink:0}
         .typing-text{font-size:.82rem;color:var(--text-muted);font-style:italic}
+        .typing-dots{display:inline-flex;gap:4px;margin-left:2px;vertical-align:middle}
+        .typing-dots span{width:5px;height:5px;border-radius:50%;background:var(--text-muted);animation:dotPulse 1.2s ease-in-out infinite}
+        .typing-dots span:nth-child(2){animation-delay:0.2s}
+        .typing-dots span:nth-child(3){animation-delay:0.4s}
+        @keyframes dotPulse{0%,80%,100%{opacity:.3;transform:scale(0.8)}40%{opacity:1;transform:scale(1.1)}}
         .input-area{padding:14px 0 10px;border-top:1px solid rgba(255,255,255,0.04);flex-shrink:0}
         .input-wrapper{display:flex;gap:10px;align-items:flex-end;background:rgba(15,23,42,0.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:8px 8px 8px 18px;transition:all .25s}
         .input-wrapper:focus-within{border-color:rgba(255,255,255,0.15);box-shadow:0 0 20px rgba(56,189,248,0.06)}
@@ -244,27 +248,38 @@
         .suggestion-btn:hover{background:rgba(56,189,248,0.08);border-color:rgba(56,189,248,0.15);color:var(--accent-soft)}
 
         /* --- Billing popup --- */
-        .billing-overlay{position:fixed;inset:0;z-index:800;background:rgba(5,8,18,0.85);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeUp .35s ease}
-        .billing-card{background:rgba(15,23,42,0.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:32px 28px 24px;width:100%;max-width:540px;display:flex;flex-direction:column;align-items:center;gap:20px;box-shadow:0 12px 60px rgba(0,0,0,0.7)}
-        .billing-title{font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text-primary);text-align:center;letter-spacing:-0.02em}
+        @keyframes billingFadeIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+        @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+        .billing-overlay{position:fixed;inset:0;z-index:800;background:rgba(5,8,18,0.88);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeUp .3s ease}
+        .billing-card{background:rgba(15,23,42,0.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:32px 28px 24px;width:100%;max-width:560px;display:flex;flex-direction:column;align-items:center;gap:20px;box-shadow:0 12px 60px rgba(0,0,0,0.7);animation:billingFadeIn .35s cubic-bezier(0.16,1,0.3,1) both}
+        .billing-title{font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text-primary);text-align:center;letter-spacing:-0.02em;margin-bottom:4px}
         .billing-sub{font-size:.85rem;color:var(--text-muted);text-align:center;margin-top:-12px}
-        .billing-plans{display:flex;gap:12px;width:100%;flex-wrap:wrap;justify-content:center}
-        .billing-plan{position:relative;flex:1;min-width:140px;background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:border-color .2s,box-shadow .2s}
-        .billing-plan:hover{border-color:var(--accent);box-shadow:0 0 16px var(--accent-glow)}
+        .billing-plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;width:100%}
+        .billing-plan{position:relative;background:var(--bg-input);border:1px solid var(--border);border-radius:12px;padding:20px 14px 18px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:border-color .3s,box-shadow .3s,transform .3s}
+        .billing-plan:hover{border-color:var(--accent);box-shadow:0 0 20px var(--accent-glow);transform:translateY(-4px)}
         .billing-plan.popular{border-color:#22d3ee;box-shadow:0 0 14px rgba(34,211,238,0.2)}
-        .billing-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:#22d3ee;color:#0b0f19;font-size:.68rem;font-weight:700;padding:2px 10px;border-radius:20px;white-space:nowrap;letter-spacing:.04em}
+        .billing-plan.popular:hover{box-shadow:0 0 24px rgba(34,211,238,0.35);transform:translateY(-4px)}
+        .billing-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:#22d3ee;color:#0b0f19;font-size:.68rem;font-weight:700;padding:2px 10px;border-radius:20px;white-space:nowrap;letter-spacing:.04em;z-index:2}
         .billing-plan-name{font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase}
         .billing-plan-price{font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text-primary)}
         .billing-plan-qty{font-size:.78rem;color:var(--accent);font-weight:600}
         .billing-plan-desc{font-size:.75rem;color:var(--text-muted);text-align:center;line-height:1.4}
-        .billing-plan-btn{margin-top:4px;width:100%;padding:9px 0;background:var(--user-bubble);border:none;border-radius:9px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:opacity .2s}
-        .billing-plan-btn:hover{opacity:.88}
-        .billing-plan-btn:disabled{opacity:.45;cursor:not-allowed}
+        .billing-plan-btn{margin-top:auto;width:100%;padding:9px 0;background:var(--user-bubble);border:none;border-radius:9px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:opacity .2s}
+        .billing-plan-btn:hover{opacity:.88;background-size:200% 100%;background-image:linear-gradient(90deg,var(--user-bubble) 0%,rgba(255,255,255,0.15) 50%,var(--user-bubble) 100%);animation:shimmer 1.5s infinite linear}
+        .billing-plan-btn:disabled{opacity:.45;cursor:not-allowed;animation:none}
         .billing-plan.popular .billing-plan-btn{background:linear-gradient(135deg,#22d3ee,#6c63ff)}
-        .billing-note{font-size:.73rem;color:var(--text-muted);text-align:center;line-height:1.5;max-width:380px}
+        .billing-plan.popular .billing-plan-btn:hover{background-size:200% 100%;background-image:linear-gradient(90deg,#22d3ee 0%,rgba(255,255,255,0.2) 50%,#6c63ff 100%);animation:shimmer 1.5s infinite linear}
+        .billing-note{font-size:.73rem;color:var(--text-muted);text-align:center;line-height:1.5;max-width:420px}
+        .billing-divider{width:85%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);margin:4px 0}
+        .billing-custom{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%}
+        .billing-custom-label{font-size:.8rem;color:var(--text-muted);text-align:center}
+        .billing-custom-btn{padding:10px 28px;background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:9px;color:var(--text-secondary);font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .3s}
+        .billing-custom-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(56,189,248,0.06);transform:translateY(-2px)}
+        .billing-mp-footer{display:flex;align-items:center;gap:6px;font-size:.68rem;color:rgba(255,255,255,0.3);margin-top:2px}
+        .billing-mp-footer img{height:16px;opacity:0.5}
         .billing-dismiss{font-size:.82rem;color:var(--text-muted);cursor:pointer;text-decoration:none;transition:color .2s;background:none;border:none;font-family:'DM Sans',sans-serif}
         .billing-dismiss:hover{color:var(--text-secondary)}
-        @media(max-width:480px){.billing-plans{flex-direction:column}.billing-plan{min-width:unset}}
+        @media(max-width:480px){.billing-plans{grid-template-columns:1fr}.billing-card{padding:24px 16px 20px}}
 
         /* --- Feedback popup --- */
         .feedback-overlay{position:fixed;inset:0;z-index:600;background:rgba(11,15,25,0.7);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeUp .4s ease}
@@ -384,7 +399,7 @@
                 <div class="billing-plans">
                     <div class="billing-plan" id="bplanBasico">
                         <div class="billing-plan-name">Básico</div>
-                        <div class="billing-plan-price">$500 <span style="font-size:.9rem;font-weight:500">ARS</span></div>
+                        <div class="billing-plan-price">$1.000 <span style="font-size:.9rem;font-weight:500">ARS</span></div>
                         <div class="billing-plan-qty">15 consultas extra</div>
                         <div class="billing-plan-desc">Para una sesión de estudio</div>
                         <button class="billing-plan-btn" onclick="choosePlan('basico',this)">Elegir</button>
@@ -392,20 +407,30 @@
                     <div class="billing-plan popular" id="bplanEstudiante">
                         <div class="billing-badge">Más popular</div>
                         <div class="billing-plan-name">Estudiante</div>
-                        <div class="billing-plan-price">$1.500 <span style="font-size:.9rem;font-weight:500">ARS</span></div>
-                        <div class="billing-plan-qty">60 consultas extra</div>
+                        <div class="billing-plan-price">$3.000 <span style="font-size:.9rem;font-weight:500">ARS</span></div>
+                        <div class="billing-plan-qty">50 consultas extra</div>
                         <div class="billing-plan-desc">Para preparar un parcial</div>
                         <button class="billing-plan-btn" onclick="choosePlan('estudiante',this)">Elegir</button>
                     </div>
                     <div class="billing-plan" id="bplanIntensivo">
                         <div class="billing-plan-name">Intensivo</div>
-                        <div class="billing-plan-price">$3.500 <span style="font-size:.9rem;font-weight:500">ARS</span></div>
-                        <div class="billing-plan-qty">200 consultas extra</div>
+                        <div class="billing-plan-price">$5.000 <span style="font-size:.9rem;font-weight:500">ARS</span></div>
+                        <div class="billing-plan-qty">100 consultas extra</div>
                         <div class="billing-plan-desc">Para todo el cuatrimestre</div>
                         <button class="billing-plan-btn" onclick="choosePlan('intensivo',this)">Elegir</button>
                     </div>
                 </div>
                 <div class="billing-note">Las consultas no usadas no vencen. Se renuevan 15 consultas gratis cada 24hs.</div>
+                <div class="billing-divider"></div>
+                <div class="billing-custom">
+                    <div class="billing-custom-label">¿Querés colaborar con Algoria con otro monto?</div>
+                    <button class="billing-custom-btn" onclick="window.open('https://mpago.la/1Eg2XRW','_blank')">Apoyá con monto personalizado</button>
+                </div>
+                <div class="billing-mp-footer">
+                    <span>Pagos procesados de forma segura por</span>
+                    <img src="https://http2.mlstatic.com/static/org-img/homesnw/mercado-pago.png" alt="Mercado Pago">
+                    <span>Mercado Pago</span>
+                </div>
             </div>
             <button class="billing-dismiss" onclick="closeBillingPopup()">Ahora no</button>
         </div>
@@ -977,13 +1002,22 @@
             } catch(e) { btn.textContent = 'Error. Reintentá.'; btn.disabled = false; }
         }
 
+        const _typingPhrases = ['Pensando', 'Buscando en las clases', 'Revisando el material', 'Procesando tu consulta', 'Armando la respuesta'];
+        let _typingInterval = null;
         function showTyping() {
             const el = document.createElement('div'); el.className = 'typing-indicator'; el.id = 'typingIndicator';
-            el.innerHTML = `<div class="message-avatar" style="background:var(--user-bubble);color:#fff;font-weight:700;box-shadow:0 2px 10px var(--accent-glow);font-size:15px">∑</div><div class="typing-content"><div class="typing-sigma">∑</div><span class="typing-text">Pensando...</span></div>`;
+            el.innerHTML = `<div class="message-avatar" style="background:var(--user-bubble);color:#fff;font-weight:700;box-shadow:0 2px 10px var(--accent-glow);font-size:15px">\u2211</div><div class="typing-content"><span class="typing-text">Pensando</span><span class="typing-dots"><span></span><span></span><span></span></span></div>`;
             chatArea.appendChild(el); chatArea.scrollTop = chatArea.scrollHeight;
             document.querySelector('.logo-mark').classList.add('thinking');
+            let idx = 0;
+            _typingInterval = setInterval(() => {
+                idx = (idx + 1) % _typingPhrases.length;
+                const txt = el.querySelector('.typing-text');
+                if (txt) txt.textContent = _typingPhrases[idx];
+            }, 2000);
         }
         function hideTyping() {
+            if (_typingInterval) { clearInterval(_typingInterval); _typingInterval = null; }
             const el = document.getElementById('typingIndicator'); if (el) el.remove();
             const logo = document.querySelector('.logo-mark');
             logo.classList.remove('thinking');

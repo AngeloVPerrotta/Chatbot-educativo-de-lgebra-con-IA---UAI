@@ -5,10 +5,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 PLAN_CONFIG = {
-    'basico':     {'title': 'AlgorIA - 15 consultas extra',  'unit_price': 500,  'qty': 15},
-    'estudiante': {'title': 'AlgorIA - 60 consultas extra',  'unit_price': 1500, 'qty': 60},
-    'intensivo':  {'title': 'AlgorIA - 200 consultas extra', 'unit_price': 3500, 'qty': 200},
-    'apoyo':      {'title': 'AlgorIA - Apoyo al proyecto',   'unit_price': 1500, 'qty': 60},
+    'basico':     {'title': 'AlgorIA - 15 consultas extra',  'unit_price': 1000, 'qty': 15},
+    'estudiante': {'title': 'AlgorIA - 50 consultas extra',  'unit_price': 3000, 'qty': 50},
+    'intensivo':  {'title': 'AlgorIA - 100 consultas extra', 'unit_price': 5000, 'qty': 100},
+    'apoyo':      {'title': 'AlgorIA - Apoyo al proyecto',   'unit_price': 1500, 'qty': 50},
 }
 
 

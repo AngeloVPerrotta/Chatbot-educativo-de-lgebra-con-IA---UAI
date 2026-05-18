@@ -34,12 +34,16 @@ from utils.analytics import (
     is_admin_or_super,
     is_superadmin,
     check_rate_limit,
+    consume_message,
     increment_rate_limit,
     grant_extra_messages,
     get_user_payment_status,
+    get_fp_status,
+    link_fp_email,
     save_error_report,
     get_error_reports,
     update_report_status,
+    FREE_DAILY_LIMIT,
 )
 from utils.payments import create_payment_link
 
@@ -156,30 +160,32 @@ def chat_endpoint(request: ChatRequest, req: Request):
         if request.user_email and not check_token_limit(request.user_email):
             raise HTTPException(status_code=429, detail="TOKEN_LIMIT_EXCEEDED")
 
-        # Verificar rate limit (15 mensajes / 24hs).
-        # Un solo identificador por orden de prioridad: email > device_fp > IP.
-        # Así la WiFi de la universidad nunca bloquea a múltiples alumnos.
-        ip_identifier = req.client.host
-        email_identifier = request.user_email.strip().lower() if request.user_email else None
-        fp_identifier = f"fp:{request.device_fp.strip()}" if request.device_fp else None
+        # Rate limit: fingerprint > IP (never email).
+        # The fingerprint is the anchor — email only links for paid credits.
+        email_clean = request.user_email.strip().lower() if request.user_email else None
+        fp_raw = request.device_fp.strip() if request.device_fp else None
+        rl_identifier = f"fp:{fp_raw}" if fp_raw else req.client.host
 
-        if email_identifier:
-            rl_identifier = email_identifier
-        elif fp_identifier:
-            rl_identifier = fp_identifier
-        else:
-            rl_identifier = ip_identifier
+        # Register fp ↔ email link on every authenticated request
+        if fp_raw and email_clean:
+            link_fp_email(fp_raw, email_clean)
 
-        rl_check = check_rate_limit(rl_identifier)
-        if not rl_check["allowed"]:
-            hours_left = round(rl_check["resets_in_seconds"] / 3600, 1)
+        # Consume message: free → credits → block
+        consume = consume_message(rl_identifier, email_clean)
+        if not consume["allowed"]:
+            # Calculate seconds until midnight UTC for reset
+            from datetime import datetime as _dt, timedelta as _td
+            _now = _dt.utcnow()
+            _midnight = _now.replace(hour=0, minute=0, second=0, microsecond=0) + _td(days=1)
+            resets_in = max(0, int((_midnight - _now).total_seconds()))
+            hours_left = round(resets_in / 3600, 1)
             raise HTTPException(
                 status_code=429,
                 detail={
                     "code": "RATE_LIMITED",
                     "remaining": 0,
-                    "resets_in": rl_check["resets_in_seconds"],
-                    "message": f"Alcanzaste el límite de 15 consultas. Se renueva en {hours_left} horas.",
+                    "resets_in": resets_in,
+                    "message": f"Alcanzaste el límite de {FREE_DAILY_LIMIT} consultas. Se renueva en {hours_left} horas.",
                 },
             )
 
@@ -214,8 +220,7 @@ def chat_endpoint(request: ChatRequest, req: Request):
         if request.user_email:
             add_tokens_used(request.user_email, len(respuesta))
 
-        # Incrementar solo el identificador que se usó para verificar
-        increment_rate_limit(rl_identifier)
+        # consume_message() already incremented the counter or decremented credits
 
         # Guardar historial de chat
         if request.user_email:
@@ -424,7 +429,11 @@ def session_detail(email: str, session_id: str, request: Request):
 
 @app.get("/rate-limit")
 def rate_limit_check(identifier: str):
-    return check_rate_limit(identifier.strip().lower())
+    # Accept raw fp or fp:xxx format
+    clean = identifier.strip().lower()
+    if not clean.startswith("fp:") and not clean.startswith("ip:") and "@" not in clean:
+        clean = f"fp:{clean}"
+    return check_rate_limit(clean)
 
 
 # --- POST /debug/fill-rate-limit ---
@@ -436,6 +445,8 @@ class FillRateLimitRequest(BaseModel):
 @app.post("/debug/fill-rate-limit")
 def debug_fill_rate_limit(payload: FillRateLimitRequest):
     identifier = payload.identifier.strip().lower()
+    if not identifier.startswith("fp:") and not identifier.startswith("ip:") and "@" not in identifier:
+        identifier = f"fp:{identifier}"
     count = min(payload.count, 50)
     for _ in range(count):
         increment_rate_limit(identifier)
@@ -444,7 +455,7 @@ def debug_fill_rate_limit(payload: FillRateLimitRequest):
 
 # --- POST /payment/create-link ---
 
-PLAN_QUANTITIES = {'basico': 15, 'estudiante': 60, 'intensivo': 200, 'apoyo': 60}
+PLAN_QUANTITIES = {'basico': 15, 'estudiante': 50, 'intensivo': 100, 'apoyo': 50}
 
 class PaymentLinkRequest(BaseModel):
     email: str
@@ -511,3 +522,13 @@ async def payment_webhook(req: Request):
 @app.get("/payment/status")
 def payment_status(email: str):
     return get_user_payment_status(email.strip().lower())
+
+
+# --- GET /admin/user-status ---
+
+@app.get("/admin/user-status")
+def admin_user_status(request: Request, fp: str = ""):
+    _require_admin(request)
+    if not fp:
+        raise HTTPException(status_code=422, detail="Se requiere ?fp=xxx")
+    return get_fp_status(fp.strip())
