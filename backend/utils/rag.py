@@ -60,14 +60,21 @@ def warmup_rag():
 def retrieve_context(query: str, top_k: int = 2) -> tuple:
     try:
         collection = _get_collection()
+        logger.info(f'RAG DEBUG | collection.count() = {collection.count()}')
+        logger.info(f'RAG DEBUG | query = {query!r}, top_k = {top_k}')
         results = collection.query(query_texts=[query], n_results=top_k)
+        logger.info(f'RAG DEBUG | raw documents = {results["documents"]}')
+        logger.info(f'RAG DEBUG | raw distances = {results["distances"]}')
+        logger.info(f'RAG DEBUG | raw metadatas = {results["metadatas"]}')
 
         if not results['documents'][0]:
+            logger.info('RAG DEBUG | documents[0] vacío, devolviendo ("", 0)')
             return ('', 0)
 
         context_parts = []
         total_chars = 0
         for doc, meta in zip(results['documents'][0], results['metadatas'][0]):
+            logger.info(f'RAG DEBUG | acumulando chunk len={len(doc)}, total_chars actual={total_chars}')
             if total_chars + len(doc) > 400:
                 break
             context_parts.append(f"[{meta['topic']}] {doc}")
@@ -80,7 +87,8 @@ def retrieve_context(query: str, top_k: int = 2) -> tuple:
         distances = results['distances'][0]
         max_score = max(0, 10 - min(distances) * 5) if distances else 0
 
+        logger.info(f'RAG DEBUG | retornando context len={len(context)}, score={max_score}')
         return (context, max_score)
     except Exception as e:
-        logger.error(f'Error en RAG: {e}')
+        logger.error(f'RAG DEBUG | EXCEPCION: {type(e).__name__}: {e}', exc_info=True)
         return ('', 0)
