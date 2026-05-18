@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -42,6 +43,18 @@ def _get_collection():
         logger.info(f'Indexados {len(chunks)} chunks')
 
     return _collection
+
+
+def warmup_rag():
+    try:
+        t0 = time.time()
+        logger.info('RAG warmup: iniciando carga de ChromaDB y modelo de embeddings...')
+        collection = _get_collection()
+        collection.query(query_texts=['warmup'], n_results=1)
+        elapsed = round(time.time() - t0, 2)
+        logger.info(f'RAG warmup: completado en {elapsed}s')
+    except Exception as e:
+        logger.error(f'RAG warmup falló (el lazy init tomará el control): {e}')
 
 
 def retrieve_context(query: str, top_k: int = 2) -> tuple:

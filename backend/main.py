@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -12,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 from agents.algebra_agent import chat as algebra_chat
 from agents.calculo_agent import chat as calculo_chat
+from utils.rag import warmup_rag
 from utils.session_manager import get_session, append_message, get_messages, clear_session
 from utils.analytics import (
     get_stats,
@@ -43,7 +45,14 @@ from utils.payments import create_payment_link
 load_dotenv(override=False)
 logger.info(f'GEMINI_API_KEY presente en env: {"Si" if os.getenv("GEMINI_API_KEY") else "No"}')
 
-app = FastAPI(title="AlgorIA API", version="1.0.0")
+
+@asynccontextmanager
+async def lifespan(app):
+    warmup_rag()
+    yield
+
+
+app = FastAPI(title="AlgorIA API", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
